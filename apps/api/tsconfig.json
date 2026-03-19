@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": [
+    "src/**/*.ts",
+    "../../packages/shared/src/**/*.ts",
+    "../../packages/policy-engine/src/**/*.ts",
+    "../../packages/audit-log/src/**/*.ts"
+  ]
+}
