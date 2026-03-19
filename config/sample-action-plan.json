@@ -1,0 +1,8 @@
+{
+  "planId": "plan-1",
+  "agentId": "bagel",
+  "type": "transfer",
+  "amount": 50,
+  "destination": "0xApprovedDestination1",
+  "reason": "Fund approved test workflow"
+}

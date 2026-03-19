@@ -1,0 +1,11 @@
+{
+  "policyId": "demo-policy-1",
+  "agentId": "bagel",
+  "currency": "USD",
+  "maxPerAction": 100,
+  "dailyCap": 500,
+  "approvalThreshold": 75,
+  "allowedDestinations": ["0xApprovedDestination1", "0xApprovedDestination2"],
+  "deniedDestinations": ["0xDeniedDestination1"],
+  "loggingRequired": true
+}
