@@ -10,43 +10,34 @@ API: healthy | executor: connected
 
 --- 2. Active policy ---
 Policy: demo-policy-1
-  Agent: bagel | Max/action: 100 | Daily cap: 500
-  Approval threshold: 75
-  Allowed: 0xApprovedDestination1, 0xApprovedDestination2
+  Agent: bagel | Max/action: 0.01 wstETH | Daily cap: 0.05 wstETH
+  Approval threshold: 0.008
+  Allowed: 0xApprovedDestination1, 0xApprovedDestination2, 0x4fD66BdA...
   Denied: 0xDeniedDestination1
 
 --- 3. On-chain treasury state ---
-Yield: 0.0435 wstETH | Principal: 0.9565 wstETH | Spent: 0.0 wstETH
+Yield: 0.0426 wstETH | Principal: 0.9524 wstETH | Spent: 0.005 wstETH
 
 --- 4. Submit plan: small transfer (auto-approved) ---
 Decision: approved
 Rules: within_policy
-Reasons: Plan is within policy.
+ON-CHAIN TX: 0x77dfdb5a...
 
 --- 5. Submit plan: larger transfer (approval required) ---
 Decision: approval_required
-Approval ID: 0e383015-5a6a-495f-bf10-60a5f8764c37
+Approval ID: a0250fae-04d6-4f94-aae6-e22c944af672
 
---- 6. Pending approvals ---
-[PENDING] 0e383015-5a6a-495f-bf10-60a5f8764c37 - 80 to 0xApprovedDestination1
+--- 6. Human approves the request ---
+Approved → status: approved
+ON-CHAIN TX: 0x337d0adc...
 
---- 7. Human approves the request ---
-Approved: 0e383015-5a6a-495f-bf10-60a5f8764c37 → status: approved
-
---- 8. Submit plan: denied destination ---
+--- 7. Submit plan: denied destination ---
 Decision: denied
 Reasons: Destination is explicitly denied by policy.
 
---- 9. Audit trail (last 10 events) ---
-[11:21:32] plan_evaluated
-[11:21:32] plan_submitted
-[11:21:32] approval_granted
-[11:21:32] approval_requested
-[11:21:32] plan_evaluated
-[11:21:32] plan_submitted
-[11:21:32] plan_evaluated
-[11:21:32] plan_submitted
-8 total events
+--- 8. Audit trail ---
+10 total events (plan_submitted, plan_evaluated, execution_result,
+approval_requested, approval_granted, ...)
 
 === Demo complete ===
 Every action was policy-evaluated, permission-scoped, and audit-logged.
@@ -79,33 +70,34 @@ Authorize $5M DAO Treasury Allocation to Lido Earn ETH and USD Vaults
 --- 1. Health ---
 ok: true | executor: connected
 
---- 2. Treasury State (live Sepolia) ---
-Yield: 0.04761904761904762 wstETH
-Principal: 0.95238095238095238 wstETH
-Spent: 0 wstETH
-Agent: 0x3d7d7712ad32efD8Cb05249d0C7a3De1B1A3bb43
+--- 2. Treasury State ---
+Yield: 0.0426 wstETH
+Principal: 0.9524 wstETH
+Spent: 0.005 wstETH
 Per-tx cap: 0.01 wstETH
 
---- 3. Policy engine: auto-approved ---
+--- 3. Small plan (auto-approved + on-chain) ---
 Decision: approved
-Rules: within_policy
+ON-CHAIN TX: 0x77dfdb5a22e9fa110aa7f5173e2d7bdf650d8b35374ef124ebe7dad6e47e0d4f
 
---- 4. Approval-required ---
+--- 4. Larger plan (approval required) ---
 Decision: approval_required
-Approval ID: 7af38279-59a3-4353-a8dc-8c77769c47b4
+Approval ID: a0250fae-04d6-4f94-aae6-e22c944af672
 
---- 5. Denied destination ---
-Decision: denied | Reasons: Destination is explicitly denied by policy.
+--- 5. Human approves → on-chain exec ---
+Status: approved
+ON-CHAIN TX: 0x337d0adcad58254e5a1084a1e80c5f70a9f756c292c9f5a04f91997b4e8e911e
 
---- 6. Direct on-chain spend (0.005 wstETH) ---
-ON-CHAIN TX: 0x1fd5edb8cfb87839b43424907da7dab61fde5109bbc0aa925aa2aed5f57c4d64
-Amount: 0.005 wstETH → 0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6
+--- 6. Denied destination ---
+Decision: denied
 
 --- 7. Audit trail ---
-8 total events
+10 total events
 ```
 
-Sepolia spend TX: [sepolia.basescan.org/tx/0x1fd5...](https://sepolia.basescan.org/tx/0x1fd5edb8cfb87839b43424907da7dab61fde5109bbc0aa925aa2aed5f57c4d64)
+Sepolia spend TXs:
+- Auto-approved: [0x77dfdb5a...](https://sepolia.basescan.org/tx/0x77dfdb5a22e9fa110aa7f5173e2d7bdf650d8b35374ef124ebe7dad6e47e0d4f)
+- Human-approved: [0x337d0adc...](https://sepolia.basescan.org/tx/0x337d0adcad58254e5a1084a1e80c5f70a9f756c292c9f5a04f91997b4e8e911e)
 
 ## Autonomous Agent Loop (Dry Run)
 
