@@ -178,7 +178,7 @@ This ties the agent's on-chain spending authority to a discoverable, verifiable 
 ## Hackathon tracks
 
 - **stETH Agent Treasury** (Lido) — yield-only spending from wstETH with permission controls
-- **Lido MCP Server** (Lido) — 9 MCP tools for treasury + staking operations
+- **Lido MCP Server** (Lido) — 11 MCP tools for treasury, staking, and governance
 - **Agents that Pay** (bond.credit) — transparent payment authority for agent transactions
 - **Agent Services on Base** (Base) — discoverable agent services on Base with ERC-8004 identity
 - **Synthesis Open Track** — community-funded prize pool

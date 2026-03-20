@@ -82,7 +82,7 @@ $CLI evaluate '{
   "agentId": "bagel",
   "type": "transfer",
   "amount": 50,
-  "destination": "0xDenied1",
+  "destination": "0xDeniedDestination1",
   "reason": "Attempt to send to blocked address"
 }'
 echo ""

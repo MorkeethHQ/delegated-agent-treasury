@@ -34,7 +34,7 @@ Yield-only spending is the primitive. What you build on top is up to you.
 - Natural rate-limiting — yield accrues slowly (~3-4% APY), so spend authority is bounded by real economic activity
 - Principal is always safe — even a compromised agent key cannot drain the deposit
 
-**The MCP angle:** We didn't just build an API — we built an MCP server with 10 tools that any Claude, Cursor, or MCP-compatible agent can call natively. `get_treasury_state`, `spend_yield`, `check_recipient` for the treasury. Plus full Lido staking operations: `stake_eth`, `wrap_steth`, `unwrap_wsteth`, `request_withdrawal`, balance and rate queries. All write operations support `dry_run` for simulation before execution.
+**The MCP angle:** We didn't just build an API — we built an MCP server with 11 tools that any Claude, Cursor, or MCP-compatible agent can call natively. `get_treasury_state`, `spend_yield`, `check_recipient` for the treasury. Plus full Lido staking operations: `stake_eth`, `wrap_steth`, `unwrap_wsteth`, `request_withdrawal`, balance and rate queries. All write operations support `dry_run` for simulation before execution.
 
 **The collaboration model:** This project was built by a human directing two AI agents:
 - Oscar (human) — architect, orchestrator, funder. Made strategic decisions. Killed the web UI in favor of agent-native interfaces. Funded the Base mainnet deployment.
