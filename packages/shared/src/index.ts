@@ -33,9 +33,13 @@ export interface EvaluationResult {
 export interface ApprovalRequest {
   approvalId: string;
   planId: string;
+  agentId: string;
+  plan: ActionPlan;
+  evaluation: EvaluationResult;
   status: 'pending' | 'approved' | 'denied';
   createdAt: string;
   respondedAt?: string;
+  respondedBy?: string;
 }
 
 export type AuditEventType =

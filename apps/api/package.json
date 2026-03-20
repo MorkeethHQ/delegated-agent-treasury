@@ -5,6 +5,7 @@
   "main": "dist/server.js",
   "types": "dist/server.d.ts",
   "dependencies": {
+    "@synthesis/approval-store": "0.1.0",
     "@synthesis/audit-log": "0.1.0",
     "@synthesis/policy-engine": "0.1.0",
     "@synthesis/shared": "0.1.0"
