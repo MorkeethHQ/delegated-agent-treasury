@@ -102,8 +102,9 @@ GET /health
 The treasury is an `AgentTreasury` smart contract on Base backed by wstETH. Yield accrues as the wstETH exchange rate increases over time. The contract enforces all permission rules at the EVM level — the API is a convenience layer, not a trust boundary.
 
 **Base Mainnet (chain 8453):**
-- AgentTreasury: `0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d`
+- AgentTreasury: `0x455d76a24e862a8d552a0722823ac4d13e482426`
 - wstETH: `0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`
+- Chainlink wstETH/stETH Oracle: `0xB88BAc61a4Ca37C43a3725912B1f472c9A5bc061`
 
 **Base Sepolia (chain 84532, demo):**
 - AgentTreasury: `0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0`

@@ -124,6 +124,13 @@ export const AGENT_TREASURY_ABI = [
     inputs: [],
     outputs: [{ name: '', type: 'address' }],
   },
+  {
+    name: 'rateOracle',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'address' }],
+  },
   // Events
   {
     name: 'Deposited',

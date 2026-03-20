@@ -51,7 +51,7 @@ Use `get_lido_governance_proposals` to stay informed about Lido DAO decisions. T
 
 ## Chain support
 
-- **Base mainnet** (production): AgentTreasury at `0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d`, real wstETH at `0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`
+- **Base mainnet** (production): AgentTreasury at `0x455d76a24e862a8d552a0722823ac4d13e482426`, real wstETH at `0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`, Chainlink oracle at `0xB88BAc61a4Ca37C43a3725912B1f472c9A5bc061`
 - **Base Sepolia** (demo): AgentTreasury + MockWstETH deployed, `simulateYield()` for instant demo
 - **Ethereum mainnet**: Full Lido staking (stake, wrap, unwrap, withdraw)
 - **Base/Arbitrum/Optimism**: wstETH balance queries via bridged wstETH contracts

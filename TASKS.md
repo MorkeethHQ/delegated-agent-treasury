@@ -32,7 +32,7 @@
 - [x] Mainnet placeholders patched with real addresses
 
 ### P3 — E2E + autonomy
-- [x] Bagel deploys AgentTreasury to Base mainnet (0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d)
+- [x] Bagel deploys AgentTreasury to Base mainnet (0x455d76a24e862a8d552a0722823ac4d13e482426)
 - [x] Bagel configures Base Sepolia treasury (mint, deposit, setAgent, addRecipient, setPerTxCap, simulateYield)
 - [x] ERC-8004 agent identity registration (participantId: 10ee7e7e703b4fc493e19f512b5ae09d)
 - [x] E2E test: Base Sepolia — policy engine all 5 paths + on-chain spend (TX: 0x1fd5edb8...)

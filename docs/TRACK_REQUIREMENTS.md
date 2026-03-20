@@ -7,7 +7,7 @@
 | Agent cannot access principal funds | `spendYield()` enforces `amount <= availableYield()` at the EVM level. Principal is calculated as `depositedWstETH * initialRate / currentRate` and is structurally untouchable. |
 | Yield balance must be spendable by agent | `availableYield()` returns real-time yield. Agent calls `spendYield(to, amount)` to spend. Proven on Sepolia: [TX 0x77dfdb5a...](https://sepolia.basescan.org/tx/0x77dfdb5a22e9fa110aa7f5173e2d7bdf650d8b35374ef124ebe7dad6e47e0d4f) |
 | Minimum one configurable permission setting | Three: recipient whitelist (`addRecipient`/`removeRecipient`), per-tx cap (`setPerTxCap`), agent address (`setAgent`) |
-| Testnet or mainnet deployment (no mocks) | Mainnet: [`0x4b8e...7a2d`](https://basescan.org/address/0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d#code) (verified). Sepolia: [`0x6fb8...7ae0`](https://sepolia.basescan.org/address/0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0) with live E2E spend proof |
+| Testnet or mainnet deployment (no mocks) | Mainnet: [`0x455d...2426`](https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426) (Chainlink oracle). Sepolia: [`0x6fb8...7ae0`](https://sepolia.basescan.org/address/0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0) with live E2E spend proof |
 
 **Beyond requirements:** Policy engine with approval workflows, autonomous agent loop with governance awareness, append-only audit trail, ERC-8004 identity.
 

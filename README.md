@@ -77,7 +77,7 @@ node dist/apps/cli/src/cli.js treasury
 
 | Contract | Address |
 |----------|---------|
-| AgentTreasury | [`0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d`](https://basescan.org/address/0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d#code) (verified) |
+| AgentTreasury | [`0x455d76a24e862a8d552a0722823ac4d13e482426`](https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426) |
 | wstETH | [`0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`](https://basescan.org/address/0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452) |
 | Chain | Base (8453) |
 | Agent Identity (ERC-8004) | `10ee7e7e703b4fc493e19f512b5ae09d` |
@@ -85,7 +85,7 @@ node dist/apps/cli/src/cli.js treasury
 ```bash
 export CHAIN=base
 export RPC_URL=https://mainnet.base.org
-export TREASURY_ADDRESS=0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d
+export TREASURY_ADDRESS=0x455d76a24e862a8d552a0722823ac4d13e482426
 export WSTETH_ADDRESS=0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452
 export AGENT_PRIVATE_KEY=0x...
 ```

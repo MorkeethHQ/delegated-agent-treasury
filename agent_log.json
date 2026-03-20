@@ -89,6 +89,64 @@
       "actor": "claude-code",
       "action": "Dry-ran judge demo end-to-end. All 5 policy paths verified: approved, approval_required, human approve, denied, audit trail.",
       "artifacts": ["scripts/judge-demo.sh"]
+    },
+    {
+      "timestamp": "2026-03-20T11:00:00Z",
+      "phase": "execution",
+      "actor": "claude-code",
+      "action": "Full E2E against live Sepolia treasury. Fixed bigint serialization bug. On-chain spend proof: 0.005 wstETH.",
+      "artifacts": ["apps/api/src/server.ts"],
+      "onchain": {
+        "chain": "base-sepolia",
+        "txHash": "0x1fd5edb8cfb87839b43424907da7dab61fde5109bbc0aa925aa2aed5f57c4d64",
+        "type": "yield spend"
+      }
+    },
+    {
+      "timestamp": "2026-03-20T11:30:00Z",
+      "phase": "execution",
+      "actor": "claude-code",
+      "action": "Built autonomous governance-aware agent loop. Monitors treasury yield + Lido governance, holds on risky proposals, spends when safe.",
+      "artifacts": ["apps/agent-loop/src/index.ts"]
+    },
+    {
+      "timestamp": "2026-03-20T13:00:00Z",
+      "phase": "decision",
+      "actor": "oscar",
+      "action": "Discovered wstETH on Base L2 is bridged ERC20 without stEthPerToken(). Directed Bagel to redeploy with Chainlink oracle.",
+      "artifacts": []
+    },
+    {
+      "timestamp": "2026-03-20T14:00:00Z",
+      "phase": "execution",
+      "actor": "bagel",
+      "action": "Redeployed AgentTreasury to Base mainnet with Chainlink oracle for wstETH/stETH rate.",
+      "artifacts": ["contracts/src/AgentTreasury.sol"],
+      "onchain": {
+        "chain": "base",
+        "agentTreasury": "0x455d76a24e862a8d552a0722823ac4d13e482426",
+        "txHash": "0x33e648434ce963eb47ddfb403df14f2faae20d72e78bf0e9ebafefa3e85ea0db",
+        "chainlinkOracle": "0xB88BAc61a4Ca37C43a3725912B1f472c9A5bc061",
+        "type": "contract deployment"
+      }
+    },
+    {
+      "timestamp": "2026-03-20T14:30:00Z",
+      "phase": "execution",
+      "actor": "oscar",
+      "action": "Funded and configured mainnet treasury: deposited 0.0038 wstETH, set agent, whitelisted recipient, set per-tx cap.",
+      "artifacts": [],
+      "onchain": {
+        "chain": "base",
+        "type": "treasury configuration"
+      }
+    },
+    {
+      "timestamp": "2026-03-20T15:00:00Z",
+      "phase": "execution",
+      "actor": "claude-code",
+      "action": "Patched new mainnet treasury address across 12 files. Updated Solidity source for Chainlink oracle. Final docs/story/artifacts update.",
+      "artifacts": ["contracts/standard-json-input.json", "contracts/src/AgentTreasury.sol"]
     }
   ]
 }
