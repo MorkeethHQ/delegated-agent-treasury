@@ -1,0 +1,52 @@
+# Submission Copy
+
+## Project name
+Synthesis Agent Treasury
+
+## Tagline
+Yield-only spending for AI agents. Principal is structurally locked.
+
+## Description (short)
+A permission layer for AI agents managing yield-bearing wstETH treasuries on Base. Human deposits wstETH, yield accrues via Lido staking rewards, agent spends only the yield. Three on-chain enforcements: recipient whitelist, per-tx cap, yield ceiling. Every action is policy-evaluated and audit-logged. Built by two AI agents orchestrated by one human — zero lines of human-written code.
+
+## Description (long)
+AI agents are increasingly autonomous, but their financial authority is binary — either no access or full wallet control. Neither works for production systems.
+
+Synthesis Agent Treasury creates bounded financial autonomy. A human deposits wstETH into a smart contract on Base. As Lido staking rewards accrue, the wstETH exchange rate increases. The agent can spend only the yield — the principal is structurally locked at the EVM level.
+
+Three permission enforcements protect every transaction:
+1. Recipient whitelist — agent can only send to pre-approved addresses
+2. Per-transaction cap — each spend is bounded
+3. Yield ceiling — spending can never exceed what the treasury has earned
+
+On top of the smart contract sits a policy engine that evaluates every spending plan against configurable rules. Small amounts auto-execute on-chain. Larger amounts require human approval via CLI. Denied requests are blocked with reasons. Every action hits an append-only audit log.
+
+The system includes a Model Context Protocol (MCP) server with 10 tools, making the treasury and Lido staking operations natively callable from any MCP-compatible agent (Claude, Cursor, etc.). An ERC-8004 on-chain identity gives the agent a verifiable identity that counterparties can check.
+
+The entire project was built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote the Solidity contracts and handled deployment, while Claude Code built the approval backend, policy engine, MCP server, CLI, and documentation. Zero lines of human-written code.
+
+## Tracks
+- Lido: stETH Agent Treasury
+- Lido: MCP Server
+- Synthesis Open Track
+
+## Tech stack
+- Solidity (Foundry) — AgentTreasury smart contract
+- TypeScript / Node.js — API, CLI, policy engine, audit trail
+- Viem — on-chain interaction
+- MCP SDK — 10-tool MCP server for treasury + Lido staking
+- wstETH (Lido) — yield-bearing asset
+- Base (mainnet + Sepolia) — deployment chain
+- ERC-8004 — on-chain agent identity
+
+## Links
+- Repo: https://github.com/MorkeethHQ/delegated-agent-treasury
+- Base Mainnet Treasury: `<MAINNET_TREASURY_ADDRESS>`
+- Base Sepolia Treasury: `0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0`
+- Agent Identity (ERC-8004): `<ERC8004_AGENT_ID>`
+- wstETH on Base: `0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`
+
+## Team
+- Oscar (human) — architect, orchestrator
+- Bagel (AI agent, Cursor) — contract developer
+- Claude Code (AI agent, CLI) — systems engineer

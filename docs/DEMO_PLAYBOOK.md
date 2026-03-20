@@ -34,7 +34,7 @@ function owner() public view returns (address)               // Treasury owner
 function perTxCap() public view returns (uint256)            // Current per-tx cap
 ```
 
-### Events (6 total)
+### Events (7 total)
 
 ```solidity
 event Deposited(address indexed owner, uint256 amount, uint256 rate)
@@ -42,6 +42,7 @@ event YieldSpent(address indexed agent, address indexed to, uint256 amount)
 event PrincipalWithdrawn(address indexed owner, uint256 amount)
 event AgentSet(address indexed agent)
 event RecipientAdded(address indexed to)
+event RecipientRemoved(address indexed to)
 event PerTxCapSet(uint256 cap)
 ```
 
@@ -64,13 +65,13 @@ function balanceOf(address) external view returns (uint256)
 
 ```bash
 # Env vars needed
-export PRIVATE_KEY=<deployer-private-key>
+export OWNER_PRIVATE_KEY=<owner-private-key>
 export BASE_SEPOLIA_RPC=https://sepolia.base.org
 export AGENT_PRIVATE_KEY=<agent-wallet-key>
 
 # Deploy
 cd contracts
-forge script script/Deploy.s.sol --rpc-url $BASE_SEPOLIA_RPC --broadcast
+forge script script/Deploy.s.sol --rpc-url $RPC_URL --broadcast
 
 # Record deployed addresses
 export MOCK_WSTETH=<deployed-mock-address>
@@ -82,15 +83,15 @@ export TREASURY=<deployed-treasury-address>
 ```bash
 # Mint 1 wstETH to owner
 cast send $MOCK_WSTETH "mint(address,uint256)" $OWNER_ADDR 1000000000000000000 \
-  --rpc-url $BASE_SEPOLIA_RPC --private-key $PRIVATE_KEY
+  --rpc-url $RPC_URL --private-key $OWNER_PRIVATE_KEY
 
 # Approve treasury to pull wstETH
 cast send $MOCK_WSTETH "approve(address,uint256)" $TREASURY 1000000000000000000 \
-  --rpc-url $BASE_SEPOLIA_RPC --private-key $PRIVATE_KEY
+  --rpc-url $RPC_URL --private-key $OWNER_PRIVATE_KEY
 
 # Deposit into treasury
 cast send $TREASURY "deposit(uint256)" 1000000000000000000 \
-  --rpc-url $BASE_SEPOLIA_RPC --private-key $PRIVATE_KEY
+  --rpc-url $RPC_URL --private-key $OWNER_PRIVATE_KEY
 ```
 
 **Expected result**: `Deposited(owner, 1e18, 1.15e18)` event. Treasury holds 1 wstETH.
@@ -100,15 +101,15 @@ cast send $TREASURY "deposit(uint256)" 1000000000000000000 \
 ```bash
 # Set agent address
 cast send $TREASURY "setAgent(address)" $AGENT_ADDR \
-  --rpc-url $BASE_SEPOLIA_RPC --private-key $PRIVATE_KEY
+  --rpc-url $RPC_URL --private-key $OWNER_PRIVATE_KEY
 
 # Whitelist recipient
 cast send $TREASURY "addRecipient(address)" $RECIPIENT_ADDR \
-  --rpc-url $BASE_SEPOLIA_RPC --private-key $PRIVATE_KEY
+  --rpc-url $RPC_URL --private-key $OWNER_PRIVATE_KEY
 
 # Set per-tx cap: 0.01 wstETH
 cast send $TREASURY "setPerTxCap(uint256)" 10000000000000000 \
-  --rpc-url $BASE_SEPOLIA_RPC --private-key $PRIVATE_KEY
+  --rpc-url $RPC_URL --private-key $OWNER_PRIVATE_KEY
 ```
 
 **Expected result**: `AgentSet`, `RecipientAdded`, `PerTxCapSet` events.
@@ -118,10 +119,10 @@ cast send $TREASURY "setPerTxCap(uint256)" 10000000000000000 \
 ```bash
 # Simulate 5% yield (500 basis points)
 cast send $MOCK_WSTETH "simulateYield(uint256)" 500 \
-  --rpc-url $BASE_SEPOLIA_RPC --private-key $PRIVATE_KEY
+  --rpc-url $RPC_URL --private-key $OWNER_PRIVATE_KEY
 
 # Check available yield
-cast call $TREASURY "availableYield()" --rpc-url $BASE_SEPOLIA_RPC
+cast call $TREASURY "availableYield()" --rpc-url $RPC_URL
 # Expected: ~0.0435 wstETH (1 * (1 - 1.15/1.2075))
 ```
 
@@ -130,7 +131,7 @@ cast call $TREASURY "availableYield()" --rpc-url $BASE_SEPOLIA_RPC
 ```bash
 # Agent spends 0.01 wstETH to whitelisted recipient
 cast send $TREASURY "spendYield(address,uint256)" $RECIPIENT_ADDR 10000000000000000 \
-  --rpc-url $BASE_SEPOLIA_RPC --private-key $AGENT_PRIVATE_KEY
+  --rpc-url $RPC_URL --private-key $AGENT_PRIVATE_KEY
 ```
 
 **Expected result**: `YieldSpent(agent, recipient, 0.01e18)` event. Recipient gets wstETH. Principal untouched.
@@ -140,27 +141,27 @@ cast send $TREASURY "spendYield(address,uint256)" $RECIPIENT_ADDR 10000000000000
 ```bash
 # Over cap → REVERT
 cast send $TREASURY "spendYield(address,uint256)" $RECIPIENT_ADDR 20000000000000000 \
-  --rpc-url $BASE_SEPOLIA_RPC --private-key $AGENT_PRIVATE_KEY
+  --rpc-url $RPC_URL --private-key $AGENT_PRIVATE_KEY
 # Expected: "exceeds per-tx cap"
 
 # Non-whitelisted → REVERT
 cast send $TREASURY "spendYield(address,uint256)" 0xDEAD000000000000000000000000000000000000 10000000000000000 \
-  --rpc-url $BASE_SEPOLIA_RPC --private-key $AGENT_PRIVATE_KEY
+  --rpc-url $RPC_URL --private-key $AGENT_PRIVATE_KEY
 # Expected: "recipient not whitelisted"
 
 # More than yield → REVERT
 cast send $TREASURY "spendYield(address,uint256)" $RECIPIENT_ADDR 900000000000000000 \
-  --rpc-url $BASE_SEPOLIA_RPC --private-key $AGENT_PRIVATE_KEY
+  --rpc-url $RPC_URL --private-key $AGENT_PRIVATE_KEY
 # Expected: "exceeds available yield"
 ```
 
 ### Step 6: Verify principal is safe
 
 ```bash
-cast call $TREASURY "principal()" --rpc-url $BASE_SEPOLIA_RPC
+cast call $TREASURY "principal()" --rpc-url $RPC_URL
 # Expected: ~0.9565 wstETH (original minus spent yield portion)
 
-cast call $TREASURY "totalSpent()" --rpc-url $BASE_SEPOLIA_RPC
+cast call $TREASURY "totalSpent()" --rpc-url $RPC_URL
 # Expected: 0.01e18
 ```
 
@@ -219,7 +220,7 @@ If the on-chain path breaks (RPC issues, gas problems, contract bug):
 
 **Fallback A**: Run Anvil locally forking Base Sepolia
 ```bash
-anvil --fork-url $BASE_SEPOLIA_RPC
+anvil --fork-url $RPC_URL
 # Use http://127.0.0.1:8545 as RPC
 # All contract calls work the same, just local
 ```
