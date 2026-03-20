@@ -10,7 +10,8 @@
     "@synthesis/executor": "0.1.0",
     "@synthesis/policy-engine": "0.1.0",
     "@synthesis/shared": "0.1.0",
-    "viem": "^2.47.5"
+    "viem": "^2.47.5",
+    "@synthesis/x402-gateway": "0.1.0"
   },
   "scripts": {
     "build": "node ../../node_modules/typescript/bin/tsc -p tsconfig.json",

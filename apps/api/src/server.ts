@@ -22,12 +22,17 @@ import {
   executeSwap,
   TOKENS,
 } from '../../../packages/trading-engine/src/index.js';
+import { createSynthesisGateway } from '../../../packages/x402-gateway/src/index.js';
 
 const root = process.cwd();
 const policyPath = resolve(root, 'config', 'sample-policy.json');
 const strategyPath = resolve(root, 'config', 'sample-yield-strategy.json');
 const auditLogPath = resolve(root, 'data', 'audit-events.jsonl');
 const approvalsPath = resolve(root, 'data', 'approvals.json');
+
+// --- x402 Payment Gateway ---
+
+const x402 = createSynthesisGateway();
 
 // --- Executor (optional — only if contract env vars are set) ---
 
@@ -424,21 +429,70 @@ async function handleSwapTokens(_req: IncomingMessage, res: ServerResponse): Pro
   return sendJson(res, 200, { tokens: TOKENS, chainId: 8453, chain: 'base' });
 }
 
+// --- x402 Pricing handler ---
+
+async function handleX402Pricing(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const pricing = x402.getPricingTable();
+  return sendJson(res, 200, {
+    x402: {
+      enabled: x402.enabled,
+      protocol: 'https://x402.org',
+      version: 1,
+      network: 'base',
+      chainId: 8453,
+      asset: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+      assetSymbol: 'USDC',
+      payTo: '0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6',
+    },
+    endpoints: pricing,
+    freeEndpoints: [
+      'GET /health',
+      'GET /policy',
+      'GET /treasury',
+      'GET /swap/tokens',
+      'GET /audit',
+      'GET /x402/pricing',
+    ],
+    usage: {
+      description: 'Send requests with X-PAYMENT header containing a base64-encoded signed USDC TransferWithAuthorization payload. Requests without payment receive HTTP 402 with payment instructions.',
+      docs: 'https://x402.org',
+    },
+  });
+}
+
 // --- Router ---
 
 const server = createServer(async (req, res) => {
   if (req.method === 'OPTIONS') {
-    return sendJson(res, 204, '');
+    // Include x-payment in allowed headers for CORS preflight
+    res.writeHead(204, {
+      'access-control-allow-origin': '*',
+      'access-control-allow-methods': 'GET, POST, PUT, PATCH, OPTIONS',
+      'access-control-allow-headers': 'content-type, x-payment',
+      'access-control-expose-headers': 'x-payment-required, x-payment-response',
+    });
+    res.end();
+    return;
   }
 
   const url = req.url ?? '';
 
   try {
+    // x402 payment gating — check before routing to paid endpoints
+    const handled = await x402.handlePaymentGating(req, res);
+    if (handled) return;
+
+    // --- x402 pricing endpoint (always free) ---
+    if (req.method === 'GET' && url === '/x402/pricing') {
+      return await handleX402Pricing(req, res);
+    }
+
     if (req.method === 'GET' && url === '/health') {
       return sendJson(res, 200, {
         ok: true,
         service: 'synthesis-api',
         executor: executor ? 'connected' : 'not configured',
+        x402: x402.enabled ? 'enabled' : 'disabled',
       });
     }
 
@@ -521,6 +575,11 @@ async function start(): Promise<void> {
   const port = Number(process.env.PORT ?? 3001);
   server.listen(port, () => {
     console.log(`Synthesis API listening on http://localhost:${port}`);
+    if (x402.enabled) {
+      console.log(`x402 payment gating ENABLED — paid endpoints require USDC on Base`);
+    } else {
+      console.log(`x402 payment gating disabled (set ENABLE_X402=true to enable)`);
+    }
   });
 }
 
