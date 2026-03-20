@@ -31,7 +31,7 @@ echo -e "${DIM}Built by 2 AI agents + 1 human orchestrator${RESET}"
 pause 3
 
 # ── 1. Health ──
-step "1/8  System Health"
+step "1/12  System Health"
 narrate "Checking API server and on-chain executor connection..."
 curl -s "$API/health" | pj "
   console.log('  API:      ' + (d.ok ? '✓ healthy' : '✗ down'));
@@ -40,22 +40,23 @@ curl -s "$API/health" | pj "
 pause
 
 # ── 2. Policy ──
-step "2/8  Active Policy Configuration"
+step "2/12  Active Policy Configuration"
 narrate "The policy engine controls what the agent can and cannot do."
 curl -s "$API/policy" | pj "
   const p=d.policy;
-  console.log('  Policy:    ' + p.policyId);
-  console.log('  Agent:     ' + p.agentId);
-  console.log('  Max/tx:    ' + p.maxPerAction + ' wstETH');
-  console.log('  Daily cap: ' + p.dailyCap + ' wstETH');
-  console.log('  Threshold: ' + p.approvalThreshold + ' wstETH (above this → human approval)');
-  console.log('  Allowed:   ' + p.allowedDestinations.length + ' whitelisted destinations');
-  console.log('  Denied:    ' + p.deniedDestinations.length + ' blocked destinations');
+  console.log('  Policy:      ' + p.policyId);
+  console.log('  Agent:       ' + p.agentId);
+  console.log('  Max/tx:      ' + p.maxPerAction + ' wstETH (transfers)');
+  console.log('  Max swap/tx: ' + (p.maxSwapPerAction || 'N/A') + ' wstETH');
+  console.log('  Max slip:    ' + (p.maxSlippageBps || 'N/A') + ' bps');
+  console.log('  Daily cap:   ' + p.dailyCap + ' wstETH');
+  console.log('  Threshold:   ' + p.approvalThreshold + ' wstETH (above → human approval)');
+  console.log('  Allowed:     ' + p.allowedDestinations.length + ' whitelisted destinations');
 "
 pause
 
 # ── 3. Treasury ──
-step "3/8  On-Chain Treasury State"
+step "3/12  On-Chain Treasury State"
 narrate "Reading live state from the AgentTreasury contract on Base..."
 curl -s "$API/treasury" | pj "
   if(d.error){
@@ -71,7 +72,7 @@ curl -s "$API/treasury" | pj "
 pause 3
 
 # ── 4. Auto-approved spend ──
-step "4/8  Small Transfer → Auto-Approved"
+step "4/12  Small Transfer → Auto-Approved"
 narrate "Agent submits a 0.005 wstETH spend. Below the approval threshold → auto-executes."
 curl -s -X POST "$API/plans/evaluate" \
   -H 'content-type: application/json' \
@@ -84,7 +85,7 @@ curl -s -X POST "$API/plans/evaluate" \
 pause
 
 # ── 5. Approval-required spend ──
-step "5/8  Larger Transfer → Requires Human Approval"
+step "5/12  Larger Transfer → Requires Human Approval"
 narrate "Agent submits 0.009 wstETH. Above threshold → policy engine escalates to human."
 LARGE_RESULT=$(curl -s -X POST "$API/plans/evaluate" \
   -H 'content-type: application/json' \
@@ -97,7 +98,7 @@ echo "$LARGE_RESULT" | pj "
 pause
 
 # ── 6. Human approves ──
-step "6/8  Human Approves the Pending Request"
+step "6/12  Human Approves the Pending Request"
 narrate "A human operator reviews and approves via CLI or API."
 APPROVAL_ID=$(curl -s "$API/approvals?status=pending" | pj "if(d.approvals.length)console.log(d.approvals[0].approvalId);")
 if [ -n "$APPROVAL_ID" ]; then
@@ -115,7 +116,7 @@ fi
 pause
 
 # ── 7. Yield Strategy ──
-step "7/10  Yield Strategy Engine"
+step "7/12  Yield Strategy Engine"
 narrate "Multi-bucket distribution — agent routes yield to ops, grants, reserve."
 curl -s "$API/strategy" | pj "
   if(d.error){ console.log('  (No strategy loaded)'); } else {
@@ -129,7 +130,7 @@ curl -s "$API/strategy" | pj "
 pause
 
 # ── 8. Strategy Preview ──
-step "8/10  Strategy Preview (Dry Run)"
+step "8/12  Strategy Preview (Dry Run)"
 narrate "Preview how 0.1 wstETH yield would be distributed across buckets."
 curl -s "$API/strategy/preview?yield=0.1&perTxCap=0.05" | pj "
   if(d.error){ console.log('  ' + d.error); } else {

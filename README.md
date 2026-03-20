@@ -144,9 +144,10 @@ packages/
   mcp-server/               — MCP server: 18 tools for treasury, staking, strategy, trust, trading
   strategy-engine/          — Multi-bucket yield distribution engine
   trading-engine/           — Uniswap Trading API client (quotes, swaps, DCA)
+  x402-gateway/             — x402 payment gating for agent-as-a-service
 ```
 
-## API endpoints
+## API endpoints (16)
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -165,6 +166,7 @@ packages/
 | GET | `/swap/tokens` | Supported tokens on Base |
 | GET | `/swap/quote` | Live Uniswap swap quote |
 | POST | `/swap/execute` | Execute yield swap (policy-gated, dry_run) |
+| GET | `/x402/pricing` | x402 payment pricing table |
 
 ## Smart contract
 

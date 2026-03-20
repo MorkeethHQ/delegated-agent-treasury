@@ -147,6 +147,54 @@
       "actor": "claude-code",
       "action": "Patched new mainnet treasury address across 12 files. Updated Solidity source for Chainlink oracle. Final docs/story/artifacts update.",
       "artifacts": ["contracts/standard-json-input.json", "contracts/src/AgentTreasury.sol"]
+    },
+    {
+      "timestamp": "2026-03-20T18:00:00Z",
+      "phase": "execution",
+      "actor": "claude-code",
+      "action": "Built multi-bucket yield distribution engine with configurable strategy profiles",
+      "artifacts": ["packages/strategy-engine", "packages/mcp-server/src/tools/strategy.ts", "config/sample-yield-strategy.json"],
+      "tag": "yield-strategy-engine"
+    },
+    {
+      "timestamp": "2026-03-20T19:00:00Z",
+      "phase": "execution",
+      "actor": "claude-code",
+      "action": "Added ERC-8004 on-chain identity verification for trust-gated payments",
+      "artifacts": ["packages/executor/src/erc8004.js", "packages/mcp-server/src/tools/trust.ts"],
+      "tag": "erc8004-trust-gating"
+    },
+    {
+      "timestamp": "2026-03-20T20:00:00Z",
+      "phase": "execution",
+      "actor": "claude-code",
+      "action": "Built Uniswap Trading API integration for yield-to-swap on Base",
+      "artifacts": ["packages/trading-engine", "packages/mcp-server/src/tools/trading.ts"],
+      "tag": "uniswap-trading-engine"
+    },
+    {
+      "timestamp": "2026-03-20T21:00:00Z",
+      "phase": "execution",
+      "actor": "claude-code",
+      "action": "Implemented x402 protocol for USDC-paid agent API service",
+      "artifacts": ["packages/x402-gateway"],
+      "tag": "x402-payment-gateway"
+    },
+    {
+      "timestamp": "2026-03-20T22:00:00Z",
+      "phase": "execution",
+      "actor": "claude-code",
+      "action": "Added separate swap caps (maxSwapPerAction) and slippage limits (maxSlippageBps)",
+      "artifacts": ["packages/policy-engine", "config/sample-policy.json"],
+      "tag": "swap-policy-controls"
+    },
+    {
+      "timestamp": "2026-03-20T23:00:00Z",
+      "phase": "execution",
+      "actor": "claude-code",
+      "action": "Updated pitches, submission, demo script, docs for 6-track bounty submission",
+      "artifacts": ["docs/PITCHES.md", "docs/SUBMISSION.md", "docs/STORY.md", "scripts/judge-demo.sh", "skill.md"],
+      "tag": "overnight-polish"
     }
   ]
 }

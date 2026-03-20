@@ -1,28 +1,44 @@
-# HANDOFF.md
+# HANDOFF.md — Morning Checklist
 
-## Current status (2026-03-20)
+## Status as of 2026-03-20 ~11pm
 
-Dual-chain support ready. Base Sepolia deployed, Base mainnet pending treasury deployment. API, CLI, MCP server, and executor wired up.
+**Everything builds clean. Everything is pushed to main.**
 
-### Working now
-- Policy engine — agent match, caps, thresholds, allow/deny lists
-- Audit logger — append-only JSONL
-- API — 8 endpoints (health, evaluate, approvals, respond, audit, policy, treasury)
-- Approval store — in-memory + file persistence, auto-creation on approval_required
-- Executor — viem integration layer, reads + writes to AgentTreasury contract
-- CLI — 9 commands (health, policy, evaluate, approvals, approve, deny, audit, treasury, demo)
-- MCP server — 11 tools (treasury state, spend yield, Lido staking ops)
-- Smart contracts — AgentTreasury + MockWstETH deployed on Base Sepolia
-- Dual-chain RPC support — `RPC_URL` env var across API + CLI
-- skill.md + lido.skill.md — agent-callable interfaces
-- README — submission-ready with mainnet placeholders
+### What's Built (Phase 1 + 2 + 3)
 
-### Deployed contracts
+| Feature | Package | Status |
+|---------|---------|--------|
+| AgentTreasury contract | `contracts/` | LIVE on mainnet + sepolia |
+| Policy engine | `policy-engine/` | Working — transfer + swap caps |
+| Approval store | `approval-store/` | Working |
+| Audit logger | `audit-log/` | Working |
+| REST API | `apps/api/` | 16 endpoints |
+| CLI | `apps/cli/` | 9 commands |
+| Agent loop | `apps/agent-loop/` | Governance-aware, strategy-aware |
+| MCP server | `mcp-server/` | 18 tools |
+| Executor | `executor/` | Viem + ERC-8004 identity |
+| Strategy engine | `strategy-engine/` | Multi-bucket yield distribution |
+| Trading engine | `trading-engine/` | Uniswap API (quotes + dry-run swaps) |
+| x402 gateway | `x402-gateway/` | USDC payment-gated API |
 
-**Base Sepolia (chain 84532)**
-- AgentTreasury: `0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0`
-- MockWstETH: `0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d`
-- Deployer/Owner: `0x3d7d7712ad32efD8Cb05249d0C7a3De1B1A3bb43`
+### What's Tested
+
+- Build: clean across 12 workspaces
+- API endpoints: `/swap/quote` returns live Uniswap prices (0.01 wstETH ≈ $26.58 USDC)
+- API endpoints: `/swap/execute` passes policy, returns dry-run quote
+- API endpoints: `/strategy`, `/strategy/preview`, `/verify/:address`, `/x402/pricing` all respond
+- Demo script: 12-step flow runs end-to-end in API-only mode
+
+### What's NOT Tested (needs morning attention)
+
+- [ ] Live swap execution (dry_run=false) — needs wallet signer wired up
+- [ ] x402 with real USDC payment — disabled by default, needs ENABLE_X402=true
+- [ ] Agent loop with trading strategies — loop uses bucket distribution, not yet wired to trading engine
+- [ ] Full on-chain flow with mainnet treasury + Uniswap swap
+
+---
+
+## Deployed Contracts
 
 **Base Mainnet (chain 8453)**
 - AgentTreasury: `0x455d76a24e862a8d552a0722823ac4d13e482426`
@@ -30,28 +46,72 @@ Dual-chain support ready. Base Sepolia deployed, Base mainnet pending treasury d
 - Chainlink wstETH/stETH Oracle: `0xB88BAc61a4Ca37C43a3725912B1f472c9A5bc061`
 - Agent Identity (ERC-8004): `10ee7e7e703b4fc493e19f512b5ae09d`
 
-### Remaining
-- Bagel deploys AgentTreasury to Base mainnet → patch address into all docs
-- Bagel configures Base Sepolia treasury (mint, deposit, setAgent, addRecipient, setPerTxCap, simulateYield)
-- End-to-end on-chain test (both chains)
-- ERC-8004 agent identity registration
-- Submission to Devfolio (conversationLog, tracks, metadata)
+**Base Sepolia (chain 84532)**
+- AgentTreasury: `0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0`
+- MockWstETH: `0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d`
 
-## Important project decisions
-- Dual-chain: Base Sepolia (demo with mock yield) + Base mainnet (real wstETH yield)
-- MockWstETH with `simulateYield()` for instant demo
-- No web UI — CLI + skill.md + MCP is the interface
-- Focus on one clean demo path, not feature breadth
+---
 
-## Sensitive context
-- Demo wallet credentials must not be committed
-- Rotate creds after hackathon
-- .env.example has the template; .env is gitignored
+## Morning Checklist — Oscar
 
-## Demo target
-A judge should understand the full flow in under 2 minutes:
-1. Agent proposes action → policy evaluates
-2. Approved → auto-executes on-chain
-3. Approval required → human reviews via CLI → executes on approval
-4. Denied → blocked with reasons
-5. Audit log proves every step
+- [ ] **Run the demo:** `npm run build && node dist/apps/api/src/server.js` then `bash scripts/screen-demo.sh`
+- [ ] **Screen record** the 12-step demo (~2 min)
+- [ ] **Update Devfolio submission** on web (copy from `docs/SUBMISSION.md`) — API endpoint changed, use web UI
+- [ ] **Add bounty tracks:** Uniswap + Agent Services on Base (if available in Devfolio)
+- [ ] **Self-custody transfer** on synthesis.md when available — required before publishing
+- [ ] **Upload demo video** to Devfolio
+
+## Morning Checklist — Bagel
+
+- [ ] **Review swap policy defaults:** `maxSwapPerAction: 0.01 wstETH`, `maxSlippageBps: 100` (1%)
+- [ ] **Review trading-engine flow** in `packages/trading-engine/src/index.ts` — especially the checkApproval → quote → sign → /swap → broadcast path
+- [ ] **Optional: Wire live execution** — Steps 3-5 in executeSwap() need a wallet signer to sign permitData and broadcast. Currently dry-run only.
+- [ ] **Optional: Verify contract on Basescan** via `forge verify-contract`
+- [ ] **Optional: Celo deployment** — same Solidity, different chain. $5K bounty if worth the time.
+
+## Morning Checklist — Claude
+
+- [ ] **Resolve any merge conflicts** from parallel agent work
+- [ ] **Run final build + smoke test**
+- [ ] **Any remaining doc/demo polish**
+- [ ] **MoonPay CLI integration** if there's time (P3)
+
+---
+
+## Bounty Targets (6 tracks, $40.5K potential)
+
+| Track | Prize | Status |
+|-------|-------|--------|
+| Synthesis Open Track | $14.5K | Ready |
+| Lido stETH Treasury | $3K | Ready |
+| Lido MCP Server | $5K | Ready (18 tools) |
+| ERC-8004 Agents With Receipts | $8K | Ready (trust-gating) |
+| Uniswap | $5K | Ready (live quotes, dry-run swaps) |
+| Agent Services on Base | $5K | Ready (x402 gateway) |
+
+## Policy Config
+
+```json
+{
+  "maxPerAction": 0.01,
+  "dailyCap": 0.05,
+  "approvalThreshold": 0.008,
+  "maxSwapPerAction": 0.01,
+  "maxSlippageBps": 100
+}
+```
+
+## Key Env Vars
+
+```bash
+UNISWAP_API_KEY=GOI55Pq1Kd97gxsb9K13A5eH5_ed59fzh9ObbXdSNZA
+ENABLE_X402=true  # to activate payment gating
+```
+
+## Project Decisions
+
+- Option A for swaps: agent wallet receives yield via spendYield(), then swaps on Uniswap. No contract changes.
+- No web UI — CLI + MCP + API is the interface
+- Demo-first: everything works in API-only mode (no contract env vars needed)
+- Separate swap/transfer caps in policy engine
+- x402 disabled by default for local dev

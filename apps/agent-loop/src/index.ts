@@ -243,6 +243,12 @@ async function tickSingleRecipient(yieldAvailable: number, perTxCap: number): Pr
   }
 }
 
+// --- Trading strategies integration (future) ---
+// TODO: Load trading strategies from /swap/strategies API endpoint and execute
+// DCA / swap-to-stable / rebalance actions as part of the autonomous loop.
+// This would run after yield distribution, using the remaining yield allocation
+// to perform token swaps via the trading engine (Uniswap).
+
 // --- Main ---
 
 async function main(): Promise<void> {

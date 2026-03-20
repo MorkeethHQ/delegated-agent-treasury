@@ -27,6 +27,7 @@ import { createSynthesisGateway } from '../../../packages/x402-gateway/src/index
 const root = process.cwd();
 const policyPath = resolve(root, 'config', 'sample-policy.json');
 const strategyPath = resolve(root, 'config', 'sample-yield-strategy.json');
+const tradingStrategiesPath = resolve(root, 'config', 'sample-trading-strategies.json');
 const auditLogPath = resolve(root, 'data', 'audit-events.jsonl');
 const approvalsPath = resolve(root, 'data', 'approvals.json');
 
@@ -429,6 +430,15 @@ async function handleSwapTokens(_req: IncomingMessage, res: ServerResponse): Pro
   return sendJson(res, 200, { tokens: TOKENS, chainId: 8453, chain: 'base' });
 }
 
+async function handleSwapStrategies(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  try {
+    const strategies = await readJsonFile<unknown>(tradingStrategiesPath);
+    return sendJson(res, 200, strategies);
+  } catch (error) {
+    return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
+  }
+}
+
 // --- x402 Pricing handler ---
 
 async function handleX402Pricing(_req: IncomingMessage, res: ServerResponse): Promise<void> {
@@ -556,6 +566,10 @@ const server = createServer(async (req, res) => {
 
     if (req.method === 'GET' && url === '/swap/tokens') {
       return await handleSwapTokens(req, res);
+    }
+
+    if (req.method === 'GET' && url === '/swap/strategies') {
+      return await handleSwapStrategies(req, res);
     }
 
     return sendJson(res, 404, { error: 'Not found' });

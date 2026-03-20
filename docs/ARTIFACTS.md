@@ -18,14 +18,14 @@
 | Metric | Count |
 |--------|-------|
 | Total commits | 34+ |
-| TypeScript source files | 20 |
+| TypeScript source files | 25 |
 | Lines of TypeScript | 2,315 |
 | Solidity source files | 3 |
 | Lines of Solidity | 219 |
 | Unit tests | 12 |
 | Demo scripts | 3 |
 
-## Packages (8)
+## Packages (9)
 
 | Package | Purpose |
 |---------|---------|
@@ -37,12 +37,13 @@
 | `mcp-server` | 18-tool MCP server for treasury, staking, governance, strategy, trust, trading |
 | `strategy-engine` | Multi-bucket yield distribution engine |
 | `trading-engine` | Uniswap Trading API client — quotes, swaps, DCA on Base |
+| `x402-gateway` | x402 payment gating — HTTP 402 payment protocol for agent-as-a-service |
 
 ## Apps (3)
 
 | App | Purpose |
 |-----|---------|
-| `api` | REST API: 12 endpoints — evaluate, approvals, respond, audit, policy, treasury, strategy, verify |
+| `api` | REST API: 16 endpoints — evaluate, approvals, respond, audit, policy, treasury, strategy, verify, swap, x402 |
 | `cli` | CLI: 9 commands — health, policy, evaluate, approvals, approve, deny, audit, treasury, demo |
 | `agent-loop` | Autonomous governance-aware yield spending agent — monitors treasury + Lido governance, decides spend/hold |
 
@@ -78,7 +79,7 @@
 - `preview_yield_swap` — preview DCA/strategy execution with current yield
 - `execute_yield_swap` — execute policy-gated swap (supports dry_run)
 
-## API Endpoints (15)
+## API Endpoints (16)
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -97,6 +98,7 @@
 | GET | `/swap/tokens` | Supported tokens on Base |
 | GET | `/swap/quote` | Live Uniswap swap quote |
 | POST | `/swap/execute` | Policy-gated yield swap execution |
+| GET | `/x402/pricing` | x402 payment pricing table |
 
 ## Scripts
 
@@ -108,11 +110,13 @@
 | `scripts/register-erc8004.sh` | Devfolio agent registration |
 | `scripts/submit.sh` | Hackathon project submission |
 
-## Hackathon Tracks (4)
+## Hackathon Tracks (6)
 
 | Track | Sponsor | UUID | Fit |
 |-------|---------|------|-----|
-| stETH Agent Treasury | Lido | `5e445a077b5248e0974904915f76e1a0` | Strong |
-| Lido MCP | Lido | `ee885a40e4bc4d3991546cec7a4433e2` | Strong |
-| Synthesis Open Track | Community | `fdb76d08812b43f6a5f454744b66f590` | Universal |
-| Agents With Receipts — ERC-8004 | Protocol Labs | `3bf41be958da497bbb69f1a150c76af9` | Partial |
+| stETH Agent Treasury | Lido ($3K) | `5e445a077b5248e0974904915f76e1a0` | Strong |
+| Lido MCP | Lido ($5K) | `ee885a40e4bc4d3991546cec7a4433e2` | Strong |
+| Synthesis Open Track | Community ($14.5K) | `fdb76d08812b43f6a5f454744b66f590` | Universal |
+| Agents With Receipts — ERC-8004 | Protocol Labs ($8K) | `3bf41be958da497bbb69f1a150c76af9` | Strong |
+| Uniswap | Uniswap ($5K) | — | Strong |
+| Agent Services on Base | Base ($5K) | — | Strong |
