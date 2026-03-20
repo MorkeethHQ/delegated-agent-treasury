@@ -10,7 +10,7 @@ const API_URL = process.env.API_URL ?? 'http://localhost:3001';
 function getExecutor() {
   const treasury = process.env.TREASURY_ADDRESS;
   const wsteth = process.env.WSTETH_ADDRESS;
-  const rpc = process.env.BASE_SEPOLIA_RPC;
+  const rpc = process.env.RPC_URL ?? process.env.BASE_SEPOLIA_RPC;
   const agentKey = process.env.AGENT_PRIVATE_KEY;
 
   if (!treasury || !wsteth || !rpc || !agentKey) {

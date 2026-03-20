@@ -27,7 +27,7 @@ let executor: Executor | null = null;
 function initExecutor(): void {
   const treasury = process.env.TREASURY_ADDRESS;
   const wsteth = process.env.WSTETH_ADDRESS;
-  const rpc = process.env.BASE_SEPOLIA_RPC;
+  const rpc = process.env.RPC_URL ?? process.env.BASE_SEPOLIA_RPC;
   const agentKey = process.env.AGENT_PRIVATE_KEY;
 
   if (treasury && wsteth && rpc && agentKey) {
@@ -128,7 +128,7 @@ async function handleEvaluate(req: IncomingMessage, res: ServerResponse): Promis
 
   // Create approval request if needed
   if (result.decision === 'approval_required') {
-    const approval = createApproval(plan, result);
+    const approval = await createApproval(plan, result);
     await auditLog('approval_requested', { approval });
     return sendJson(res, 200, { result, approval });
   }
@@ -164,7 +164,7 @@ async function handleRespondApproval(
     return sendJson(res, 400, { error: 'Decision must be "approved" or "denied"' });
   }
 
-  const approval = respondToApproval(approvalId, decision, respondedBy);
+  const approval = await respondToApproval(approvalId, decision, respondedBy);
   if (!approval) {
     return sendJson(res, 404, { error: 'Approval not found or already resolved' });
   }
