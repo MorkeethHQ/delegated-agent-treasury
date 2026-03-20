@@ -34,7 +34,7 @@
 ## Remaining
 
 ### Waiting on Bagel/Oscar
-- [ ] Bagel deploys AgentTreasury to Base mainnet → instant-patch all `<MAINNET_TREASURY_ADDRESS>` placeholders
+- [x] Bagel deploys AgentTreasury to Base mainnet → patched (0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d)
 - [ ] Bagel configures Base Sepolia treasury (mint, deposit, setAgent, addRecipient, setPerTxCap, simulateYield)
 - [x] ERC-8004 agent identity registration → patched (participantId: 10ee7e7e703b4fc493e19f512b5ae09d)
 

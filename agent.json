@@ -27,7 +27,7 @@
   },
   "contracts": {
     "base-mainnet": {
-      "agentTreasury": "<MAINNET_TREASURY_ADDRESS>",
+      "agentTreasury": "0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d",
       "wstETH": "0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452"
     },
     "base-sepolia": {

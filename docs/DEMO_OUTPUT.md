@@ -76,7 +76,7 @@ Authorize $5M DAO Treasury Allocation to Lido Earn ETH and USD Vaults
 - **ERC-8004 Registration**: [basescan.org/tx/0x40276...](https://basescan.org/tx/0x4027641718bb5cfb9fdf7f4871f6506685b5367cab1a3a030b9bb0fe779ee934) — "Register Agent Identity" | Success
 - **AgentTreasury (Sepolia)**: [sepolia.basescan.org/address/0x6fb8...](https://sepolia.basescan.org/address/0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0)
 - **MockWstETH (Sepolia)**: [sepolia.basescan.org/address/0x4b8e...](https://sepolia.basescan.org/address/0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d)
-- **AgentTreasury (Mainnet)**: *pending deployment*
+- **AgentTreasury (Mainnet)**: [basescan.org/address/0x4b8e...](https://basescan.org/address/0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d) — [deploy tx](https://basescan.org/tx/0x65167ae9308b3fd9316a280264ef996cd7092231d59bc78e64865cc4a261a392)
 
 ## Commit History (26 commits during hackathon)
 
