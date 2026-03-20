@@ -21,7 +21,7 @@ Three permission enforcements protect every transaction:
 
 On top of the smart contract sits a policy engine that evaluates every spending plan against configurable rules. Small amounts auto-execute on-chain. Larger amounts require human approval via CLI. Denied requests are blocked with reasons. Every action hits an append-only audit log.
 
-The system includes a Model Context Protocol (MCP) server with 10 tools, making the treasury and Lido staking operations natively callable from any MCP-compatible agent (Claude, Cursor, etc.). An ERC-8004 on-chain identity gives the agent a verifiable identity that counterparties can check.
+The system includes a Model Context Protocol (MCP) server with 11 tools covering treasury operations, Lido staking (stake, wrap, unwrap, withdraw), and Lido DAO governance — natively callable from any MCP-compatible agent (Claude, Cursor, etc.). All write operations support dry_run simulation. An ERC-8004 on-chain identity gives the agent a verifiable identity that counterparties can check.
 
 The entire project was built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote the Solidity contracts and handled deployment, while Claude Code built the approval backend, policy engine, MCP server, CLI, and documentation. Zero lines of human-written code.
 
@@ -34,7 +34,7 @@ The entire project was built by one human (Oscar) orchestrating two AI agents: B
 - Solidity (Foundry) — AgentTreasury smart contract
 - TypeScript / Node.js — API, CLI, policy engine, audit trail
 - Viem — on-chain interaction
-- MCP SDK — 10-tool MCP server for treasury + Lido staking
+- MCP SDK — 11-tool MCP server for treasury + Lido staking + governance
 - wstETH (Lido) — yield-bearing asset
 - Base (mainnet + Sepolia) — deployment chain
 - ERC-8004 — on-chain agent identity

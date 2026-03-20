@@ -38,6 +38,10 @@ Before spending, always:
 
 If any check fails, the transaction will revert. Use `dry_run: true` first if unsure.
 
+## Governance
+
+Use `get_lido_governance_proposals` to stay informed about Lido DAO decisions. This queries Lido's Snapshot space (`lido-snapshot.eth`) for proposals — filter by state (`active`, `closed`, `pending`) and get vote counts, choices, and results. Governance decisions can affect staking yields, protocol parameters, and the broader Lido ecosystem your treasury depends on.
+
 ## Key concepts
 
 - **Yield** = the wstETH value increase since deposit. Calculated as: `deposited - (deposited * initialRate / currentRate)`
