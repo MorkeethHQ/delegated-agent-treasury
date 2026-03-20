@@ -18,6 +18,7 @@ You have access to a Lido-powered Agent Treasury on Base. This skill lets you ma
 - `get_steth_exchange_rate` — current wstETH/stETH rate (increases over time)
 - `check_recipient` — verify if an address is whitelisted for treasury spending
 - `get_lido_protocol_stats` — total pooled ETH, total shares (Ethereum mainnet only)
+- `get_lido_governance_proposals` — recent Lido DAO governance proposals from Snapshot (any chain)
 
 ### Write operations (require wallet)
 - `spend_yield` — spend accrued yield to a whitelisted recipient (the main action)

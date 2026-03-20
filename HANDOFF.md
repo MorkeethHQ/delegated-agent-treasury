@@ -11,7 +11,7 @@ Dual-chain support ready. Base Sepolia deployed, Base mainnet pending treasury d
 - Approval store — in-memory + file persistence, auto-creation on approval_required
 - Executor — viem integration layer, reads + writes to AgentTreasury contract
 - CLI — 9 commands (health, policy, evaluate, approvals, approve, deny, audit, treasury, demo)
-- MCP server — 10 tools (treasury state, spend yield, Lido staking ops)
+- MCP server — 11 tools (treasury state, spend yield, Lido staking ops)
 - Smart contracts — AgentTreasury + MockWstETH deployed on Base Sepolia
 - Dual-chain RPC support — `RPC_URL` env var across API + CLI
 - skill.md + lido.skill.md — agent-callable interfaces

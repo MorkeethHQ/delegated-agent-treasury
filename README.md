@@ -132,7 +132,7 @@ packages/
   approval-store/           — In-memory + file-persisted approval lifecycle
   audit-log/                — Append-only JSONL event logging
   executor/                 — Viem integration layer (API ↔ contract)
-  mcp-server/               — MCP server: 10 tools for treasury + Lido staking
+  mcp-server/               — MCP server: 11 tools for treasury + Lido staking
 ```
 
 ## API endpoints

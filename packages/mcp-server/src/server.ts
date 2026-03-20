@@ -5,6 +5,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { createConfig } from './config.js';
 import { registerTreasuryTools } from './tools/treasury.js';
 import { registerStakingTools } from './tools/staking.js';
+import { registerGovernanceTools } from './tools/governance.js';
 
 const server = new McpServer({
   name: 'synthesis-lido-treasury',
@@ -16,6 +17,7 @@ const config = createConfig();
 // Register all tools
 registerTreasuryTools(server, config);
 registerStakingTools(server, config);
+registerGovernanceTools(server);
 
 // Connect via stdio
 const transport = new StdioServerTransport();
