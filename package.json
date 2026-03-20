@@ -1,6 +1,7 @@
 {
   "name": "synthesis",
   "private": true,
+  "type": "module",
   "version": "0.1.0",
   "workspaces": [
     "apps/*",
@@ -13,6 +14,7 @@
   },
   "dependencies": {
     "@types/node": "^24.5.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "viem": "^2.47.5"
   }
 }

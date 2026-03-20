@@ -1,0 +1,17 @@
+{
+  "name": "@synthesis/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "synthesis": "dist/cli.js"
+  },
+  "dependencies": {
+    "@synthesis/executor": "0.1.0",
+    "@synthesis/shared": "0.1.0",
+    "viem": "*"
+  },
+  "scripts": {
+    "build": "node ../../node_modules/typescript/bin/tsc -p tsconfig.json",
+    "check": "node ../../node_modules/typescript/bin/tsc -p tsconfig.json --noEmit"
+  }
+}

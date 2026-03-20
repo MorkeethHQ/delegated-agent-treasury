@@ -3,9 +3,6 @@
   "include": [
     "src/**/*.ts",
     "../../packages/shared/src/**/*.ts",
-    "../../packages/policy-engine/src/**/*.ts",
-    "../../packages/audit-log/src/**/*.ts",
-    "../../packages/approval-store/src/**/*.ts",
     "../../packages/executor/src/**/*.ts"
   ]
 }
