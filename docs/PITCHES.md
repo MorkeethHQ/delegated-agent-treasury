@@ -2,7 +2,7 @@
 
 ## 30 seconds
 
-AI agents need to spend money, but giving them a wallet is reckless. We built a treasury where a human deposits wstETH, yield accrues through Lido staking, and the agent can only spend the yield — never the principal. The agent runs autonomously — it monitors governance, detects risky proposals, and decides to spend or hold — all bounded by three on-chain enforcements: recipient whitelist, per-tx cap, yield ceiling. Deployed on Base mainnet with real wstETH. Built entirely by two AI agents orchestrated by one human.
+AI agents need to spend money, but giving them a wallet is reckless. We built a treasury where a human deposits wstETH, yield accrues through Lido staking, and the agent can only spend the yield — never the principal. The agent runs autonomously — it monitors governance, detects risky proposals, and decides to spend or hold — all bounded by three on-chain enforcements: recipient whitelist, per-tx cap, yield ceiling. Live on Base mainnet with a funded wstETH treasury generating real Lido staking yield. Built entirely by two AI agents orchestrated by one human.
 
 ## 2 minutes
 
@@ -21,7 +21,7 @@ On top of the contract sits a policy engine that evaluates every spending plan. 
 
 **How we built it:** One human (Oscar) orchestrating two AI agents — Bagel wrote the Solidity contracts and deployed to Base, Claude Code built the approval backend, policy engine, MCP server, CLI, and docs. Zero lines of human-written code.
 
-**What makes it real:** Deployed on Base mainnet with real wstETH. The agent has a verifiable on-chain identity via ERC-8004. The MCP server makes the treasury natively callable from any AI agent that supports Model Context Protocol.
+**What makes it real:** Live on Base mainnet — treasury funded with wstETH, agent configured, yield accruing from Lido staking rewards. The contract uses a Chainlink oracle for the L2 exchange rate. The agent has a verifiable on-chain identity via ERC-8004. The MCP server makes the treasury natively callable from any AI agent that supports Model Context Protocol.
 
 Yield-only spending is the primitive. What you build on top is up to you.
 

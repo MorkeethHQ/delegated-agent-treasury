@@ -57,6 +57,8 @@ No Jira. No Slack. No meetings. Just a human with two terminal windows and a cle
 
 **The mainnet decision.** Oscar saw the innovation gap — deploying on testnet only scored 6/10 for innovation. His response: "I can fund Base mainnet." Ten euros of ETH and a message to Bagel. That's the bridge between demo and production.
 
+**The Chainlink pivot.** Midway through mainnet deployment, Bagel hit a wall: wstETH on Base is a bridged ERC20 — it doesn't expose `stEthPerToken()`. The entire yield math depended on that function. Oscar's call: "Are we sure we need a new contract?" After research confirmed the L2 gap, Bagel redeployed with a Chainlink oracle (`0xB88BAc61a4Ca37C43a3725912B1f472c9A5bc061`) feeding the wstETH/stETH exchange rate. An L2-specific problem solved in under an hour. The treasury is now live on Base mainnet with 0.0038 wstETH deposited and fully configured.
+
 **ERC-8004.** Not in the original plan. Discovered mid-hackathon as a way to give the agent a verifiable on-chain identity. Now the agent isn't just a private key — it's a registered entity that counterparties can verify.
 
 **The autonomy moment.** Near the finish line, Oscar asked: "What would a minimal orchestration loop look like?" The answer: a governance-aware autonomous agent. 80 lines of TypeScript that monitors treasury yield, checks Lido governance for risky proposals, and autonomously decides to spend or hold — all bounded by the policy engine. This transformed the project from a permission layer into an actual autonomous financial agent.

@@ -23,6 +23,8 @@ On top of the smart contract sits a policy engine that evaluates every spending 
 
 The system includes a Model Context Protocol (MCP) server with 11 tools covering treasury operations, Lido staking (stake, wrap, unwrap, withdraw), and Lido DAO governance — natively callable from any MCP-compatible agent (Claude, Cursor, etc.). All write operations support dry_run simulation. An ERC-8004 on-chain identity gives the agent a verifiable identity that counterparties can check.
 
+An autonomous agent loop ties it all together: the agent monitors treasury yield, queries Lido governance for risky proposals (upgrades, parameter changes), and autonomously decides to spend or hold — all bounded by the policy engine. On Base mainnet, the contract uses a Chainlink oracle for the wstETH/stETH exchange rate, solving the L2 challenge of bridged wstETH not exposing native rate functions.
+
 The entire project was built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote the Solidity contracts and handled deployment, while Claude Code built the approval backend, policy engine, MCP server, CLI, and documentation. Zero lines of human-written code.
 
 ## Tracks
@@ -42,10 +44,12 @@ The entire project was built by one human (Oscar) orchestrating two AI agents: B
 
 ## Links
 - Repo: https://github.com/MorkeethHQ/delegated-agent-treasury
-- Base Mainnet Treasury: `0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d`
-- Base Sepolia Treasury: `0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0`
+- Base Mainnet Treasury: [`0x455d76a24e862a8d552a0722823ac4d13e482426`](https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426)
+- Mainnet Deploy TX: [`0x33e648...`](https://basescan.org/tx/0x33e648434ce963eb47ddfb403df14f2faae20d72e78bf0e9ebafefa3e85ea0db)
+- Chainlink Oracle (wstETH/stETH): [`0xB88BAc61a4Ca37C43a3725912B1f472c9A5bc061`](https://basescan.org/address/0xB88BAc61a4Ca37C43a3725912B1f472c9A5bc061)
+- Base Sepolia Treasury: [`0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0`](https://sepolia.basescan.org/address/0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0)
 - Agent Identity (ERC-8004): `10ee7e7e703b4fc493e19f512b5ae09d`
-- wstETH on Base: `0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`
+- wstETH on Base: [`0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`](https://basescan.org/address/0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452)
 
 ## Team
 - Oscar (human) — architect, orchestrator

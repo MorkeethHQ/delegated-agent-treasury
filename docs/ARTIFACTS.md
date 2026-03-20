@@ -4,8 +4,10 @@
 
 | Artifact | Chain | Address / Link |
 |----------|-------|----------------|
-| AgentTreasury | Base Mainnet | [`0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d`](https://basescan.org/address/0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d#code) — **verified** |
+| AgentTreasury | Base Mainnet | [`0x455d76a24e862a8d552a0722823ac4d13e482426`](https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426) |
+| Chainlink Oracle | Base Mainnet | [`0xB88BAc61a4Ca37C43a3725912B1f472c9A5bc061`](https://basescan.org/address/0xB88BAc61a4Ca37C43a3725912B1f472c9A5bc061) — wstETH/stETH rate |
 | wstETH | Base Mainnet | [`0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`](https://basescan.org/address/0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452) |
+| Mainnet Deploy TX | Base Mainnet | [`0x33e648...`](https://basescan.org/tx/0x33e648434ce963eb47ddfb403df14f2faae20d72e78bf0e9ebafefa3e85ea0db) |
 | ERC-8004 Identity | Base Mainnet | [Registration TX](https://basescan.org/tx/0x4027641718bb5cfb9fdf7f4871f6506685b5367cab1a3a030b9bb0fe779ee934) |
 | AgentTreasury | Base Sepolia | [`0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0`](https://sepolia.basescan.org/address/0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0) |
 | MockWstETH | Base Sepolia | [`0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d`](https://sepolia.basescan.org/address/0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d) |
@@ -15,7 +17,7 @@
 
 | Metric | Count |
 |--------|-------|
-| Total commits | 31 |
+| Total commits | 34+ |
 | TypeScript source files | 20 |
 | Lines of TypeScript | 2,315 |
 | Solidity source files | 3 |

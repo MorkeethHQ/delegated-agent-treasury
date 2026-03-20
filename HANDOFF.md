@@ -25,8 +25,9 @@ Dual-chain support ready. Base Sepolia deployed, Base mainnet pending treasury d
 - Deployer/Owner: `0x3d7d7712ad32efD8Cb05249d0C7a3De1B1A3bb43`
 
 **Base Mainnet (chain 8453)**
-- AgentTreasury: `0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d`
+- AgentTreasury: `0x455d76a24e862a8d552a0722823ac4d13e482426`
 - wstETH: `0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`
+- Chainlink wstETH/stETH Oracle: `0xB88BAc61a4Ca37C43a3725912B1f472c9A5bc061`
 - Agent Identity (ERC-8004): `10ee7e7e703b4fc493e19f512b5ae09d`
 
 ### Remaining

@@ -138,6 +138,8 @@ export const LIDO_ADDRESSES = {
   },
   base: {
     wstETH: '0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452' as const,
+    agentTreasury: '0x455d76a24e862a8d552a0722823ac4d13e482426' as const,
+    chainlinkOracle: '0xB88BAc61a4Ca37C43a3725912B1f472c9A5bc061' as const,
   },
   arbitrum: {
     wstETH: '0x5979D7b546E38E414F7E9822514be443A4800529' as const,

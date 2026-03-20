@@ -3,10 +3,23 @@ pragma solidity ^0.8.24;
 
 import "./IWstETH.sol";
 
+interface AggregatorV3Interface {
+    function latestRoundData() external view returns (
+        uint80 roundId,
+        int256 answer,
+        uint256 startedAt,
+        uint256 updatedAt,
+        uint80 answeredInRound
+    );
+}
+
 /// @title AgentTreasury — yield-only spending for AI agents
 /// @notice Human deposits wstETH. Agent spends only accrued yield. Principal is locked.
+/// @dev Uses Chainlink oracle for wstETH/stETH exchange rate on L2 (Base),
+///      since bridged wstETH does not expose stEthPerToken().
 contract AgentTreasury {
     IWstETH public immutable wstETH;
+    AggregatorV3Interface public immutable rateOracle;
     address public owner;
     address public agent;
 
@@ -35,8 +48,9 @@ contract AgentTreasury {
         _;
     }
 
-    constructor(address _wstETH) {
+    constructor(address _wstETH, address _rateOracle) {
         wstETH = IWstETH(_wstETH);
+        rateOracle = AggregatorV3Interface(_rateOracle);
         owner = msg.sender;
     }
 
@@ -47,11 +61,11 @@ contract AgentTreasury {
         require(wstETH.transferFrom(msg.sender, address(this), amount), "transfer failed");
 
         if (depositedWstETH == 0) {
-            initialRate = wstETH.stEthPerToken();
+            initialRate = _getRate();
         }
         depositedWstETH += amount;
 
-        emit Deposited(msg.sender, amount, wstETH.stEthPerToken());
+        emit Deposited(msg.sender, amount, _getRate());
     }
 
     function withdrawPrincipal() external onlyOwner {
@@ -107,7 +121,7 @@ contract AgentTreasury {
     function availableYield() public view returns (uint256) {
         if (depositedWstETH == 0 || initialRate == 0) return 0;
 
-        uint256 currentRate = wstETH.stEthPerToken();
+        uint256 currentRate = _getRate();
         if (currentRate <= initialRate) return 0;
 
         // yieldWstETH = deposited - (deposited * initialRate / currentRate)
@@ -129,5 +143,12 @@ contract AgentTreasury {
         uint256 yield = availableYield();
         // Principal = whatever is in the contract minus unspent yield
         return balance > yield ? balance - yield : 0;
+    }
+
+    /// @dev Reads wstETH/stETH exchange rate from Chainlink oracle (18 decimals)
+    function _getRate() internal view returns (uint256) {
+        (, int256 answer,,,) = rateOracle.latestRoundData();
+        require(answer > 0, "invalid oracle rate");
+        return uint256(answer);
     }
 }

@@ -115,13 +115,6 @@ Oscar decides direction
     └── reviews both, resolves conflicts, pushes forward
 ```
 
-## Key Pivots
-
-1. **Web UI → CLI + skill.md + MCP** — Oscar's call. Right decision for agent-native judges.
-2. **Testnet only → Dual-chain** — Claude identified mainnet as innovation differentiator. Oscar funded it.
-3. **ERC-8004 identity** — Discovered mid-hackathon. Not in original scope but adds verifiable on-chain agent identity.
-4. **Governance tool** — Added after bounty audit revealed it was a hard requirement for $5K MCP bounty.
-
 ## Session 3: E2E + Autonomous Agent Loop
 
 **Oscar:** "Bagel finished Sepolia config. Run the E2E."
@@ -143,6 +136,24 @@ Oscar decides direction
 
 **Bagel's rating:** 8/10 overall. "Not just 'good enough' — actually good."
 
+### Session 4: Chainlink Oracle Pivot & Mainnet Funding
+
+**Oscar:** "Bagel tried to transfer wstETH to the treasury but `stEthPerToken()` reverts on Base."
+
+**Claude Code:** Researched and confirmed — wstETH on Base is `ERC20BridgedPermit` via OP Stack canonical bridge. No rate functions. Identified Chainlink oracle `0xB88BAc61a4Ca37C43a3725912B1f472c9A5bc061` (wstETH/stETH, 18 decimals, 24h heartbeat) as the solution.
+
+**Oscar → Bagel:** "Redeploy with Chainlink oracle instead of `stEthPerToken()`."
+
+**Bagel:** Redeployed AgentTreasury to Base mainnet: `0x455d76a24e862a8d552a0722823ac4d13e482426`. Deploy TX: `0x33e648434ce963eb47ddfb403df14f2faae20d72e78bf0e9ebafefa3e85ea0db`.
+
+**Oscar:** Funded and configured the treasury:
+- Deposited 0.003792746035366772 wstETH
+- Set agent address
+- Whitelisted recipient (0xdead)
+- Set per-tx cap (0.0001 wstETH)
+
+**Claude Code:** Patched new mainnet address across all 12 files. Updated Solidity source and Standard JSON Input for Chainlink oracle version. Updated story, docs, artifacts.
+
 ## Key Pivots
 
 1. **Web UI → CLI + skill.md + MCP** — Oscar's call. Right decision for agent-native judges.
@@ -150,6 +161,7 @@ Oscar decides direction
 3. **ERC-8004 identity** — Discovered mid-hackathon. Not in original scope but adds verifiable on-chain agent identity.
 4. **Governance tool** — Added after bounty audit revealed it was a hard requirement for $5K MCP bounty.
 5. **Autonomous agent loop** — Added to transform from permission layer into actual autonomous agent with governance awareness.
+6. **Chainlink oracle pivot** — L2 wstETH doesn't expose `stEthPerToken()`. Redeployed with Chainlink price feed. Real L2 engineering problem solved under pressure.
 
 ## Artifacts
 
