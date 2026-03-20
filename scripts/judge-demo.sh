@@ -39,7 +39,7 @@ echo ""
 echo "--- 4. Submit plan: small transfer (auto-approved) ---"
 curl -s -X POST "$API/plans/evaluate" \
   -H 'content-type: application/json' \
-  -d '{"planId":"demo-small-1","agentId":"bagel","type":"transfer","amount":50,"destination":"0xApprovedDestination1","reason":"Fund approved workflow — small amount, auto-executes"}' \
+  -d '{"planId":"demo-small-1","agentId":"bagel","type":"transfer","amount":0.005,"destination":"0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6","reason":"Fund approved workflow — small amount, auto-executes"}' \
   | pj "console.log('Decision:', d.result.decision); console.log('Rules:', d.result.appliedRules.join(', ')); console.log('Reasons:', d.result.reasons.join('; '));"
 echo ""
 
@@ -47,7 +47,7 @@ echo ""
 echo "--- 5. Submit plan: larger transfer (approval required) ---"
 curl -s -X POST "$API/plans/evaluate" \
   -H 'content-type: application/json' \
-  -d '{"planId":"demo-large-1","agentId":"bagel","type":"transfer","amount":80,"destination":"0xApprovedDestination1","reason":"Larger spend — requires human approval"}' \
+  -d '{"planId":"demo-large-1","agentId":"bagel","type":"transfer","amount":0.009,"destination":"0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6","reason":"Larger spend — requires human approval"}' \
   | pj "console.log('Decision:', d.result.decision); if(d.approval) console.log('Approval ID:', d.approval.approvalId);"
 echo ""
 
@@ -73,7 +73,7 @@ echo ""
 echo "--- 8. Submit plan: denied destination ---"
 curl -s -X POST "$API/plans/evaluate" \
   -H 'content-type: application/json' \
-  -d '{"planId":"demo-denied-1","agentId":"bagel","type":"transfer","amount":50,"destination":"0xDeniedDestination1","reason":"Attempt to send to blocked address"}' \
+  -d '{"planId":"demo-denied-1","agentId":"bagel","type":"transfer","amount":0.005,"destination":"0xDeniedDestination1","reason":"Attempt to send to blocked address"}' \
   | pj "console.log('Decision:', d.result.decision); console.log('Reasons:', d.result.reasons.join('; '));"
 echo ""
 
