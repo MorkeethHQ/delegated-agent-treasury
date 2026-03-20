@@ -77,7 +77,7 @@ node dist/apps/cli/src/cli.js treasury
 
 | Contract | Address |
 |----------|---------|
-| AgentTreasury | `0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d` |
+| AgentTreasury | [`0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d`](https://basescan.org/address/0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d#code) (verified) |
 | wstETH | [`0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`](https://basescan.org/address/0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452) |
 | Chain | Base (8453) |
 | Agent Identity (ERC-8004) | `10ee7e7e703b4fc493e19f512b5ae09d` |
