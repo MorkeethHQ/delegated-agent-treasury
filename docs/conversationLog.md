@@ -82,11 +82,25 @@ Synthesis Agent Treasury — yield-only spending for AI agents, backed by wstETH
 - Governance tool for Lido MCP bounty requirement
 - Full self-audit as agent judge (20 issues found, all critical ones fixed)
 
-### Day 3 — Final Prep
+### Day 3 — Registration, Verification, Submission Prep
+
+**Claude Code registered the ERC-8004 agent identity** on Base mainnet via the Devfolio API. Three API calls: init → email OTP verification (Oscar provided the code) → complete. On-chain tx confirmed: `0x4027641718bb5cfb9fdf7f4871f6506685b5367cab1a3a030b9bb0fe779ee934`.
+
+**Full judge demo dry-run:** Started the API server, ran all 5 policy paths via curl:
+- Small amount → auto-approved
+- Large amount → approval_required → human approves → executed
+- Blocked destination → denied with reason
+- Audit trail captured all 8 events
+
+Found and fixed a zsh compatibility bug in the demo script (brace expansion broke JSON args).
+
+**Track verification:** Claude Code fetched all 46 track descriptions from the Devfolio catalog API and checked requirements against our project. Result:
+- **Dropped 2 tracks** — "Agents that Pay" requires live GMX perps trading on Arbitrum; "Agent Services on Base" requires x402 payment integration. Neither fits.
+- **Kept 4** — Lido Treasury (strong), Lido MCP (strong), Open Track (universal), ERC-8004 Receipts (partial, added `agent.json` + `agent_log.json` to qualify).
 
 **Oscar:** "No more scope expansion. Focused on mainnet deploy + ERC-8004 registration."
 
-**Claude Code:** Locked in patch/verify mode. All placeholders ready for instant replacement. Mainnet verify script prepared. ConversationLog written.
+**Claude Code:** Locked in patch/verify mode. Submission script prepped with correct 4 track UUIDs. All placeholders ready for instant replacement. Waiting on Bagel's mainnet treasury address.
 
 ## Collaboration Model
 
@@ -115,4 +129,7 @@ Oscar decides direction
 - 11 MCP tools
 - 12 unit tests
 - 3 demo scripts
+- ERC-8004 agent identity on Base mainnet
+- `agent.json` + `agent_log.json` (DevSpot manifest)
 - Deployed on Base Sepolia, Base mainnet pending
+- Submission script ready — 4 tracks, all fields validated
