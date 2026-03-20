@@ -59,6 +59,8 @@ No Jira. No Slack. No meetings. Just a human with two terminal windows and a cle
 
 **ERC-8004.** Not in the original plan. Discovered mid-hackathon as a way to give the agent a verifiable on-chain identity. Now the agent isn't just a private key — it's a registered entity that counterparties can verify.
 
+**The autonomy moment.** Near the finish line, Oscar asked: "What would a minimal orchestration loop look like?" The answer: a governance-aware autonomous agent. 80 lines of TypeScript that monitors treasury yield, checks Lido governance for risky proposals, and autonomously decides to spend or hold — all bounded by the policy engine. This transformed the project from a permission layer into an actual autonomous financial agent.
+
 ---
 
 ## The architecture tells the story
@@ -66,11 +68,13 @@ No Jira. No Slack. No meetings. Just a human with two terminal windows and a cle
 ```
 Human deposits wstETH
     → yield accrues passively (Lido staking rewards)
+    → autonomous agent loop monitors treasury + governance
     → agent submits spending plan
     → policy engine evaluates (caps, whitelist, thresholds)
     → approved → auto-executes on-chain
     → approval_required → human reviews via CLI
     → denied → blocked with reasons
+    → risky governance detected → agent holds spending
     → every action → append-only audit log
 ```
 

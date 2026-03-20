@@ -9,6 +9,7 @@
 | ERC-8004 Identity | Base Mainnet | [Registration TX](https://basescan.org/tx/0x4027641718bb5cfb9fdf7f4871f6506685b5367cab1a3a030b9bb0fe779ee934) |
 | AgentTreasury | Base Sepolia | [`0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0`](https://sepolia.basescan.org/address/0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0) |
 | MockWstETH | Base Sepolia | [`0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d`](https://sepolia.basescan.org/address/0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d) |
+| Sepolia Spend TX | Base Sepolia | [`0x1fd5edb8...`](https://sepolia.basescan.org/tx/0x1fd5edb8cfb87839b43424907da7dab61fde5109bbc0aa925aa2aed5f57c4d64) — 0.005 wstETH yield spend |
 
 ## Codebase
 
@@ -33,12 +34,13 @@
 | `executor` | Viem integration layer (API ↔ contract) |
 | `mcp-server` | 11-tool MCP server for treasury, Lido staking, governance |
 
-## Apps (2)
+## Apps (3)
 
 | App | Purpose |
 |-----|---------|
 | `api` | REST API: 8 endpoints — evaluate, approvals, respond, audit, policy, treasury |
 | `cli` | CLI: 9 commands — health, policy, evaluate, approvals, approve, deny, audit, treasury, demo |
+| `agent-loop` | Autonomous governance-aware yield spending agent — monitors treasury + Lido governance, decides spend/hold |
 
 ## MCP Tools (11)
 

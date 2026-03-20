@@ -122,14 +122,44 @@ Oscar decides direction
 3. **ERC-8004 identity** — Discovered mid-hackathon. Not in original scope but adds verifiable on-chain agent identity.
 4. **Governance tool** — Added after bounty audit revealed it was a hard requirement for $5K MCP bounty.
 
+## Session 3: E2E + Autonomous Agent Loop
+
+**Oscar:** "Bagel finished Sepolia config. Run the E2E."
+
+**Claude Code:** Fixed bigint serialization bug in API server, ran full E2E against live Sepolia treasury. Policy engine: all 5 paths pass. On-chain spend: 0.005 wstETH successfully spent via executor. TX: `0x1fd5edb8...`.
+
+**Oscar:** "What would a minimal orchestration loop look like? More autonomy?"
+
+**Claude Code:** Proposed governance-aware autonomous agent loop — 80 lines of TypeScript, monitors treasury + Lido governance, fuses signals into spend/hold decisions, all bounded by the policy engine.
+
+**Oscar:** "Let's do it! I love it"
+
+**Claude Code:** Built `apps/agent-loop` — autonomous daemon that:
+1. Checks treasury state (available yield)
+2. Queries Lido governance (active Snapshot proposals)
+3. Holds spending if risky governance detected (upgrades, parameter changes, emergencies)
+4. Submits spend plans through the policy engine when conditions are safe
+5. All decisions are audit-logged and policy-bounded
+
+**Bagel's rating:** 8/10 overall. "Not just 'good enough' — actually good."
+
+## Key Pivots
+
+1. **Web UI → CLI + skill.md + MCP** — Oscar's call. Right decision for agent-native judges.
+2. **Testnet only → Dual-chain** — Claude identified mainnet as innovation differentiator. Oscar funded it.
+3. **ERC-8004 identity** — Discovered mid-hackathon. Not in original scope but adds verifiable on-chain agent identity.
+4. **Governance tool** — Added after bounty audit revealed it was a hard requirement for $5K MCP bounty.
+5. **Autonomous agent loop** — Added to transform from permission layer into actual autonomous agent with governance awareness.
+
 ## Artifacts
 
-- 8 packages in monorepo (shared, policy-engine, approval-store, audit-log, executor, mcp-server, api, cli)
+- 9 packages in monorepo (shared, policy-engine, approval-store, audit-log, executor, mcp-server, api, cli, agent-loop)
 - 1 Solidity contract (AgentTreasury) + 1 mock (MockWstETH)
 - 11 MCP tools
 - 12 unit tests
 - 3 demo scripts
 - ERC-8004 agent identity on Base mainnet
 - `agent.json` + `agent_log.json` (DevSpot manifest)
-- Deployed on Base Sepolia, Base mainnet pending
+- Deployed on Base Sepolia + Base mainnet
+- Sepolia E2E spend proof: `0x1fd5edb8cfb87839b43424907da7dab61fde5109bbc0aa925aa2aed5f57c4d64`
 - Submission script ready — 4 tracks, all fields validated

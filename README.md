@@ -9,6 +9,8 @@ Built for the [Synthesis hackathon](https://synthesis.md/) — **Agents that Pay
 ```
 Human deposits wstETH → yield accrues via staking rewards
                          ↓
+Autonomous agent loop → monitors treasury + governance
+                         ↓
 Agent submits action plan → policy engine evaluates
                             ↓
         ┌─────────────────────────────────────┐
@@ -125,6 +127,7 @@ contracts/
 apps/
   api/                      — REST API: evaluate, approvals, audit, treasury state
   cli/                      — CLI: approve, deny, treasury, audit, demo
+  agent-loop/               — Autonomous governance-aware yield spending agent
 
 packages/
   shared/                   — Domain types (Policy, ActionPlan, ApprovalRequest, AuditEvent)
@@ -177,11 +180,10 @@ This ties the agent's on-chain spending authority to a discoverable, verifiable 
 
 ## Hackathon tracks
 
-- **stETH Agent Treasury** (Lido) — yield-only spending from wstETH with permission controls
-- **Lido MCP Server** (Lido) — 11 MCP tools for treasury, staking, and governance
-- **Agents that Pay** (bond.credit) — transparent payment authority for agent transactions
-- **Agent Services on Base** (Base) — discoverable agent services on Base with ERC-8004 identity
-- **Synthesis Open Track** — community-funded prize pool
+- **stETH Agent Treasury** (Lido, $3K) — yield-only spending from wstETH with permission controls
+- **Lido MCP Server** (Lido, $5K) — 11 MCP tools for treasury, staking, and governance
+- **Synthesis Open Track** ($14.5K) — community-funded prize pool
+- **Agents With Receipts** (Protocol Labs, $8K) — ERC-8004 identity, agent.json, on-chain verifiability
 
 ## Roadmap
 

@@ -27,24 +27,22 @@
 - [x] .env.example
 - [x] Fallback demo script (scripts/demo-api-only.sh)
 - [x] CONTRACT_SPEC.md + DEMO_PLAYBOOK.md
-- [x] Lido MCP server — 9 tools for treasury + staking
+- [x] Lido MCP server — 11 tools for treasury + staking + governance
 - [x] Dual-chain support (Base Sepolia + Base mainnet)
-- [x] Mainnet placeholders in all docs
+- [x] Mainnet placeholders patched with real addresses
+
+### P3 — E2E + autonomy
+- [x] Bagel deploys AgentTreasury to Base mainnet (0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d)
+- [x] Bagel configures Base Sepolia treasury (mint, deposit, setAgent, addRecipient, setPerTxCap, simulateYield)
+- [x] ERC-8004 agent identity registration (participantId: 10ee7e7e703b4fc493e19f512b5ae09d)
+- [x] E2E test: Base Sepolia — policy engine all 5 paths + on-chain spend (TX: 0x1fd5edb8...)
+- [x] Fix bigint serialization in API server
+- [x] Autonomous agent loop (apps/agent-loop) — governance-aware yield spending
+- [x] conversationLog updated with E2E results
 
 ## Remaining
 
-### Waiting on Bagel/Oscar
-- [x] Bagel deploys AgentTreasury to Base mainnet → patched (0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d)
-- [ ] Bagel configures Base Sepolia treasury (mint, deposit, setAgent, addRecipient, setPerTxCap, simulateYield)
-- [x] ERC-8004 agent identity registration → patched (participantId: 10ee7e7e703b4fc493e19f512b5ae09d)
-
-### Ready to run immediately
-- [ ] E2E test: Base Sepolia (API → contract → execution)
-- [ ] E2E test: Base mainnet (treasury state read, spend yield)
-- [ ] Verify CLI demo command against live contracts
-
-### Submission prep
-- [ ] Register on synthesis.devfolio.co
-- [ ] Prepare conversationLog (human-agent collaboration narrative)
-- [ ] Select tracks: Lido stETH Treasury, Lido MCP, Open Track, Base Agent Services
-- [ ] Submit before March 22
+### Submission
+- [ ] Run scripts/submit.sh to create Devfolio project draft
+- [ ] Final submission publish before March 22
+- [ ] Optional: contract verification on Basescan
