@@ -27,21 +27,24 @@
 - [x] .env.example
 - [x] Fallback demo script (scripts/demo-api-only.sh)
 - [x] CONTRACT_SPEC.md + DEMO_PLAYBOOK.md
+- [x] Lido MCP server — 9 tools for treasury + staking
+- [x] Dual-chain support (Base Sepolia + Base mainnet)
+- [x] Mainnet placeholders in all docs
 
 ## Remaining
 
-### Now — end-to-end verification
-- [ ] Bagel configures treasury (mint, deposit, setAgent, addRecipient, setPerTxCap, simulateYield)
-- [ ] Run full API → contract → execution test with live treasury
+### Waiting on Bagel/Oscar
+- [ ] Bagel deploys AgentTreasury to Base mainnet → instant-patch all `<MAINNET_TREASURY_ADDRESS>` placeholders
+- [ ] Bagel configures Base Sepolia treasury (mint, deposit, setAgent, addRecipient, setPerTxCap, simulateYield)
+- [ ] ERC-8004 agent identity registration → patch all `<ERC8004_AGENT_ID>` placeholders
+
+### Ready to run immediately
+- [ ] E2E test: Base Sepolia (API → contract → execution)
+- [ ] E2E test: Base mainnet (treasury state read, spend yield)
 - [ ] Verify CLI demo command against live contracts
 
 ### Submission prep
 - [ ] Register on synthesis.devfolio.co
 - [ ] Prepare conversationLog (human-agent collaboration narrative)
-- [ ] Select tracks: Lido stETH Treasury, Open Track, Base Agent Services
-- [ ] ERC-8004 identity registration
+- [ ] Select tracks: Lido stETH Treasury, Lido MCP, Open Track, Base Agent Services
 - [ ] Submit before March 22
-
-### Stretch — Lido MCP ($5K bounty)
-- [ ] Evaluate: thin MCP wrapper on existing executor (~435 lines, ~8h)
-- [ ] Only if additive, not a pivot

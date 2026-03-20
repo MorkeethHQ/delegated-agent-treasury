@@ -46,6 +46,7 @@ If any check fails, the transaction will revert. Use `dry_run: true` first if un
 
 ## Chain support
 
+- **Base mainnet** (production): AgentTreasury at `<MAINNET_TREASURY_ADDRESS>`, real wstETH at `0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`
 - **Base Sepolia** (demo): AgentTreasury + MockWstETH deployed, `simulateYield()` for instant demo
 - **Ethereum mainnet**: Full Lido staking (stake, wrap, unwrap, withdraw)
 - **Base/Arbitrum/Optimism**: wstETH balance queries via bridged wstETH contracts

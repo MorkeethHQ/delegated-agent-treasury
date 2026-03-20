@@ -69,7 +69,26 @@ node dist/apps/cli/src/cli.js approve <approval-id> operator-name
 node dist/apps/cli/src/cli.js treasury
 ```
 
-## Live deployment (Base Sepolia)
+## Live deployments
+
+### Base Mainnet (production)
+
+| Contract | Address |
+|----------|---------|
+| AgentTreasury | `<MAINNET_TREASURY_ADDRESS>` |
+| wstETH | [`0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`](https://basescan.org/address/0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452) |
+| Chain | Base (8453) |
+| Agent Identity (ERC-8004) | `<ERC8004_AGENT_ID>` |
+
+```bash
+export CHAIN=base
+export RPC_URL=https://mainnet.base.org
+export TREASURY_ADDRESS=<MAINNET_TREASURY_ADDRESS>
+export WSTETH_ADDRESS=0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452
+export AGENT_PRIVATE_KEY=0x...
+```
+
+### Base Sepolia (demo with instant yield)
 
 | Contract | Address |
 |----------|---------|
@@ -78,17 +97,16 @@ node dist/apps/cli/src/cli.js treasury
 | Chain | Base Sepolia (84532) |
 | Deployer | `0x3d7d7712ad32efD8Cb05249d0C7a3De1B1A3bb43` |
 
-Connect to the live treasury:
-
 ```bash
+export CHAIN=base-sepolia
+export RPC_URL=https://sepolia.base.org
 export TREASURY_ADDRESS=0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0
 export WSTETH_ADDRESS=0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d
-export BASE_SEPOLIA_RPC=https://sepolia.base.org
 export AGENT_PRIVATE_KEY=0x...
 export OWNER_PRIVATE_KEY=0x...   # for setup/demo only
 ```
 
-Then run the full demo:
+### Run the demo
 
 ```bash
 node dist/apps/cli/src/cli.js demo
@@ -114,6 +132,7 @@ packages/
   approval-store/           — In-memory + file-persisted approval lifecycle
   audit-log/                — Append-only JSONL event logging
   executor/                 — Viem integration layer (API ↔ contract)
+  mcp-server/               — MCP server: 9 tools for treasury + Lido staking
 ```
 
 ## API endpoints
@@ -146,22 +165,31 @@ wstETH on Base mainnet: `0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`
 
 See [`skill.md`](skill.md) for the agent-callable interface.
 
+## Agent identity (ERC-8004)
+
+The treasury agent is registered on Base mainnet via [ERC-8004](https://eips.ethereum.org/EIPS/eip-8004), providing on-chain verifiable identity for the AI agent managing this treasury.
+
+- **Agent ID**: `<ERC8004_AGENT_ID>`
+- **Registry**: Base mainnet
+- **Linked wallet**: Agent signing key (same as `AGENT_PRIVATE_KEY`)
+
+This ties the agent's on-chain spending authority to a discoverable, verifiable identity — judges and counterparties can verify who (or what) is spending from the treasury.
+
 ## Hackathon tracks
 
 - **stETH Agent Treasury** (Lido) — yield-only spending from wstETH with permission controls
+- **Lido MCP Server** (Lido) — 9 MCP tools for treasury + staking operations
 - **Agents that Pay** (bond.credit) — transparent payment authority for agent transactions
-- **Agent Services on Base** (Base) — discoverable agent services on Base
+- **Agent Services on Base** (Base) — discoverable agent services on Base with ERC-8004 identity
 - **Synthesis Open Track** — community-funded prize pool
 
 ## Roadmap
 
-**Current (hackathon):** Single-agent treasury on Base Sepolia with mock wstETH yield.
+**Current (hackathon):** Dual-chain treasury — Base Sepolia (demo) + Base mainnet (production, real wstETH yield).
 
 **Post-hackathon:**
-- Deploy to Base mainnet with real wstETH (`0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`)
 - Multi-agent support — parent agents allocate yield budgets to sub-agents
 - Time-windowed permissions (spending windows, cooldown periods)
-- MCP server — make the treasury natively callable from Claude, Cursor, etc.
 - Policy authoring UI — visual editor for permission rules
 - Cross-chain support — wstETH on Arbitrum, Optimism, Polygon
 
@@ -169,6 +197,8 @@ See [`skill.md`](skill.md) for the agent-callable interface.
 
 - TypeScript, Node.js, Viem
 - Solidity (Foundry)
-- Base Sepolia
+- Base (mainnet + Sepolia)
 - wstETH (Lido)
+- MCP (Model Context Protocol)
+- ERC-8004 (on-chain agent identity)
 - Claude Code + Bagel (human-agent collaboration)
