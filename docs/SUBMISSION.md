@@ -29,6 +29,7 @@ The entire project was built by one human (Oscar) orchestrating two AI agents: B
 - Lido: stETH Agent Treasury
 - Lido: MCP Server
 - Synthesis Open Track
+- Protocol Labs: Agents With Receipts — ERC-8004
 
 ## Tech stack
 - Solidity (Foundry) — AgentTreasury smart contract

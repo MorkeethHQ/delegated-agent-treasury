@@ -1,0 +1,59 @@
+{
+  "name": "Synthesis Agent Treasury",
+  "description": "A yield-only treasury agent on Base. Deposits wstETH, spends only accrued yield. Principal is structurally locked. Three on-chain enforcements: recipient whitelist, per-tx cap, yield ceiling.",
+  "version": "0.1.0",
+  "identity": {
+    "erc8004": {
+      "participantId": "10ee7e7e703b4fc493e19f512b5ae09d",
+      "registrationTxn": "https://basescan.org/tx/0x4027641718bb5cfb9fdf7f4871f6506685b5367cab1a3a030b9bb0fe779ee934",
+      "chain": "base",
+      "chainId": 8453
+    }
+  },
+  "capabilities": [
+    "treasury-management",
+    "yield-spending",
+    "policy-evaluation",
+    "approval-workflow",
+    "lido-staking",
+    "governance-queries",
+    "audit-logging"
+  ],
+  "interfaces": {
+    "api": "http://localhost:3001",
+    "cli": "node dist/apps/cli/src/cli.js",
+    "mcp": "node dist/packages/mcp-server/src/server.js",
+    "skill": "skill.md"
+  },
+  "contracts": {
+    "base-mainnet": {
+      "agentTreasury": "<MAINNET_TREASURY_ADDRESS>",
+      "wstETH": "0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452"
+    },
+    "base-sepolia": {
+      "agentTreasury": "0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0",
+      "mockWstETH": "0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d"
+    }
+  },
+  "operators": [
+    {
+      "role": "orchestrator",
+      "type": "human",
+      "name": "Oscar"
+    },
+    {
+      "role": "contract-developer",
+      "type": "agent",
+      "name": "Bagel",
+      "harness": "cursor"
+    },
+    {
+      "role": "systems-engineer",
+      "type": "agent",
+      "name": "Claude Code",
+      "harness": "claude-code",
+      "model": "claude-opus-4-6"
+    }
+  ],
+  "repository": "https://github.com/MorkeethHQ/delegated-agent-treasury"
+}

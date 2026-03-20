@@ -7,13 +7,12 @@ API_KEY="sk-synth-8915d49ce13cd92a3a2ee83bdc53b58f020ec8d18eda2efa"
 TEAM_UUID="2b168ebca75a4db49ae552c06cca2fc8"
 API="https://synthesis.devfolio.co"
 
-# Track UUIDs
-LIDO_TREASURY="5e445a077b5248e0974904915f76e1a0"
-LIDO_MCP="ee885a40e4bc4d3991546cec7a4433e2"
-OPEN_TRACK="fdb76d08812b43f6a5f454744b66f590"
-AGENTS_THAT_PAY="17ddda1d3cd1483aa4cfc45d493ac653"
-ERC8004_RECEIPTS="3bf41be958da497bbb69f1a150c76af9"
-BASE_AGENT_SERVICES="6f0e3d7dcadf4ef080d3f424963caff5"
+# Track UUIDs (verified fit)
+LIDO_TREASURY="5e445a077b5248e0974904915f76e1a0"   # stETH Agent Treasury — STRONG fit
+LIDO_MCP="ee885a40e4bc4d3991546cec7a4433e2"         # Lido MCP Server — STRONG fit
+OPEN_TRACK="fdb76d08812b43f6a5f454744b66f590"       # Synthesis Open Track — universal
+ERC8004_RECEIPTS="3bf41be958da497bbb69f1a150c76af9"  # Agents With Receipts — ERC-8004 registered
+# DROPPED: Agents that Pay (requires GMX perps trading), Agent Services on Base (requires x402)
 
 CONVERSATION_LOG=$(cat docs/conversationLog.md)
 
@@ -33,9 +32,7 @@ console.log(JSON.stringify({
     '$LIDO_TREASURY',
     '$LIDO_MCP',
     '$OPEN_TRACK',
-    '$AGENTS_THAT_PAY',
-    '$ERC8004_RECEIPTS',
-    '$BASE_AGENT_SERVICES'
+    '$ERC8004_RECEIPTS'
   ],
   conversationLog: log,
   submissionMetadata: {
