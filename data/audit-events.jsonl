@@ -1,1 +1,1 @@
-{"id":"e5497452-bf1a-4391-8707-bee6e3bbdcab","type":"plan_evaluated","timestamp":"2026-03-19T10:08:28.631Z","payload":{"plan":{"planId":"plan-1","agentId":"bagel","type":"transfer","amount":50,"destination":"0xApprovedDestination1","reason":"Fund approved test workflow"},"result":{"decision":"approved","reasons":["Plan is within policy."],"appliedRules":["within_policy"]}}}
+
