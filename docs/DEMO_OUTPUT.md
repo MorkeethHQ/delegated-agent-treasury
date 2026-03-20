@@ -111,14 +111,28 @@ Sepolia spend TXs:
 [2026-03-20T11:06:28] [SKIP] No SPEND_RECIPIENT configured — dry run only
 ```
 
+## Base Mainnet Treasury (Live Read)
+
+```
+=== Base Mainnet Treasury (LIVE) ===
+Contract: 0x4b8e...7a2d (verified on Basescan)
+Owner: 0x3d7d7712ad32efD8Cb05249d0C7a3De1B1A3bb43
+Agent: (not configured yet)
+Deposited: 0 wstETH
+Status: Awaiting deposit
+```
+
 ## On-chain Artifacts
 
-- **ERC-8004 Registration**: [basescan.org/tx/0x40276...](https://basescan.org/tx/0x4027641718bb5cfb9fdf7f4871f6506685b5367cab1a3a030b9bb0fe779ee934) — "Register Agent Identity" | Success
+- **AgentTreasury (Mainnet)**: [basescan.org/address/0x4b8e...](https://basescan.org/address/0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d#code) — **verified source code**
+- **Mainnet Deploy TX**: [basescan.org/tx/0x6516...](https://basescan.org/tx/0x65167ae9308b3fd9316a280264ef996cd7092231d59bc78e64865cc4a261a392) — Success
+- **ERC-8004 Registration**: [basescan.org/tx/0x4027...](https://basescan.org/tx/0x4027641718bb5cfb9fdf7f4871f6506685b5367cab1a3a030b9bb0fe779ee934) — "Register Agent Identity" | Success
 - **AgentTreasury (Sepolia)**: [sepolia.basescan.org/address/0x6fb8...](https://sepolia.basescan.org/address/0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0)
 - **MockWstETH (Sepolia)**: [sepolia.basescan.org/address/0x4b8e...](https://sepolia.basescan.org/address/0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d)
-- **AgentTreasury (Mainnet)**: [basescan.org/address/0x4b8e...](https://basescan.org/address/0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d) — [deploy tx](https://basescan.org/tx/0x65167ae9308b3fd9316a280264ef996cd7092231d59bc78e64865cc4a261a392)
+- **Sepolia Spend 1**: [0x77dfdb5a...](https://sepolia.basescan.org/tx/0x77dfdb5a22e9fa110aa7f5173e2d7bdf650d8b35374ef124ebe7dad6e47e0d4f) — auto-approved, 0.005 wstETH
+- **Sepolia Spend 2**: [0x337d0adc...](https://sepolia.basescan.org/tx/0x337d0adcad58254e5a1084a1e80c5f70a9f756c292c9f5a04f91997b4e8e911e) — human-approved, 0.009 wstETH
 
-## Commit History (26 commits during hackathon)
+## Commit History (32 commits during hackathon)
 
 ```
 5fa1152 Initialize Synthesis local MVP scaffold
