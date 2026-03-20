@@ -71,6 +71,54 @@ Authorize $5M DAO Treasury Allocation to Lido Earn ETH and USD Vaults
   Created: 2026-03-02
 ```
 
+## E2E: Sepolia On-Chain (Live Run)
+
+```
+=== FULL E2E: Sepolia On-Chain ===
+
+--- 1. Health ---
+ok: true | executor: connected
+
+--- 2. Treasury State (live Sepolia) ---
+Yield: 0.04761904761904762 wstETH
+Principal: 0.95238095238095238 wstETH
+Spent: 0 wstETH
+Agent: 0x3d7d7712ad32efD8Cb05249d0C7a3De1B1A3bb43
+Per-tx cap: 0.01 wstETH
+
+--- 3. Policy engine: auto-approved ---
+Decision: approved
+Rules: within_policy
+
+--- 4. Approval-required ---
+Decision: approval_required
+Approval ID: 7af38279-59a3-4353-a8dc-8c77769c47b4
+
+--- 5. Denied destination ---
+Decision: denied | Reasons: Destination is explicitly denied by policy.
+
+--- 6. Direct on-chain spend (0.005 wstETH) ---
+ON-CHAIN TX: 0x1fd5edb8cfb87839b43424907da7dab61fde5109bbc0aa925aa2aed5f57c4d64
+Amount: 0.005 wstETH → 0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6
+
+--- 7. Audit trail ---
+8 total events
+```
+
+Sepolia spend TX: [sepolia.basescan.org/tx/0x1fd5...](https://sepolia.basescan.org/tx/0x1fd5edb8cfb87839b43424907da7dab61fde5109bbc0aa925aa2aed5f57c4d64)
+
+## Autonomous Agent Loop (Dry Run)
+
+```
+[2026-03-20T11:06:27] [INFO] === Autonomous Agent Loop started ===
+[2026-03-20T11:06:27] [INFO] API: http://localhost:3001 | Interval: 300s | Threshold: 0.001 wstETH
+[2026-03-20T11:06:27] [INFO] Recipient: (none — dry run) | Agent: bagel
+[2026-03-20T11:06:27] [INFO] ── tick ──
+[2026-03-20T11:06:27] [INFO] Treasury state: { yield: 0.0476, principal: 0.9524 }
+[2026-03-20T11:06:28] [INFO] Active governance proposals: 0
+[2026-03-20T11:06:28] [SKIP] No SPEND_RECIPIENT configured — dry run only
+```
+
 ## On-chain Artifacts
 
 - **ERC-8004 Registration**: [basescan.org/tx/0x40276...](https://basescan.org/tx/0x4027641718bb5cfb9fdf7f4871f6506685b5367cab1a3a030b9bb0fe779ee934) — "Register Agent Identity" | Success

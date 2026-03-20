@@ -2,7 +2,7 @@
 
 ## 30 seconds
 
-AI agents need to spend money, but giving them a wallet is reckless. We built a treasury where a human deposits wstETH, yield accrues through Lido staking, and the agent can only spend the yield — never the principal. Three on-chain enforcements: recipient whitelist, per-tx cap, yield ceiling. Deployed on Base mainnet with real wstETH. Built entirely by two AI agents orchestrated by one human.
+AI agents need to spend money, but giving them a wallet is reckless. We built a treasury where a human deposits wstETH, yield accrues through Lido staking, and the agent can only spend the yield — never the principal. The agent runs autonomously — it monitors governance, detects risky proposals, and decides to spend or hold — all bounded by three on-chain enforcements: recipient whitelist, per-tx cap, yield ceiling. Deployed on Base mainnet with real wstETH. Built entirely by two AI agents orchestrated by one human.
 
 ## 2 minutes
 
@@ -16,6 +16,8 @@ AI agents need to spend money, but giving them a wallet is reckless. We built a 
 3. Yield ceiling — spending can never exceed what the treasury has earned
 
 On top of the contract sits a policy engine that evaluates every spending plan. Small amounts auto-execute. Larger amounts require human approval. Denied requests are blocked with reasons. Every action hits an append-only audit log.
+
+**Autonomous, not just permissioned:** The agent doesn't just wait for instructions — it runs an autonomous loop that monitors treasury yield, queries Lido governance for risky proposals (protocol upgrades, parameter changes), and decides to spend or hold. If a dangerous governance vote is active, the agent pauses spending automatically. All decisions flow through the policy engine.
 
 **How we built it:** One human (Oscar) orchestrating two AI agents — Bagel wrote the Solidity contracts and deployed to Base, Claude Code built the approval backend, policy engine, MCP server, CLI, and docs. Zero lines of human-written code.
 

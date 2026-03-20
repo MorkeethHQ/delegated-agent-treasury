@@ -59,7 +59,7 @@ function sendJson(res: ServerResponse, statusCode: number, body: unknown): void 
     'access-control-allow-methods': 'GET, POST, PUT, PATCH, OPTIONS',
     'access-control-allow-headers': 'content-type',
   });
-  res.end(JSON.stringify(body, null, 2));
+  res.end(JSON.stringify(body, (_key, value) => typeof value === 'bigint' ? value.toString() : value, 2));
 }
 
 function parseBody(req: IncomingMessage): Promise<string> {
