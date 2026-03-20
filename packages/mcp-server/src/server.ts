@@ -8,6 +8,7 @@ import { registerStakingTools } from './tools/staking.js';
 import { registerGovernanceTools } from './tools/governance.js';
 import { registerTrustTools } from './tools/trust.js';
 import { registerStrategyTools } from './tools/strategy.js';
+import { registerTradingTools } from './tools/trading.js';
 
 const server = new McpServer({
   name: 'synthesis-lido-treasury',
@@ -22,6 +23,7 @@ registerStakingTools(server, config);
 registerGovernanceTools(server);
 registerTrustTools(server);
 registerStrategyTools(server);
+registerTradingTools(server);
 
 // Connect via stdio
 const transport = new StdioServerTransport();

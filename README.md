@@ -31,6 +31,8 @@ Agent submits action plan → policy engine evaluates
 
 **ERC-8004 Trust-Gated Payments** — before sending to a recipient, the policy engine verifies their on-chain agent identity via the ERC-8004 registry. Unverified recipients are escalated to human approval.
 
+**Uniswap Yield Trading** — the agent can swap yield into any token on Base via Uniswap. Supports DCA, swap-to-stable, and rebalance strategies. Every swap goes through the policy engine. Live quotes from Uniswap Trading API, same chain as treasury — no bridging.
+
 ## Quick start
 
 ```bash
@@ -139,8 +141,9 @@ packages/
   approval-store/           — In-memory + file-persisted approval lifecycle
   audit-log/                — Append-only JSONL event logging
   executor/                 — Viem integration layer (API ↔ contract) + ERC-8004 identity verification
-  mcp-server/               — MCP server: 15 tools for treasury, staking, strategy, trust
+  mcp-server/               — MCP server: 18 tools for treasury, staking, strategy, trust, trading
   strategy-engine/          — Multi-bucket yield distribution engine
+  trading-engine/           — Uniswap Trading API client (quotes, swaps, DCA)
 ```
 
 ## API endpoints
@@ -159,6 +162,9 @@ packages/
 | GET | `/strategy/preview` | Dry-run yield distribution preview |
 | POST | `/strategy/distribute` | Trigger manual yield distribution |
 | GET | `/verify/:address` | ERC-8004 identity verification |
+| GET | `/swap/tokens` | Supported tokens on Base |
+| GET | `/swap/quote` | Live Uniswap swap quote |
+| POST | `/swap/execute` | Execute yield swap (policy-gated, dry_run) |
 
 ## Smart contract
 
@@ -190,9 +196,11 @@ This ties the agent's on-chain spending authority to a discoverable, verifiable 
 ## Hackathon tracks
 
 - **stETH Agent Treasury** (Lido, $3K) — yield-only spending from wstETH with permission controls
-- **Lido MCP Server** (Lido, $5K) — 11 MCP tools for treasury, staking, and governance
+- **Lido MCP Server** (Lido, $5K) — 18 MCP tools for treasury, staking, governance, trading
 - **Synthesis Open Track** ($14.5K) — community-funded prize pool
 - **Agents With Receipts** (Protocol Labs, $8K) — ERC-8004 identity, agent.json, on-chain verifiability
+- **Uniswap** ($5K) — yield-to-swap via Uniswap Trading API on Base
+- **Agent Services on Base** ($5K) — agent treasury as a payable service via x402
 
 ## Roadmap
 

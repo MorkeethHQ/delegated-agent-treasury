@@ -59,3 +59,4 @@ export interface AuditEvent<T = Record<string, unknown>> {
 }
 
 export * from './yield-strategy.js';
+export * from './trading.js';

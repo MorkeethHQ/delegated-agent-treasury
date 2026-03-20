@@ -141,8 +141,24 @@ curl -s "$API/strategy/preview?yield=0.1&perTxCap=0.05" | pj "
 "
 pause
 
-# ── 9. ERC-8004 Identity ──
-step "9/10  ERC-8004 Trust Verification"
+# ── 9. Uniswap Yield Swap ──
+step "9/12  Yield Swap via Uniswap (DCA)"
+narrate "Agent swaps 0.01 wstETH yield into USDC via Uniswap on Base."
+curl -s -X POST "$API/swap/execute" \
+  -H 'content-type: application/json' \
+  -d '{"agentId":"bagel","tokenOut":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913","amount":"10000000000000000","reason":"DCA yield into USDC — autonomous strategy","dryRun":true}' \
+  | pj "
+  console.log('  Policy:    ' + d.result.decision.toUpperCase());
+  if(d.swap) {
+    console.log('  Swap:      0.01 wstETH → ' + (parseInt(d.swap.amountOut)/1e6).toFixed(2) + ' USDC');
+    console.log('  Mode:      dry run (simulation)');
+    console.log('  → Agent deploys ONLY yield into bounded strategies.');
+  }
+"
+pause
+
+# ── 10. ERC-8004 Identity ──
+step "10/12  ERC-8004 Trust Verification"
 narrate "Before paying a recipient, verify their on-chain agent identity."
 curl -s "$API/verify/0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6" | pj "
   console.log('  Address:  0x4fD6...DCe6');
@@ -153,8 +169,22 @@ curl -s "$API/verify/0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6" | pj "
 "
 pause
 
-# ── 10. Denied destination ──
-step "10/10  Blocked Destination → Denied"
+# ── 11. Swap Quote ──
+step "11/12  Live Uniswap Quote"
+narrate "Real-time pricing from Uniswap on Base — no bridge, same chain as treasury."
+curl -s "$API/swap/quote?tokenIn=0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452&tokenOut=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913&amount=10000000000000000" \
+  | pj "
+  const q=d.quote;
+  console.log('  Route:     wstETH → WETH → USDC (Uniswap V3)');
+  console.log('  In:        0.01 wstETH');
+  console.log('  Out:       ' + q.amountOutFormatted + ' USDC');
+  console.log('  Impact:    ' + q.priceImpact + '%');
+  console.log('  Gas:       $' + parseFloat(q.gasEstimateUSD).toFixed(4));
+"
+pause
+
+# ── 12. Denied destination ──
+step "12/12  Blocked Destination → Denied"
 narrate "Agent tries to send to a denied address. Policy engine blocks it immediately."
 curl -s -X POST "$API/plans/evaluate" \
   -H 'content-type: application/json' \
@@ -187,6 +217,8 @@ echo ""
 echo -e "  ${GREEN}✓${RESET} Auto-approved spend (below threshold)"
 echo -e "  ${GREEN}✓${RESET} Human-approved spend (above threshold)"
 echo -e "  ${GREEN}✓${RESET} Multi-bucket yield strategy"
+echo -e "  ${GREEN}✓${RESET} Uniswap yield swap (DCA)"
+echo -e "  ${GREEN}✓${RESET} Live swap quotes on Base"
 echo -e "  ${GREEN}✓${RESET} ERC-8004 trust verification"
 echo -e "  ${RED}✗${RESET} Denied spend (blocked destination)"
 echo -e "  ${GREEN}✓${RESET} Full audit trail captured"

@@ -23,25 +23,28 @@ export function evaluatePlan(
     };
   }
 
-  if (policy.deniedDestinations.includes(plan.destination)) {
-    appliedRules.push('denied_destination');
-    return {
-      decision: 'denied',
-      reasons: ['Destination is explicitly denied by policy.'],
-      appliedRules,
-    };
-  }
+  // Destination checks only apply to transfers, not swaps
+  if (plan.type !== 'swap') {
+    if (policy.deniedDestinations.includes(plan.destination)) {
+      appliedRules.push('denied_destination');
+      return {
+        decision: 'denied',
+        reasons: ['Destination is explicitly denied by policy.'],
+        appliedRules,
+      };
+    }
 
-  if (
-    policy.allowedDestinations.length > 0 &&
-    !policy.allowedDestinations.includes(plan.destination)
-  ) {
-    appliedRules.push('allowed_destination');
-    return {
-      decision: 'denied',
-      reasons: ['Destination is not in the allowed destination list.'],
-      appliedRules,
-    };
+    if (
+      policy.allowedDestinations.length > 0 &&
+      !policy.allowedDestinations.includes(plan.destination)
+    ) {
+      appliedRules.push('allowed_destination');
+      return {
+        decision: 'denied',
+        reasons: ['Destination is not in the allowed destination list.'],
+        appliedRules,
+      };
+    }
   }
 
   if (plan.amount > policy.maxPerAction) {
