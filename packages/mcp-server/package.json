@@ -7,10 +7,10 @@
     "synthesis-mcp": "dist/server.js"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "*",
+    "@modelcontextprotocol/sdk": "^1.27.1",
     "@synthesis/shared": "0.1.0",
-    "viem": "*",
-    "zod": "*"
+    "viem": "^2.47.5",
+    "zod": "^4.3.6"
   },
   "scripts": {
     "build": "node ../../node_modules/typescript/bin/tsc -p tsconfig.json",

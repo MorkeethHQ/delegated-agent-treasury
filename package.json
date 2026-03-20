@@ -10,7 +10,8 @@
   "scripts": {
     "build": "npm run build --workspaces --if-present",
     "check": "npm run check --workspaces --if-present",
-    "dev:api": "npm --workspace @synthesis/api run dev"
+    "dev:api": "npm --workspace @synthesis/api run dev",
+    "test": "node --test dist/policy-engine/src/index.test.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.1",

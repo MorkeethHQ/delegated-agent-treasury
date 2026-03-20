@@ -10,7 +10,7 @@
     "@synthesis/executor": "0.1.0",
     "@synthesis/policy-engine": "0.1.0",
     "@synthesis/shared": "0.1.0",
-    "viem": "*"
+    "viem": "^2.47.5"
   },
   "scripts": {
     "build": "node ../../node_modules/typescript/bin/tsc -p tsconfig.json",

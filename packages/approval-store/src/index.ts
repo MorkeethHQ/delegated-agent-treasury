@@ -31,10 +31,10 @@ export async function loadApprovals(path: string): Promise<void> {
   }
 }
 
-export function createApproval(
+export async function createApproval(
   plan: ActionPlan,
   evaluation: EvaluationResult,
-): ApprovalRequest {
+): Promise<ApprovalRequest> {
   const approval: ApprovalRequest = {
     approvalId: randomUUID(),
     planId: plan.planId,
@@ -45,7 +45,7 @@ export function createApproval(
     createdAt: new Date().toISOString(),
   };
   approvals.set(approval.approvalId, approval);
-  void persist();
+  await persist();
   return approval;
 }
 
@@ -61,17 +61,17 @@ export function listApprovals(filter?: { status?: ApprovalRequest['status'] }): 
   return all.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
-export function respondToApproval(
+export async function respondToApproval(
   approvalId: string,
   decision: 'approved' | 'denied',
   respondedBy?: string,
-): ApprovalRequest | null {
+): Promise<ApprovalRequest | null> {
   const approval = approvals.get(approvalId);
   if (!approval || approval.status !== 'pending') return null;
 
   approval.status = decision;
   approval.respondedAt = new Date().toISOString();
   approval.respondedBy = respondedBy;
-  void persist();
+  await persist();
   return approval;
 }
