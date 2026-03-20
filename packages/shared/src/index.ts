@@ -11,6 +11,9 @@ export interface Policy {
   deniedDestinations: string[];
   loggingRequired: boolean;
   requireVerifiedIdentity?: boolean;
+  // Swap-specific controls (separate from transfer caps)
+  maxSwapPerAction?: number;
+  maxSlippageBps?: number;  // e.g. 50 = 0.5%
 }
 
 export interface ActionPlan {

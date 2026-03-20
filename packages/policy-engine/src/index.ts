@@ -3,6 +3,7 @@ import type { ActionPlan, EvaluationResult, Policy } from '../../shared/src/inde
 export interface EvaluatePlanOptions {
   spentToday?: number;
   recipientVerified?: boolean;
+  slippageBps?: number;  // actual slippage for swap validation
 }
 
 export function evaluatePlan(
@@ -47,9 +48,16 @@ export function evaluatePlan(
     }
   }
 
-  if (plan.amount > policy.maxPerAction) {
-    reasons.push('Amount exceeds max per action.');
-    appliedRules.push('max_per_action');
+  // Use swap-specific caps when available, fall back to general caps
+  const maxPerAction = (plan.type === 'swap' && policy.maxSwapPerAction != null)
+    ? policy.maxSwapPerAction
+    : policy.maxPerAction;
+
+  if (plan.amount > maxPerAction) {
+    reasons.push(plan.type === 'swap'
+      ? `Swap amount exceeds max swap per action (${maxPerAction}).`
+      : 'Amount exceeds max per action.');
+    appliedRules.push(plan.type === 'swap' ? 'max_swap_per_action' : 'max_per_action');
   }
 
   if (spentToday + plan.amount > policy.dailyCap) {
@@ -60,6 +68,14 @@ export function evaluatePlan(
   if (plan.amount >= policy.approvalThreshold) {
     reasons.push('Amount meets or exceeds approval threshold.');
     appliedRules.push('approval_threshold');
+  }
+
+  // Swap-specific: slippage check
+  if (plan.type === 'swap' && policy.maxSlippageBps != null && options.slippageBps != null) {
+    if (options.slippageBps > policy.maxSlippageBps) {
+      reasons.push(`Slippage ${options.slippageBps}bps exceeds max ${policy.maxSlippageBps}bps.`);
+      appliedRules.push('max_slippage');
+    }
   }
 
   // ERC-8004 trust-gated identity check
@@ -80,7 +96,7 @@ export function evaluatePlan(
     };
   }
 
-  if (appliedRules.includes('max_per_action') || appliedRules.includes('daily_cap')) {
+  if (appliedRules.includes('max_per_action') || appliedRules.includes('max_swap_per_action') || appliedRules.includes('daily_cap') || appliedRules.includes('max_slippage')) {
     return {
       decision: 'denied',
       reasons,
