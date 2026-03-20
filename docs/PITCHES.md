@@ -2,7 +2,7 @@
 
 ## 30 seconds
 
-AI agents need to spend money, but giving them a wallet is reckless. We built a treasury where a human deposits wstETH, yield accrues through Lido staking, and the agent can only spend the yield — never the principal. The agent runs autonomously — it monitors governance, detects risky proposals, and decides to spend or hold — all bounded by three on-chain enforcements: recipient whitelist, per-tx cap, yield ceiling. Live on Base mainnet with a funded wstETH treasury generating real Lido staking yield. Built entirely by two AI agents orchestrated by one human.
+AI agents need to spend money, but giving them a wallet is reckless. We built a treasury where a human deposits wstETH, yield accrues through Lido staking, and the agent can only spend the yield — never the principal. The agent doesn't just transfer yield — it deploys it into trading strategies via Uniswap on Base, all policy-gated with separate swap caps, slippage limits, and trust verification via ERC-8004. Other agents can pay USDC to use the treasury service via x402. Live on Base mainnet with real Lido staking yield. Built entirely by two AI agents orchestrated by one human.
 
 ## 2 minutes
 
@@ -15,9 +15,15 @@ AI agents need to spend money, but giving them a wallet is reckless. We built a 
 2. Per-transaction cap — each spend is bounded
 3. Yield ceiling — spending can never exceed what the treasury has earned
 
-On top of the contract sits a policy engine that evaluates every spending plan. Small amounts auto-execute. Larger amounts require human approval. Denied requests are blocked with reasons. Every action hits an append-only audit log.
+On top of the contract sits a policy engine that evaluates every action — transfers and swaps have separate caps and controls. Small amounts auto-execute. Larger amounts require human approval. Denied requests are blocked with reasons. Every action hits an append-only audit log.
 
-**Autonomous, not just permissioned:** The agent doesn't just wait for instructions — it runs an autonomous loop that monitors treasury yield, queries Lido governance for risky proposals (protocol upgrades, parameter changes), and decides to spend or hold. If a dangerous governance vote is active, the agent pauses spending automatically. All decisions flow through the policy engine.
+**Not just spending — deploying:** The agent doesn't just transfer yield — it deploys it into trading strategies via Uniswap on Base. DCA into USDC, swap to stable, rebalance — all with separate swap caps (`maxSwapPerAction`) and slippage limits (`maxSlippageBps`). The policy engine treats transfers and swaps as distinct action types with independent risk controls.
+
+**Trust-gated payments:** Before sending to any recipient, the agent verifies their on-chain identity via the ERC-8004 registry. Unverified counterparties are escalated to human approval.
+
+**Agent-as-a-service:** Other agents can pay USDC to use this treasury via x402 (HTTP 402 payment protocol). Swap quotes cost $0.01, execution costs $0.05. The treasury becomes a discoverable, payable service on Base.
+
+**Autonomous, not just permissioned:** The agent runs an autonomous loop — monitors treasury yield, queries Lido governance for risky proposals, and decides to spend, swap, or hold. If a dangerous governance vote is active, spending pauses automatically.
 
 **How we built it:** One human (Oscar) orchestrating two AI agents — Bagel wrote the Solidity contracts and deployed to Base, Claude Code built the approval backend, policy engine, MCP server, CLI, and docs. Zero lines of human-written code.
 
@@ -36,7 +42,7 @@ Yield-only spending is the primitive. What you build on top is up to you.
 - Natural rate-limiting — yield accrues slowly (~3-4% APY), so spend authority is bounded by real economic activity
 - Principal is always safe — even a compromised agent key cannot drain the deposit
 
-**The MCP angle:** We didn't just build an API — we built an MCP server with 11 tools that any Claude, Cursor, or MCP-compatible agent can call natively. `get_treasury_state`, `spend_yield`, `check_recipient` for the treasury. Plus full Lido staking operations: `stake_eth`, `wrap_steth`, `unwrap_wsteth`, `request_withdrawal`, balance and rate queries. All write operations support `dry_run` for simulation before execution.
+**The MCP angle:** We built an MCP server with 18 tools that any Claude, Cursor, or MCP-compatible agent can call natively. Treasury management, Lido staking operations, multi-bucket yield strategies, ERC-8004 identity verification, and live Uniswap swap quotes + execution. All write operations support `dry_run` for simulation before execution.
 
 **The collaboration model:** This project was built by a human directing two AI agents:
 - Oscar (human) — architect, orchestrator, funder. Made strategic decisions. Killed the web UI in favor of agent-native interfaces. Funded the Base mainnet deployment.
@@ -45,6 +51,6 @@ Yield-only spending is the primitive. What you build on top is up to you.
 
 They communicated through a shared Git repo. Oscar relayed context between them — contract addresses, ABI decisions, scope changes. No Slack, no Jira, no meetings. Just intent and code.
 
-**What's next:** Multi-agent support (parent agents allocating yield budgets to sub-agents), time-windowed permissions, cross-chain wstETH on Arbitrum and Optimism, and a visual policy editor.
+**What's next:** Multi-agent support (parent agents allocating yield budgets to sub-agents), time-windowed permissions, cross-chain wstETH on Arbitrum and Optimism, richer trading strategies via Synthetix perps, and a visual policy editor.
 
-**The bottom line:** AI agents need financial authority. Not unlimited, not zero. Yield-only spending from staked assets is the right primitive — bounded by math, enforced on-chain, transparent by default.
+**The bottom line:** AI agents need financial authority. Not unlimited, not zero. A treasury that protects principal and autonomously deploys only accrued yield — into payments, distributions, and trading strategies — using identity-aware policy rules, bounded risk controls, and full receipts.

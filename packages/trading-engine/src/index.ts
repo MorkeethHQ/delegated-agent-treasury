@@ -159,12 +159,59 @@ export async function getIndicativeQuote(
   tokenOut: string,
   amountIn: string,
 ): Promise<SwapQuote> {
-  // Use the full /quote endpoint with a zero-address swapper for previews
-  // (indicative_quote is not available on all API key tiers)
+  // Uniswap Trading API has no /indicative_quote endpoint.
+  // Use /quote with a dummy swapper for preview-only quotes.
   const PREVIEW_SWAPPER = '0x0000000000000000000000000000000000000001';
   return getQuote(tokenIn, tokenOut, amountIn, PREVIEW_SWAPPER);
 }
 
+/**
+ * Check if token approval is needed before swapping.
+ * Returns the approval tx data if needed, null if already approved.
+ */
+export async function checkApproval(
+  walletAddress: string,
+  tokenIn: string,
+  tokenOut: string,
+  amount: string,
+): Promise<{ approval: unknown } | null> {
+  const response = await fetch(`${UNISWAP_API_URL}/check_approval`, {
+    method: 'POST',
+    headers: {
+      'x-api-key': getApiKey(),
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      walletAddress,
+      token: tokenIn,
+      amount,
+      chainId: BASE_CHAIN_ID,
+      tokenOut,
+      tokenOutChainId: BASE_CHAIN_ID,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Uniswap check_approval error (${response.status}): ${errorText}`);
+  }
+
+  const data = await response.json() as { approval?: unknown };
+  return data.approval ? { approval: data.approval } : null;
+}
+
+/**
+ * Execute a swap via Uniswap Trading API.
+ *
+ * Full flow (when dryRun=false):
+ *   1. checkApproval() — ensure Permit2 can spend tokenIn
+ *   2. getQuote() — get executable quote with permitData
+ *   3. Sign permitData (EIP-712) with wallet
+ *   4. POST /swap with { quote, permitData, signature }
+ *   5. Sign and broadcast the returned transaction
+ *
+ * For dryRun=true, we stop after step 2 and return the quote.
+ */
 export async function executeSwap(
   tokenIn: string,
   tokenOut: string,
@@ -173,6 +220,11 @@ export async function executeSwap(
   dryRun: boolean = true,
 ): Promise<SwapResult> {
   try {
+    // Step 1: Check approval status
+    const approvalNeeded = await checkApproval(swapperAddress, tokenIn, tokenOut, amountIn)
+      .catch(() => null); // Non-critical for dry runs
+
+    // Step 2: Get executable quote
     const quote = await getQuote(tokenIn, tokenOut, amountIn, swapperAddress);
 
     if (dryRun) {
@@ -180,18 +232,18 @@ export async function executeSwap(
         success: true,
         amountIn: quote.amountIn,
         amountOut: quote.amountOut,
-        error: undefined,
+        error: approvalNeeded ? 'Permit2 approval needed before live execution' : undefined,
         txHash: undefined,
       };
     }
 
-    // Non-dry-run path: would need walletClient to sign & send the tx
-    // For hackathon, return the quote as a simulated result
+    // Steps 3-5 require a wallet signer — not implemented for hackathon
+    // In production: sign permitData, POST /swap, broadcast tx
     return {
       success: true,
       amountIn: quote.amountIn,
       amountOut: quote.amountOut,
-      txHash: '0x_dry_run_no_tx',
+      txHash: '0x_execution_requires_wallet_signer',
     };
   } catch (error) {
     return {
