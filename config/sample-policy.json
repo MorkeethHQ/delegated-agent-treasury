@@ -9,6 +9,6 @@
   "deniedDestinations": ["0xDeniedDestination1"],
   "loggingRequired": true,
   "requireVerifiedIdentity": false,
-  "maxSwapPerAction": 0.02,
+  "maxSwapPerAction": 0.01,
   "maxSlippageBps": 100
 }

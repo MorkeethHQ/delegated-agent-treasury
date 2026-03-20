@@ -1,0 +1,37 @@
+{
+  "strategies": [
+    {
+      "strategyId": "dca-usdc",
+      "type": "dca",
+      "label": "DCA into USDC",
+      "description": "Dollar-cost average yield into USDC stablecoin",
+      "tokenIn": "0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452",
+      "tokenOut": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "allocationPercent": 50,
+      "maxSlippageBps": 50,
+      "minAmountThreshold": 1000000000000000
+    },
+    {
+      "strategyId": "swap-to-eth",
+      "type": "swap-to-stable",
+      "label": "Swap to WETH",
+      "description": "Convert yield to native ETH for gas or deployment",
+      "tokenIn": "0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452",
+      "tokenOut": "0x4200000000000000000000000000000000000006",
+      "allocationPercent": 30,
+      "maxSlippageBps": 30,
+      "minAmountThreshold": 500000000000000
+    },
+    {
+      "strategyId": "rebalance-cbeth",
+      "type": "rebalance",
+      "label": "Diversify to cbETH",
+      "description": "Rebalance a portion of yield into Coinbase staked ETH",
+      "tokenIn": "0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452",
+      "tokenOut": "0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22",
+      "allocationPercent": 20,
+      "maxSlippageBps": 75,
+      "minAmountThreshold": 1000000000000000
+    }
+  ]
+}
