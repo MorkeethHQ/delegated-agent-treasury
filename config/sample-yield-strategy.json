@@ -1,0 +1,26 @@
+{
+  "strategyId": "default-strategy-1",
+  "agentId": "bagel",
+  "minYieldThreshold": 0.001,
+  "distributionRatio": 0.8,
+  "buckets": [
+    {
+      "id": "ops",
+      "label": "Operations",
+      "percentage": 40,
+      "destination": "0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6"
+    },
+    {
+      "id": "grants",
+      "label": "Grants Program",
+      "percentage": 30,
+      "destination": "0xApprovedDestination1"
+    },
+    {
+      "id": "reserve",
+      "label": "Reserve Fund",
+      "percentage": 30,
+      "destination": "0xApprovedDestination2"
+    }
+  ]
+}

@@ -10,6 +10,7 @@ export interface Policy {
   allowedDestinations: string[];
   deniedDestinations: string[];
   loggingRequired: boolean;
+  requireVerifiedIdentity?: boolean;
 }
 
 export interface ActionPlan {
@@ -56,3 +57,5 @@ export interface AuditEvent<T = Record<string, unknown>> {
   timestamp: string;
   payload: T;
 }
+
+export * from './yield-strategy.js';

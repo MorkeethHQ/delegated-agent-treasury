@@ -6,6 +6,7 @@
     "../../packages/policy-engine/src/**/*.ts",
     "../../packages/audit-log/src/**/*.ts",
     "../../packages/approval-store/src/**/*.ts",
-    "../../packages/executor/src/**/*.ts"
+    "../../packages/executor/src/**/*.ts",
+    "../../packages/strategy-engine/src/**/*.ts"
   ]
 }

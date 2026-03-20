@@ -27,6 +27,10 @@ Agent submits action plan → policy engine evaluates
 2. Per-transaction cap — each spend is bounded
 3. Yield ceiling — agent can never touch principal
 
+**Yield Strategy Engine** — multi-bucket distribution. Configure named buckets (ops, grants, reserve) with percentages. The agent distributes yield across buckets automatically, with per-tx cap clamping and threshold gating.
+
+**ERC-8004 Trust-Gated Payments** — before sending to a recipient, the policy engine verifies their on-chain agent identity via the ERC-8004 registry. Unverified recipients are escalated to human approval.
+
 ## Quick start
 
 ```bash
@@ -134,8 +138,9 @@ packages/
   policy-engine/            — Rule evaluation (agent match, caps, thresholds, allow/deny lists)
   approval-store/           — In-memory + file-persisted approval lifecycle
   audit-log/                — Append-only JSONL event logging
-  executor/                 — Viem integration layer (API ↔ contract)
-  mcp-server/               — MCP server: 11 tools for treasury + Lido staking
+  executor/                 — Viem integration layer (API ↔ contract) + ERC-8004 identity verification
+  mcp-server/               — MCP server: 15 tools for treasury, staking, strategy, trust
+  strategy-engine/          — Multi-bucket yield distribution engine
 ```
 
 ## API endpoints
@@ -150,6 +155,10 @@ packages/
 | GET | `/audit` | Full audit event stream |
 | GET | `/policy` | Current policy config |
 | GET | `/treasury` | On-chain treasury state |
+| GET | `/strategy` | Current yield strategy config |
+| GET | `/strategy/preview` | Dry-run yield distribution preview |
+| POST | `/strategy/distribute` | Trigger manual yield distribution |
+| GET | `/verify/:address` | ERC-8004 identity verification |
 
 ## Smart contract
 

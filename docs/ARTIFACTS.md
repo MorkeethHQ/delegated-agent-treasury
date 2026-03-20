@@ -25,26 +25,27 @@
 | Unit tests | 12 |
 | Demo scripts | 3 |
 
-## Packages (6)
+## Packages (7)
 
 | Package | Purpose |
 |---------|---------|
-| `shared` | Domain types (Policy, ActionPlan, ApprovalRequest, AuditEvent) |
-| `policy-engine` | Rule evaluation — agent match, caps, thresholds, allow/deny lists |
+| `shared` | Domain types (Policy, ActionPlan, ApprovalRequest, AuditEvent, YieldStrategy) |
+| `policy-engine` | Rule evaluation — agent match, caps, thresholds, allow/deny lists, trust-gating |
 | `approval-store` | In-memory + file-persisted approval lifecycle |
 | `audit-log` | Append-only JSONL event logging |
-| `executor` | Viem integration layer (API ↔ contract) |
-| `mcp-server` | 11-tool MCP server for treasury, Lido staking, governance |
+| `executor` | Viem integration layer (API ↔ contract) + ERC-8004 identity verification |
+| `mcp-server` | 15-tool MCP server for treasury, staking, governance, strategy, trust |
+| `strategy-engine` | Multi-bucket yield distribution engine |
 
 ## Apps (3)
 
 | App | Purpose |
 |-----|---------|
-| `api` | REST API: 8 endpoints — evaluate, approvals, respond, audit, policy, treasury |
+| `api` | REST API: 12 endpoints — evaluate, approvals, respond, audit, policy, treasury, strategy, verify |
 | `cli` | CLI: 9 commands — health, policy, evaluate, approvals, approve, deny, audit, treasury, demo |
 | `agent-loop` | Autonomous governance-aware yield spending agent — monitors treasury + Lido governance, decides spend/hold |
 
-## MCP Tools (11)
+## MCP Tools (15)
 
 ### Treasury (3)
 - `get_treasury_state` — available yield, principal, total spent, per-tx cap
@@ -63,7 +64,15 @@
 ### Governance (1)
 - `get_lido_governance_proposals` — Lido DAO proposals from Snapshot (any chain)
 
-## API Endpoints (8)
+### Strategy (3)
+- `get_yield_strategy` — current multi-bucket yield distribution config
+- `preview_yield_distribution` — dry-run distribution plan for given yield amount
+- `trigger_yield_distribution` — manually trigger yield distribution across buckets
+
+### Trust (1)
+- `verify_counterparty_identity` — ERC-8004 on-chain identity lookup for recipient
+
+## API Endpoints (12)
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -75,6 +84,10 @@
 | GET | `/audit` | Full audit event stream |
 | GET | `/policy` | Current policy config |
 | GET | `/treasury` | On-chain treasury state |
+| GET | `/strategy` | Current yield strategy config |
+| GET | `/strategy/preview` | Dry-run yield distribution preview |
+| POST | `/strategy/distribute` | Trigger manual yield distribution |
+| GET | `/verify/:address` | ERC-8004 identity verification |
 
 ## Scripts
 

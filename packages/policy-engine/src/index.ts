@@ -2,6 +2,7 @@ import type { ActionPlan, EvaluationResult, Policy } from '../../shared/src/inde
 
 export interface EvaluatePlanOptions {
   spentToday?: number;
+  recipientVerified?: boolean;
 }
 
 export function evaluatePlan(
@@ -56,6 +57,16 @@ export function evaluatePlan(
   if (plan.amount >= policy.approvalThreshold) {
     reasons.push('Amount meets or exceeds approval threshold.');
     appliedRules.push('approval_threshold');
+  }
+
+  // ERC-8004 trust-gated identity check
+  if (
+    policy.requireVerifiedIdentity &&
+    options.recipientVerified !== undefined &&
+    !options.recipientVerified
+  ) {
+    reasons.push('Recipient does not have verified ERC-8004 identity.');
+    appliedRules.push('unverified_identity');
   }
 
   if (reasons.length === 0) {
