@@ -69,13 +69,20 @@ node dist/apps/cli/src/cli.js approve <approval-id> operator-name
 node dist/apps/cli/src/cli.js treasury
 ```
 
-## With deployed contract
+## Live deployment (Base Sepolia)
 
-Set env vars to connect to the on-chain treasury:
+| Contract | Address |
+|----------|---------|
+| AgentTreasury | [`0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0`](https://sepolia.basescan.org/address/0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0) |
+| MockWstETH | [`0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d`](https://sepolia.basescan.org/address/0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d) |
+| Chain | Base Sepolia (84532) |
+| Deployer | `0x3d7d7712ad32efD8Cb05249d0C7a3De1B1A3bb43` |
+
+Connect to the live treasury:
 
 ```bash
-export TREASURY_ADDRESS=<deployed-address>
-export WSTETH_ADDRESS=<deployed-wsteth-or-mock>
+export TREASURY_ADDRESS=0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0
+export WSTETH_ADDRESS=0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d
 export BASE_SEPOLIA_RPC=https://sepolia.base.org
 export AGENT_PRIVATE_KEY=0x...
 export OWNER_PRIVATE_KEY=0x...   # for setup/demo only
