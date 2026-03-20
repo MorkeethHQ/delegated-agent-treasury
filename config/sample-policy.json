@@ -7,5 +7,6 @@
   "approvalThreshold": 0.008,
   "allowedDestinations": ["0xApprovedDestination1", "0xApprovedDestination2", "0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6"],
   "deniedDestinations": ["0xDeniedDestination1"],
-  "loggingRequired": true
+  "loggingRequired": true,
+  "requireVerifiedIdentity": false
 }

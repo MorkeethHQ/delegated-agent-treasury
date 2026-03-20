@@ -3,5 +3,9 @@
   "compilerOptions": {
     "outDir": "../../dist/apps/agent-loop"
   },
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*.ts",
+    "../../packages/shared/src/**/*.ts",
+    "../../packages/strategy-engine/src/**/*.ts"
+  ]
 }

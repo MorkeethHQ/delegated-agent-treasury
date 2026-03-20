@@ -13,10 +13,13 @@ import {
   respondToApproval,
 } from '../../../packages/approval-store/src/index.js';
 import { createExecutor, type Executor } from '../../../packages/executor/src/index.js';
-import type { ActionPlan, AuditEvent, Policy } from '../../../packages/shared/src/index.js';
+import { verifyCounterpartyIdentity } from '../../../packages/executor/src/erc8004.js';
+import type { ActionPlan, AuditEvent, Policy, DistributionPlan } from '../../../packages/shared/src/index.js';
+import { loadStrategy, computeDistribution } from '../../../packages/strategy-engine/src/index.js';
 
 const root = process.cwd();
 const policyPath = resolve(root, 'config', 'sample-policy.json');
+const strategyPath = resolve(root, 'config', 'sample-yield-strategy.json');
 const auditLogPath = resolve(root, 'data', 'audit-events.jsonl');
 const approvalsPath = resolve(root, 'data', 'approvals.json');
 
@@ -104,8 +107,20 @@ async function handleEvaluate(req: IncomingMessage, res: ServerResponse): Promis
 
   await auditLog('plan_submitted', { plan });
 
-  const result = evaluatePlan(policy, plan, { spentToday: 0 });
-  await auditLog('plan_evaluated', { plan, result });
+  // ERC-8004 trust-gated identity verification
+  let recipientVerified: boolean | undefined;
+  if (policy.requireVerifiedIdentity) {
+    const identity = await verifyCounterpartyIdentity(plan.destination);
+    recipientVerified = identity.verified;
+    if (!identity.verified) {
+      console.log(`[ERC-8004] Recipient ${plan.destination} is not verified`);
+    } else {
+      console.log(`[ERC-8004] Recipient ${plan.destination} verified — agent #${identity.agentId}`);
+    }
+  }
+
+  const result = evaluatePlan(policy, plan, { spentToday: 0, recipientVerified });
+  await auditLog('plan_evaluated', { plan, result, recipientVerified });
 
   // Auto-execute if approved and executor is available
   if (result.decision === 'approved' && executor) {
@@ -201,12 +216,126 @@ async function handleGetPolicy(_req: IncomingMessage, res: ServerResponse): Prom
   return sendJson(res, 200, { policy });
 }
 
+async function handleVerifyIdentity(address: string, res: ServerResponse): Promise<void> {
+  const identity = await verifyCounterpartyIdentity(address);
+  return sendJson(res, 200, { address, identity });
+}
+
 async function handleTreasuryState(_req: IncomingMessage, res: ServerResponse): Promise<void> {
   if (!executor) {
     return sendJson(res, 503, { error: 'Executor not configured — set contract env vars' });
   }
   const state = await executor.treasuryState();
   return sendJson(res, 200, { treasury: state });
+}
+
+// --- Strategy handlers ---
+
+async function handleGetStrategy(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  try {
+    const strategy = await loadStrategy(strategyPath);
+    return sendJson(res, 200, { strategy });
+  } catch (error) {
+    return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
+  }
+}
+
+async function handleStrategyPreview(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  try {
+    const strategy = await loadStrategy(strategyPath);
+    const reqUrl = new URL(req.url ?? '', `http://${req.headers.host}`);
+    const yieldParam = reqUrl.searchParams.get('yield');
+    const capParam = reqUrl.searchParams.get('perTxCap');
+
+    let availableYield: number;
+    let perTxCap: number;
+
+    if (yieldParam && capParam) {
+      // Use query params for dry-run preview (works without executor)
+      availableYield = parseFloat(yieldParam);
+      perTxCap = parseFloat(capParam);
+    } else if (executor) {
+      // Use live treasury state
+      const state = await executor.treasuryState();
+      availableYield = parseFloat(state.availableYield.formatted);
+      perTxCap = parseFloat(state.perTxCap.formatted);
+    } else {
+      return sendJson(res, 503, { error: 'Provide ?yield=X&perTxCap=Y or configure executor' });
+    }
+
+    const plan = computeDistribution(strategy, availableYield, perTxCap);
+    return sendJson(res, 200, { plan });
+  } catch (error) {
+    return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
+  }
+}
+
+async function handleStrategyDistribute(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  if (!executor) {
+    return sendJson(res, 503, { error: 'Executor not configured — set contract env vars' });
+  }
+
+  try {
+    const strategy = await loadStrategy(strategyPath);
+    const state = await executor.treasuryState();
+    const availableYield = parseFloat(state.availableYield.formatted);
+    const perTxCap = parseFloat(state.perTxCap.formatted);
+    const plan = computeDistribution(strategy, availableYield, perTxCap);
+
+    if (plan.items.length === 0) {
+      return sendJson(res, 200, { plan, results: [], message: 'No items to distribute' });
+    }
+
+    const policy = await readJsonFile<Policy>(policyPath);
+    const results: Array<{ bucketId: string; decision: string; execution?: unknown; error?: string }> = [];
+
+    for (const item of plan.items) {
+      const actionPlan: ActionPlan = {
+        planId: `strategy-${item.bucketId}-${Date.now()}`,
+        agentId: strategy.agentId,
+        type: 'transfer',
+        amount: item.amount,
+        destination: item.destination,
+        reason: `Yield distribution [${strategy.strategyId}] bucket "${item.bucketLabel}" (${item.percentage}%)`,
+      };
+
+      await auditLog('plan_submitted', { plan: actionPlan });
+
+      let recipientVerified: boolean | undefined;
+      if (policy.requireVerifiedIdentity) {
+        const identity = await verifyCounterpartyIdentity(actionPlan.destination);
+        recipientVerified = identity.verified;
+      }
+
+      const evalResult = evaluatePlan(policy, actionPlan, { spentToday: 0, recipientVerified });
+      await auditLog('plan_evaluated', { plan: actionPlan, result: evalResult });
+
+      if (evalResult.decision === 'approved' && executor) {
+        try {
+          const tx = await executor.spendYield(
+            actionPlan.destination as Address,
+            parseEther(String(actionPlan.amount)),
+          );
+          await auditLog('execution_result', { plan: actionPlan, result: evalResult, tx });
+          results.push({ bucketId: item.bucketId, decision: evalResult.decision, execution: tx });
+        } catch (error) {
+          const msg = error instanceof Error ? error.message : String(error);
+          await auditLog('execution_result', { plan: actionPlan, result: evalResult, error: msg });
+          results.push({ bucketId: item.bucketId, decision: evalResult.decision, error: msg });
+        }
+      } else if (evalResult.decision === 'approval_required') {
+        const approval = await createApproval(actionPlan, evalResult);
+        await auditLog('approval_requested', { approval });
+        results.push({ bucketId: item.bucketId, decision: evalResult.decision });
+      } else {
+        results.push({ bucketId: item.bucketId, decision: evalResult.decision });
+      }
+    }
+
+    return sendJson(res, 200, { plan, results });
+  } catch (error) {
+    return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
+  }
 }
 
 // --- Router ---
@@ -237,6 +366,25 @@ const server = createServer(async (req, res) => {
 
     if (req.method === 'GET' && url === '/treasury') {
       return await handleTreasuryState(req, res);
+    }
+
+    if (req.method === 'GET' && url === '/strategy') {
+      return await handleGetStrategy(req, res);
+    }
+
+    if (req.method === 'GET' && (url === '/strategy/preview' || url.startsWith('/strategy/preview?'))) {
+      return await handleStrategyPreview(req, res);
+    }
+
+    if (req.method === 'POST' && url === '/strategy/distribute') {
+      return await handleStrategyDistribute(req, res);
+    }
+
+    if (req.method === 'GET' && url.startsWith('/verify/')) {
+      const address = url.split('/verify/')[1]?.split('?')[0];
+      if (address) {
+        return await handleVerifyIdentity(address, res);
+      }
     }
 
     if (req.method === 'GET' && url.startsWith('/approvals')) {

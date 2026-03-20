@@ -114,8 +114,47 @@ else
 fi
 pause
 
-# ── 7. Denied destination ──
-step "7/8  Blocked Destination → Denied"
+# ── 7. Yield Strategy ──
+step "7/10  Yield Strategy Engine"
+narrate "Multi-bucket distribution — agent routes yield to ops, grants, reserve."
+curl -s "$API/strategy" | pj "
+  if(d.error){ console.log('  (No strategy loaded)'); } else {
+    const s=d.strategy;
+    console.log('  Strategy:  ' + s.strategyId);
+    console.log('  Ratio:     ' + (s.distributionRatio*100) + '% of yield');
+    console.log('  Threshold: ' + s.minYieldThreshold + ' wstETH min');
+    s.buckets.forEach(b => console.log('  Bucket:    ' + b.label + ' → ' + b.percentage + '%'));
+  }
+"
+pause
+
+# ── 8. Strategy Preview ──
+step "8/10  Strategy Preview (Dry Run)"
+narrate "Preview how 0.1 wstETH yield would be distributed across buckets."
+curl -s "$API/strategy/preview?yield=0.1&perTxCap=0.05" | pj "
+  if(d.error){ console.log('  ' + d.error); } else {
+    const p=d.plan;
+    console.log('  Total to distribute: ' + p.totalToDistribute.toFixed(6) + ' wstETH');
+    p.items.forEach(i => console.log('    ' + i.bucketLabel + ': ' + i.amount.toFixed(6) + ' wstETH → ' + i.destination.slice(0,10) + '...'));
+    if(p.skippedItems.length) p.skippedItems.forEach(s => console.log('    SKIP: ' + s.bucketId + ' — ' + s.reason));
+  }
+"
+pause
+
+# ── 9. ERC-8004 Identity ──
+step "9/10  ERC-8004 Trust Verification"
+narrate "Before paying a recipient, verify their on-chain agent identity."
+curl -s "$API/verify/0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6" | pj "
+  console.log('  Address:  0x4fD6...DCe6');
+  console.log('  Verified: ' + d.verified);
+  if(d.agentId) console.log('  Agent ID: ' + d.agentId);
+  if(d.name) console.log('  Name:     ' + d.name);
+  console.log('  → Unverified recipients escalate to human approval.');
+"
+pause
+
+# ── 10. Denied destination ──
+step "10/10  Blocked Destination → Denied"
 narrate "Agent tries to send to a denied address. Policy engine blocks it immediately."
 curl -s -X POST "$API/plans/evaluate" \
   -H 'content-type: application/json' \
@@ -127,8 +166,9 @@ curl -s -X POST "$API/plans/evaluate" \
 "
 pause
 
-# ── 8. Audit trail ──
-step "8/8  Audit Trail"
+# ── Audit trail ──
+echo ""
+echo -e "${BOLD}--- Audit Trail ---${RESET}"
 narrate "Every action is logged — append-only, tamper-evident."
 curl -s "$API/audit" | pj "
   const types = {};
@@ -146,6 +186,8 @@ echo -e "${BOLD}============================================${RESET}"
 echo ""
 echo -e "  ${GREEN}✓${RESET} Auto-approved spend (below threshold)"
 echo -e "  ${GREEN}✓${RESET} Human-approved spend (above threshold)"
+echo -e "  ${GREEN}✓${RESET} Multi-bucket yield strategy"
+echo -e "  ${GREEN}✓${RESET} ERC-8004 trust verification"
 echo -e "  ${RED}✗${RESET} Denied spend (blocked destination)"
 echo -e "  ${GREEN}✓${RESET} Full audit trail captured"
 echo ""

@@ -5,8 +5,13 @@
  * Monitors treasury state + Lido governance, fuses signals into
  * autonomous spend/hold decisions — all bounded by the policy engine.
  *
- * Loop:  check treasury → check governance → decide → act → sleep → repeat
+ * Loop:  check treasury -> check governance -> decide -> act -> sleep -> repeat
  */
+
+import { resolve } from 'node:path';
+import { access } from 'node:fs/promises';
+import { loadStrategy, computeDistribution } from '../../../packages/strategy-engine/src/index.js';
+import type { YieldStrategyConfig } from '../../../packages/shared/src/index.js';
 
 const API = process.env.API_URL ?? 'http://localhost:3001';
 const INTERVAL_MS = Number(process.env.LOOP_INTERVAL_MS ?? 5 * 60 * 1000); // 5 min default
@@ -49,6 +54,18 @@ function log(level: string, msg: string, data?: Record<string, unknown>) {
   const ts = new Date().toISOString();
   const extra = data ? ' ' + JSON.stringify(data) : '';
   console.log(`[${ts}] [${level}] ${msg}${extra}`);
+}
+
+// --- Strategy loader ---
+
+async function tryLoadStrategy(): Promise<YieldStrategyConfig | null> {
+  const strategyPath = resolve(process.cwd(), 'config', 'sample-yield-strategy.json');
+  try {
+    await access(strategyPath);
+    return await loadStrategy(strategyPath);
+  } catch {
+    return null;
+  }
 }
 
 // --- Governance check ---
@@ -96,6 +113,7 @@ async function tick(): Promise<void> {
 
   const yieldAvailable = parseFloat(treasury.treasury.availableYield.formatted);
   const principal = parseFloat(treasury.treasury.principal.formatted);
+  const perTxCap = parseFloat(treasury.treasury.perTxCap.formatted);
   log('INFO', 'Treasury state', { yield: yieldAvailable, principal });
 
   // 2. Check governance
@@ -115,20 +133,89 @@ async function tick(): Promise<void> {
     return;
   }
 
-  // 3. Decide
+  // 3. Try multi-bucket strategy first, fall back to single-recipient
+  const strategy = await tryLoadStrategy();
+
+  if (strategy) {
+    await tickWithStrategy(strategy, yieldAvailable, perTxCap);
+  } else {
+    await tickSingleRecipient(yieldAvailable, perTxCap);
+  }
+}
+
+// --- Multi-bucket distribution ---
+
+async function tickWithStrategy(
+  strategy: YieldStrategyConfig,
+  yieldAvailable: number,
+  perTxCap: number,
+): Promise<void> {
+  log('INFO', `Using yield strategy: ${strategy.strategyId} (${strategy.buckets.length} buckets)`);
+
+  const plan = computeDistribution(strategy, yieldAvailable, perTxCap);
+
+  if (plan.items.length === 0) {
+    const reasons = plan.skippedItems.map((s) => `${s.bucketId}: ${s.reason}`).join('; ');
+    log('SKIP', `No distribution items — ${reasons}`);
+    return;
+  }
+
+  log('INFO', `Distribution plan: ${plan.items.length} items, total ${plan.totalToDistribute.toFixed(6)} wstETH`);
+
+  for (const item of plan.items) {
+    log('INFO', `Submitting bucket "${item.bucketLabel}": ${item.amount.toFixed(6)} wstETH -> ${item.destination}`);
+
+    try {
+      const result = await api<EvalResult>('/plans/evaluate', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          planId: `auto-${item.bucketId}-${Date.now()}`,
+          agentId: strategy.agentId,
+          type: 'transfer',
+          amount: item.amount,
+          destination: item.destination,
+          reason: `Yield distribution [${strategy.strategyId}] bucket "${item.bucketLabel}" (${item.percentage}%) — ${yieldAvailable.toFixed(6)} available`,
+        }),
+      });
+
+      log('INFO', `Bucket "${item.bucketLabel}" policy decision: ${result.result.decision}`, {
+        reasons: result.result.reasons,
+      });
+
+      if (result.execution) {
+        log('INFO', `Bucket "${item.bucketLabel}" executed on-chain: ${result.execution.hash}`);
+      } else if (result.approval) {
+        log('INFO', `Bucket "${item.bucketLabel}" approval required: ${result.approval.approvalId}`);
+      } else if (result.executionError) {
+        log('WARN', `Bucket "${item.bucketLabel}" execution failed: ${result.executionError}`);
+      }
+    } catch (err) {
+      log('ERROR', `Bucket "${item.bucketLabel}" failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  if (plan.skippedItems.length > 0) {
+    log('INFO', `Skipped buckets: ${plan.skippedItems.map((s) => `${s.bucketId}: ${s.reason}`).join('; ')}`);
+  }
+}
+
+// --- Single-recipient fallback (original logic) ---
+
+async function tickSingleRecipient(yieldAvailable: number, perTxCap: number): Promise<void> {
   if (yieldAvailable < YIELD_THRESHOLD) {
     log('SKIP', `Yield ${yieldAvailable} below threshold ${YIELD_THRESHOLD}`);
     return;
   }
 
   if (!SPEND_RECIPIENT) {
-    log('SKIP', 'No SPEND_RECIPIENT configured — dry run only');
+    log('SKIP', 'No SPEND_RECIPIENT configured and no strategy file — dry run only');
     return;
   }
 
-  // 4. Act — submit plan through policy engine
-  const spendAmount = Math.min(yieldAvailable * 0.5, parseFloat(treasury.treasury.perTxCap.formatted));
-  log('INFO', `Submitting spend plan: ${spendAmount} wstETH → ${SPEND_RECIPIENT}`);
+  // Submit plan through policy engine
+  const spendAmount = Math.min(yieldAvailable * 0.5, perTxCap);
+  log('INFO', `Submitting spend plan: ${spendAmount} wstETH -> ${SPEND_RECIPIENT}`);
 
   const result = await api<EvalResult>('/plans/evaluate', {
     method: 'POST',
