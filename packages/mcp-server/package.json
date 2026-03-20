@@ -1,0 +1,19 @@
+{
+  "name": "@synthesis/mcp-server",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/server.js",
+  "bin": {
+    "synthesis-mcp": "dist/server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "*",
+    "@synthesis/shared": "0.1.0",
+    "viem": "*",
+    "zod": "*"
+  },
+  "scripts": {
+    "build": "node ../../node_modules/typescript/bin/tsc -p tsconfig.json",
+    "check": "node ../../node_modules/typescript/bin/tsc -p tsconfig.json --noEmit"
+  }
+}

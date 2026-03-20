@@ -13,8 +13,10 @@
     "dev:api": "npm --workspace @synthesis/api run dev"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
     "@types/node": "^24.5.2",
     "typescript": "^5.9.3",
-    "viem": "^2.47.5"
+    "viem": "^2.47.5",
+    "zod": "^4.3.6"
   }
 }
