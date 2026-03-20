@@ -15,9 +15,9 @@
 
 | Metric | Count |
 |--------|-------|
-| Total commits | 23 |
-| TypeScript source files | 18 |
-| Lines of TypeScript | 2,127 |
+| Total commits | 31 |
+| TypeScript source files | 20 |
+| Lines of TypeScript | 2,315 |
 | Solidity source files | 3 |
 | Lines of Solidity | 219 |
 | Unit tests | 12 |
