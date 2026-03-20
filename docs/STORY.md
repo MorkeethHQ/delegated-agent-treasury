@@ -87,9 +87,21 @@ The API and policy engine are convenience layers. The *trust boundary* is the sm
 
 The future of AI isn't agents that ask permission for every dollar. It's agents with *bounded autonomy* — real authority within safe limits.
 
-- A marketing agent that can spend up to $50/day on approved platforms from yield, without touching the campaign budget
-- A DevOps agent that pays for cloud resources from treasury yield, capped per transaction
-- A trading agent with yield-funded operations that can never drain the principal
+### Use cases that become possible
+
+**The self-funding research agent.** A company deposits 10 wstETH. The agent uses accrued yield to pay for API calls (OpenAI, search, databases), cloud compute, and data feeds. The research budget regenerates passively. If the agent is compromised, the attacker gets access to ~0.03 wstETH of monthly yield — not 10 wstETH of principal.
+
+**The DAO operations agent.** A DAO deposits treasury wstETH. The agent handles routine payments — contributor stipends, infrastructure costs, bounty payouts — all from yield. The DAO's principal stays locked, earning more yield. The agent's spending is capped, whitelisted, and auditable by any DAO member.
+
+**The multi-agent hierarchy.** A parent agent manages a treasury and allocates yield budgets to sub-agents. Marketing sub-agent gets 30% of yield to whitelisted ad platforms. DevOps sub-agent gets 20% for infrastructure. Each has its own per-tx cap and recipient whitelist. The parent agent monitors via the audit trail and can revoke permissions.
+
+**The agent-to-agent economy.** Agent A provides a service (data analysis, content generation, code review). Agent B pays for it from yield. The payment flows through the treasury — whitelisted, capped, logged. Neither agent has access to the other's principal. This is the economic primitive for agent services.
+
+**The personal AI assistant with a budget.** You deposit wstETH and set a per-tx cap of $5. Your assistant books restaurants, pays for subscriptions, tips content creators — all from yield. You check the audit log weekly. If something looks wrong, you revoke the agent and withdraw principal. Zero risk to savings.
+
+### What makes yield-only spending different
+
+Traditional agent budgets are a pile of money that gets smaller. Yield-only spending is a *stream* that regenerates. The agent's spending power is naturally rate-limited by real economic activity (staking rewards), not arbitrary budget cycles. The principal is always safe — not because of policy, but because of math.
 
 This isn't hypothetical. The contracts are deployed on Base mainnet. The yield is real. The agent can spend today.
 
