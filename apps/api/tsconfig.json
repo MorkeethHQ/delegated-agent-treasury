@@ -8,6 +8,7 @@
     "../../packages/approval-store/src/**/*.ts",
     "../../packages/executor/src/**/*.ts",
     "../../packages/strategy-engine/src/**/*.ts",
-    "../../packages/trading-engine/src/**/*.ts"
+    "../../packages/trading-engine/src/**/*.ts",
+    "../../packages/x402-gateway/src/**/*.ts"
   ]
 }
