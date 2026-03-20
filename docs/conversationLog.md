@@ -1,0 +1,118 @@
+# Conversation Log — Human-Agent Collaboration
+
+## Project
+Synthesis Agent Treasury — yield-only spending for AI agents, backed by wstETH on Base.
+
+## Participants
+- **Oscar** (human) — architect, orchestrator, funder
+- **Bagel** (AI agent, Cursor) — contract developer, deployment, core flow
+- **Claude Code** (AI agent, CLI) — approval backend, policy engine, MCP server, CLI, docs
+
+## Timeline
+
+### Day 1 — Direction & Architecture
+
+**Oscar → Both agents:** "I'm building for the Synthesis hackathon with my bot Bagel. What can we do?"
+
+**Division of labor established:**
+- Bagel: core flow, contract deployment, integration
+- Claude Code: approvals backend, CLI, docs/demo polish
+
+**Key decisions:**
+- Oscar killed the web UI: "Can we make it human AND agent compatible without a web UI?" Both agents agreed — CLI + skill.md + MCP is more aligned with hackathon ethos (judges are AI agents).
+- Chain: Base Sepolia for demo, with production path to Base mainnet.
+- Focus: "Keep it brutally simple. One clean demo path, not feature breadth."
+
+### Day 1 — Core Build
+
+**Claude Code built (autonomously):**
+- Policy engine with 12 unit tests (agent match, caps, thresholds, allow/deny lists)
+- Approval store with file persistence
+- REST API: 8 endpoints (health, evaluate, approvals, respond, audit, policy, treasury)
+- CLI: 9 commands (health, policy, evaluate, approvals, approve, deny, audit, treasury, demo)
+- Audit logger (append-only JSONL)
+- skill.md for agent-callable interface
+
+**Bagel built (autonomously):**
+- AgentTreasury.sol — wstETH treasury with yield-only spending, recipient whitelist, per-tx cap
+- MockWstETH.sol — testnet mock with simulateYield()
+- Deployed both to Base Sepolia
+
+**Oscar relayed** contract addresses from Bagel to Claude Code. Claude Code wired up the executor (viem integration layer).
+
+### Day 1 — Integration Point
+
+**Bagel → Oscar:** "We're at the real integration point. Next: mint, deposit, set agent."
+
+**Oscar → Both:** "Plan locked: Bagel does treasury config, Claude does small E2E immediately after."
+
+### Day 2 — MCP Server & Bounty Strategy
+
+**Oscar:** "Go ahead on the MCP task."
+
+**Claude Code built the Lido MCP server in ~10 minutes** (estimated 8 hours). 11 tools covering treasury operations, Lido staking (stake, wrap, unwrap, withdraw), balance/rate queries, protocol stats, and governance proposals. All write operations support dry_run simulation. Thin wrapper on existing executor — most of the work was already done.
+
+**Oscar:** "Funny you said it would take 8 hours but you did it in 10 minutes."
+
+**Bounty research:** Claude Code analyzed all 46 hackathon bounties. Identified 3 realistic targets:
+- Lido stETH Agent Treasury ($3K)
+- Lido MCP Server ($5K)
+- Synthesis Open Track ($14.5K)
+
+### Day 2 — Innovation Push
+
+**Oscar:** "Are there ways to make this more innovative?"
+
+**Claude Code identified:**
+1. Base mainnet deployment (real wstETH, real yield)
+2. ERC-8004 on-chain agent identity
+
+**Oscar:** "I love it. I can fund Base mainnet." Sent ETH to Base mainnet and messaged Bagel to deploy.
+
+### Day 2 — Polish & Audit
+
+**Claude Code (autonomously):**
+- Dual-chain support (RPC_URL env var, .env.example with both configs)
+- Fixed missing `await` on async approval store calls (bug caught during build)
+- Mainnet placeholders across all docs for instant-patch
+- Three pitch variants (30s, 2min, 5min)
+- Submission copy
+- Judge demo script
+- Story narrative ("An Agent With a Wallet")
+- Governance tool for Lido MCP bounty requirement
+- Full self-audit as agent judge (20 issues found, all critical ones fixed)
+
+### Day 3 — Final Prep
+
+**Oscar:** "No more scope expansion. Focused on mainnet deploy + ERC-8004 registration."
+
+**Claude Code:** Locked in patch/verify mode. All placeholders ready for instant replacement. Mainnet verify script prepared. ConversationLog written.
+
+## Collaboration Model
+
+Oscar never wrote code. He wrote intent, made strategic decisions, and funded deployment. The two AI agents worked autonomously within their domains, communicating through a shared Git repo with Oscar as the message bus.
+
+```
+Oscar decides direction
+    ├── tells Bagel: "deploy AgentTreasury on Base Sepolia"
+    │       └── Bagel deploys, returns addresses
+    ├── tells Claude: "wire up the executor to these addresses"
+    │       └── Claude builds integration, CLI, tests
+    └── reviews both, resolves conflicts, pushes forward
+```
+
+## Key Pivots
+
+1. **Web UI → CLI + skill.md + MCP** — Oscar's call. Right decision for agent-native judges.
+2. **Testnet only → Dual-chain** — Claude identified mainnet as innovation differentiator. Oscar funded it.
+3. **ERC-8004 identity** — Discovered mid-hackathon. Not in original scope but adds verifiable on-chain agent identity.
+4. **Governance tool** — Added after bounty audit revealed it was a hard requirement for $5K MCP bounty.
+
+## Artifacts
+
+- 8 packages in monorepo (shared, policy-engine, approval-store, audit-log, executor, mcp-server, api, cli)
+- 1 Solidity contract (AgentTreasury) + 1 mock (MockWstETH)
+- 11 MCP tools
+- 12 unit tests
+- 3 demo scripts
+- Deployed on Base Sepolia, Base mainnet pending
