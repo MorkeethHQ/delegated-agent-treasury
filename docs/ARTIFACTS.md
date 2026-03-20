@@ -25,17 +25,18 @@
 | Unit tests | 12 |
 | Demo scripts | 3 |
 
-## Packages (7)
+## Packages (8)
 
 | Package | Purpose |
 |---------|---------|
-| `shared` | Domain types (Policy, ActionPlan, ApprovalRequest, AuditEvent, YieldStrategy) |
-| `policy-engine` | Rule evaluation — agent match, caps, thresholds, allow/deny lists, trust-gating |
+| `shared` | Domain types (Policy, ActionPlan, ApprovalRequest, AuditEvent, YieldStrategy, TradingStrategy) |
+| `policy-engine` | Rule evaluation — agent match, caps, thresholds, allow/deny lists, trust-gating, swap-aware |
 | `approval-store` | In-memory + file-persisted approval lifecycle |
 | `audit-log` | Append-only JSONL event logging |
 | `executor` | Viem integration layer (API ↔ contract) + ERC-8004 identity verification |
-| `mcp-server` | 15-tool MCP server for treasury, staking, governance, strategy, trust |
+| `mcp-server` | 18-tool MCP server for treasury, staking, governance, strategy, trust, trading |
 | `strategy-engine` | Multi-bucket yield distribution engine |
+| `trading-engine` | Uniswap Trading API client — quotes, swaps, DCA on Base |
 
 ## Apps (3)
 
@@ -45,7 +46,7 @@
 | `cli` | CLI: 9 commands — health, policy, evaluate, approvals, approve, deny, audit, treasury, demo |
 | `agent-loop` | Autonomous governance-aware yield spending agent — monitors treasury + Lido governance, decides spend/hold |
 
-## MCP Tools (15)
+## MCP Tools (18)
 
 ### Treasury (3)
 - `get_treasury_state` — available yield, principal, total spent, per-tx cap
@@ -72,7 +73,12 @@
 ### Trust (1)
 - `verify_counterparty_identity` — ERC-8004 on-chain identity lookup for recipient
 
-## API Endpoints (12)
+### Trading (3)
+- `get_swap_quote` — live Uniswap quote for yield token swaps on Base
+- `preview_yield_swap` — preview DCA/strategy execution with current yield
+- `execute_yield_swap` — execute policy-gated swap (supports dry_run)
+
+## API Endpoints (15)
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -88,6 +94,9 @@
 | GET | `/strategy/preview` | Dry-run yield distribution preview |
 | POST | `/strategy/distribute` | Trigger manual yield distribution |
 | GET | `/verify/:address` | ERC-8004 identity verification |
+| GET | `/swap/tokens` | Supported tokens on Base |
+| GET | `/swap/quote` | Live Uniswap swap quote |
+| POST | `/swap/execute` | Policy-gated yield swap execution |
 
 ## Scripts
 

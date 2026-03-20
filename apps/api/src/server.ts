@@ -16,6 +16,12 @@ import { createExecutor, type Executor } from '../../../packages/executor/src/in
 import { verifyCounterpartyIdentity } from '../../../packages/executor/src/erc8004.js';
 import type { ActionPlan, AuditEvent, Policy, DistributionPlan } from '../../../packages/shared/src/index.js';
 import { loadStrategy, computeDistribution } from '../../../packages/strategy-engine/src/index.js';
+import {
+  getQuote,
+  getIndicativeQuote,
+  executeSwap,
+  TOKENS,
+} from '../../../packages/trading-engine/src/index.js';
 
 const root = process.cwd();
 const policyPath = resolve(root, 'config', 'sample-policy.json');
@@ -338,6 +344,86 @@ async function handleStrategyDistribute(req: IncomingMessage, res: ServerRespons
   }
 }
 
+// --- Swap / Trading handlers ---
+
+async function handleSwapQuote(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const reqUrl = new URL(req.url ?? '', `http://${req.headers.host}`);
+  const tokenIn = reqUrl.searchParams.get('tokenIn');
+  const tokenOut = reqUrl.searchParams.get('tokenOut');
+  const amount = reqUrl.searchParams.get('amount');
+
+  if (!tokenIn || !tokenOut || !amount) {
+    return sendJson(res, 400, { error: 'Missing required query params: tokenIn, tokenOut, amount' });
+  }
+
+  try {
+    const quote = await getIndicativeQuote(tokenIn, tokenOut, amount);
+    return sendJson(res, 200, { quote });
+  } catch (error) {
+    return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
+  }
+}
+
+async function handleSwapExecute(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  try {
+    const body = await parseBody(req);
+    const { agentId, tokenOut, amount, reason, dryRun = true } = JSON.parse(body) as {
+      agentId: string;
+      tokenOut: string;
+      amount: string;
+      strategy?: string;
+      reason: string;
+      dryRun?: boolean;
+    };
+
+    if (!agentId || !tokenOut || !amount || !reason) {
+      return sendJson(res, 400, { error: 'Missing required fields: agentId, tokenOut, amount, reason' });
+    }
+
+    // Default tokenIn is wstETH
+    const tokenIn = TOKENS.wstETH.address;
+
+    // Evaluate through policy engine
+    const policy = await readJsonFile<Policy>(policyPath);
+    const plan: ActionPlan = {
+      planId: `swap-${Date.now()}`,
+      agentId,
+      type: 'swap',
+      amount: 0, // policy uses number; we pass 0 and rely on the swap amount
+      destination: tokenOut,
+      reason,
+    };
+
+    await auditLog('plan_submitted', { plan, swapDetails: { tokenIn, tokenOut, amount, dryRun } });
+
+    const evalResult = evaluatePlan(policy, plan, { spentToday: 0 });
+    await auditLog('plan_evaluated', { plan, result: evalResult });
+
+    if (evalResult.decision === 'denied') {
+      return sendJson(res, 403, { result: evalResult, message: 'Swap denied by policy engine' });
+    }
+
+    if (evalResult.decision === 'approval_required') {
+      const approval = await createApproval(plan, evalResult);
+      await auditLog('approval_requested', { approval });
+      return sendJson(res, 200, { result: evalResult, approval, message: 'Swap requires approval' });
+    }
+
+    // Approved — get quote and optionally execute
+    const swapperAddress = executor?.agentAddress ?? '0x0000000000000000000000000000000000000000';
+    const swapResult = await executeSwap(tokenIn, tokenOut, amount, swapperAddress, dryRun);
+    await auditLog('execution_result', { plan, result: evalResult, swap: swapResult });
+
+    return sendJson(res, 200, { result: evalResult, swap: swapResult });
+  } catch (error) {
+    return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
+  }
+}
+
+async function handleSwapTokens(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  return sendJson(res, 200, { tokens: TOKENS, chainId: 8453, chain: 'base' });
+}
+
 // --- Router ---
 
 const server = createServer(async (req, res) => {
@@ -402,6 +488,20 @@ const server = createServer(async (req, res) => {
 
     if (req.method === 'GET' && url === '/audit') {
       return await handleAuditEvents(req, res);
+    }
+
+    // --- Swap / Trading routes ---
+
+    if (req.method === 'GET' && url.startsWith('/swap/quote')) {
+      return await handleSwapQuote(req, res);
+    }
+
+    if (req.method === 'POST' && url === '/swap/execute') {
+      return await handleSwapExecute(req, res);
+    }
+
+    if (req.method === 'GET' && url === '/swap/tokens') {
+      return await handleSwapTokens(req, res);
     }
 
     return sendJson(res, 404, { error: 'Not found' });
