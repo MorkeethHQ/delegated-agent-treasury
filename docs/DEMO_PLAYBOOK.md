@@ -191,21 +191,24 @@ export BASE_SEPOLIA_RPC=https://sepolia.base.org
 6. Audit log: approval_granted + execution_result with tx hash
 ```
 
-### CLI commands (planned)
+### CLI commands
 
 ```bash
 # List pending approvals
-synthesis approvals list --status pending
+synthesis approvals pending
 
-# Approve
-synthesis approvals respond <id> --decision approved
+# Approve / deny
+synthesis approve <id> [respondedBy]
+synthesis deny <id> [respondedBy]
 
-# Check treasury state
-synthesis treasury balance
-synthesis treasury yield
+# Check on-chain treasury state
+synthesis treasury
 
 # View audit trail
-synthesis audit --limit 10
+synthesis audit 10
+
+# Run full end-to-end demo
+synthesis demo
 ```
 
 ---

@@ -1,56 +1,47 @@
 # TASKS.md
 
-## Priority order
+## Completed
 
-### P0 — complete live demo path
-- [ ] Add approval request persistence
-- [ ] Add `POST /approvals/:id/respond`
-- [ ] Add `GET /approvals`
-- [ ] Add audit events for approval requested / granted / denied
-- [ ] Add Base Sepolia transfer execution adapter
-- [ ] Add policy hook so execution only happens after approval logic passes
-- [ ] Add one end-to-end test flow
+### P0 — live demo path
+- [x] Approval request persistence (packages/approval-store)
+- [x] POST /approvals/:id/respond endpoint
+- [x] GET /approvals endpoint
+- [x] Audit events for approval lifecycle (submitted → evaluated → requested → granted/denied)
+- [x] Base Sepolia execution adapter (packages/executor, viem)
+- [x] Policy hook — execution only after approval passes
+- [x] AgentTreasury + MockWstETH contracts deployed on Base Sepolia
+- [x] CLI with full approve/deny/demo flow
 
-### P1 — minimal operator UI
-- [ ] Show pending approvals
-- [ ] Approve / deny buttons
-- [ ] Show recent audit events
-- [ ] Show current policy summary
+### P1 — operator interface
+- [x] CLI: list pending approvals
+- [x] CLI: approve/deny commands
+- [x] CLI: audit event feed
+- [x] CLI: policy summary
+- [x] CLI: treasury state (on-chain)
+- [x] CLI: full demo command (mint → deposit → permissions → yield → spend → verify)
 
-### P2 — polish for judges/demo
-- [ ] Seed example policies
-- [ ] Seed example demo scenarios
-- [ ] Add README demo instructions
-- [ ] Add architecture diagram or simple flow graphic
-- [ ] Add short pitch copy to repo
+### P2 — polish
+- [x] Sample policy + action plan
+- [x] README with demo instructions + architecture
+- [x] skill.md (agent-callable interface)
+- [x] .env.example
+- [x] Fallback demo script (scripts/demo-api-only.sh)
+- [x] CONTRACT_SPEC.md + DEMO_PLAYBOOK.md
 
-## Suggested task split for contributors
+## Remaining
 
-### Contributor A — backend / approvals
-- approval request storage
-- approval endpoints
-- approval audit events
+### Now — end-to-end verification
+- [ ] Bagel configures treasury (mint, deposit, setAgent, addRecipient, setPerTxCap, simulateYield)
+- [ ] Run full API → contract → execution test with live treasury
+- [ ] Verify CLI demo command against live contracts
 
-### Contributor B — execution
-- Base Sepolia wallet wiring
-- transfer executor
-- transaction result logging
-- safe config handling
+### Submission prep
+- [ ] Register on synthesis.devfolio.co
+- [ ] Prepare conversationLog (human-agent collaboration narrative)
+- [ ] Select tracks: Lido stETH Treasury, Open Track, Base Agent Services
+- [ ] ERC-8004 identity registration
+- [ ] Submit before March 22
 
-### Contributor C — frontend / demo UX
-- tiny UI for approvals
-- recent audit feed
-- policy summary panel
-
-### Contributor D — docs / pitch / demo prep
-- refine README
-- contributor handoff docs
-- demo script
-- judge-facing framing
-
-## Definition of done for tonight
-- can submit plan
-- can receive `approved` or `approval_required`
-- can approve a pending action
-- can execute a tiny Base Sepolia transfer
-- can show audit trail of full flow
+### Stretch — Lido MCP ($5K bounty)
+- [ ] Evaluate: thin MCP wrapper on existing executor (~435 lines, ~8h)
+- [ ] Only if additive, not a pivot

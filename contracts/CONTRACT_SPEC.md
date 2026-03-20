@@ -52,7 +52,7 @@ availableYield = yieldInWstETH - alreadySpent
 
 ### Events
 ```solidity
-event Deposited(address indexed owner, uint256 amount, uint256 initialRate);
+event Deposited(address indexed owner, uint256 amount, uint256 rate);
 event YieldSpent(address indexed agent, address indexed to, uint256 amount);
 event PrincipalWithdrawn(address indexed owner, uint256 amount);
 event AgentSet(address indexed agent);

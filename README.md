@@ -148,9 +148,22 @@ See [`skill.md`](skill.md) for the agent-callable interface.
 
 ## Hackathon tracks
 
-- **Agents that Pay** (bond.credit) — transparent payment authority for agent transactions
 - **stETH Agent Treasury** (Lido) — yield-only spending from wstETH with permission controls
+- **Agents that Pay** (bond.credit) — transparent payment authority for agent transactions
+- **Agent Services on Base** (Base) — discoverable agent services on Base
 - **Synthesis Open Track** — community-funded prize pool
+
+## Roadmap
+
+**Current (hackathon):** Single-agent treasury on Base Sepolia with mock wstETH yield.
+
+**Post-hackathon:**
+- Deploy to Base mainnet with real wstETH (`0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`)
+- Multi-agent support — parent agents allocate yield budgets to sub-agents
+- Time-windowed permissions (spending windows, cooldown periods)
+- MCP server — make the treasury natively callable from Claude, Cursor, etc.
+- Policy authoring UI — visual editor for permission rules
+- Cross-chain support — wstETH on Arbitrum, Optimism, Polygon
 
 ## Built with
 
