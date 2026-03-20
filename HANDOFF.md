@@ -27,7 +27,7 @@ Dual-chain support ready. Base Sepolia deployed, Base mainnet pending treasury d
 **Base Mainnet (chain 8453)**
 - AgentTreasury: `<MAINNET_TREASURY_ADDRESS>`
 - wstETH: `0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`
-- Agent Identity (ERC-8004): `<ERC8004_AGENT_ID>`
+- Agent Identity (ERC-8004): `10ee7e7e703b4fc493e19f512b5ae09d`
 
 ### Remaining
 - Bagel deploys AgentTreasury to Base mainnet → patch address into all docs

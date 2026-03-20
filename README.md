@@ -78,7 +78,7 @@ node dist/apps/cli/src/cli.js treasury
 | AgentTreasury | `<MAINNET_TREASURY_ADDRESS>` |
 | wstETH | [`0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`](https://basescan.org/address/0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452) |
 | Chain | Base (8453) |
-| Agent Identity (ERC-8004) | `<ERC8004_AGENT_ID>` |
+| Agent Identity (ERC-8004) | `10ee7e7e703b4fc493e19f512b5ae09d` |
 
 ```bash
 export CHAIN=base
@@ -169,7 +169,7 @@ See [`skill.md`](skill.md) for the agent-callable interface.
 
 The treasury agent is registered on Base mainnet via [ERC-8004](https://eips.ethereum.org/EIPS/eip-8004), providing on-chain verifiable identity for the AI agent managing this treasury.
 
-- **Agent ID**: `<ERC8004_AGENT_ID>`
+- **Agent ID**: `10ee7e7e703b4fc493e19f512b5ae09d`
 - **Registry**: Base mainnet
 - **Linked wallet**: Agent signing key (same as `AGENT_PRIVATE_KEY`)
 

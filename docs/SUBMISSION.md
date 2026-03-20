@@ -43,7 +43,7 @@ The entire project was built by one human (Oscar) orchestrating two AI agents: B
 - Repo: https://github.com/MorkeethHQ/delegated-agent-treasury
 - Base Mainnet Treasury: `<MAINNET_TREASURY_ADDRESS>`
 - Base Sepolia Treasury: `0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0`
-- Agent Identity (ERC-8004): `<ERC8004_AGENT_ID>`
+- Agent Identity (ERC-8004): `10ee7e7e703b4fc493e19f512b5ae09d`
 - wstETH on Base: `0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`
 
 ## Team
