@@ -82,13 +82,11 @@
 | `scripts/register-erc8004.sh` | Devfolio agent registration |
 | `scripts/submit.sh` | Hackathon project submission |
 
-## Hackathon Tracks (6)
+## Hackathon Tracks (4)
 
-| Track | Sponsor | UUID |
-|-------|---------|------|
-| stETH Agent Treasury | Lido | `5e445a077b5248e0974904915f76e1a0` |
-| Lido MCP | Lido | `ee885a40e4bc4d3991546cec7a4433e2` |
-| Synthesis Open Track | Community | `fdb76d08812b43f6a5f454744b66f590` |
-| Agents that Pay | bond.credit | `17ddda1d3cd1483aa4cfc45d493ac653` |
-| Agents With Receipts — ERC-8004 | Protocol Labs | `3bf41be958da497bbb69f1a150c76af9` |
-| Agent Services on Base | Base | `6f0e3d7dcadf4ef080d3f424963caff5` |
+| Track | Sponsor | UUID | Fit |
+|-------|---------|------|-----|
+| stETH Agent Treasury | Lido | `5e445a077b5248e0974904915f76e1a0` | Strong |
+| Lido MCP | Lido | `ee885a40e4bc4d3991546cec7a4433e2` | Strong |
+| Synthesis Open Track | Community | `fdb76d08812b43f6a5f454744b66f590` | Universal |
+| Agents With Receipts — ERC-8004 | Protocol Labs | `3bf41be958da497bbb69f1a150c76af9` | Partial |
