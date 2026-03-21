@@ -81,16 +81,19 @@
 
 ---
 
-## Bounty Targets (6 tracks, ~$50K potential)
+## Bounty Targets (9 tracks, ~$62.5K potential)
 
 | Track | Prize | Status |
 |-------|-------|--------|
 | Synthesis Open Track | ~$28K | Ready |
-| Lido stETH Treasury | $3K | Ready |
-| Lido MCP Server | $5K | Ready (18 tools) |
-| ERC-8004 Agents With Receipts | $4K | Ready (trust-gating) |
-| Uniswap | $5K | Ready (live quotes, dry-run swaps) |
+| stETH Agent Treasury (Lido) | $3K | Ready |
+| Lido MCP | $5K | Ready (24 tools) |
+| Agents With Receipts — ERC-8004 | $4K | Ready (trust-gating) |
+| Agentic Finance (Uniswap) | $5K | Ready (live swap on Base mainnet) |
 | Agent Services on Base | $5K | Ready (x402 gateway) |
+| Let the Agent Cook (Protocol Labs) | $4K | Ready (multi-agent, ERC-8004, agent.json) |
+| Autonomous Trading Agent (Base) | $5K | Ready (DCA strategies, policy-gated) |
+| MoonPay CLI Agents | $3.5K | Ready (bridge + 3 MCP tools) |
 
 ## Policy Config
 

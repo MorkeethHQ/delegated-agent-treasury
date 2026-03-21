@@ -33,15 +33,22 @@ Synthesis Agent Treasury creates bounded financial autonomy. A human deposits ws
 
 On Base mainnet, the contract uses a Chainlink oracle for the wstETH/stETH exchange rate, solving the L2 challenge of bridged wstETH not exposing native rate functions.
 
-Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Solidity and deployed on-chain. Claude Code built the 9-package TypeScript system — policy engine, trading engine, strategy engine, x402 gateway, MCP server, API, CLI, and docs. Zero lines of human-written code.
+**Multi-agent architecture:** Three agent roles (proposer/executor/auditor) with freeze/unfreeze controls. The auditor can halt any agent's spending. The proposer submits plans, the executor signs transactions, and the auditor monitors everything — separation of duties enforced at the API level.
+
+**MoonPay CLI bridge:** 54 crypto tools across 10+ chains (Base, Ethereum, Arbitrum, Polygon, etc.) integrated as an alternative execution backend, all policy-gated through the same engine.
+
+Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Solidity and deployed on-chain. Claude Code built the 10-package TypeScript system — policy engine, trading engine, strategy engine, x402 gateway, MoonPay bridge, MCP server, API, CLI, and docs. Zero lines of human-written code.
 
 ## Tracks
-- Lido: stETH Agent Treasury ($3K)
-- Lido: MCP Server ($5K)
-- Synthesis Open Track (~$28K)
-- Protocol Labs: Agents With Receipts — ERC-8004 ($4K)
-- Uniswap ($5K) — yield-to-swap via Trading API on Base
-- Agent Services on Base ($5K) — x402 payment-gated agent service
+- stETH Agent Treasury (Lido Labs Foundation, $3K)
+- Lido MCP (Lido Labs Foundation, $5K)
+- Synthesis Open Track (Synthesis Community, ~$28K)
+- Agents With Receipts — ERC-8004 (Protocol Labs, $4K)
+- Agentic Finance — Best Uniswap API Integration (Uniswap, $5K)
+- Agent Services on Base (Base, $5K)
+- Let the Agent Cook — No Humans Required (Protocol Labs, $4K)
+- Autonomous Trading Agent (Base, $5K)
+- MoonPay CLI Agents (MoonPay, $3.5K)
 
 ## Tech stack
 - Solidity (Foundry) — AgentTreasury smart contract with Chainlink oracle
@@ -49,7 +56,8 @@ Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Sol
 - Viem — on-chain interaction (treasury + ERC-8004 registry)
 - Uniswap Trading API — yield swap execution on Base
 - x402 (Coinbase) — HTTP 402 payment-gated agent service
-- MCP SDK — 18-tool MCP server
+- MCP SDK — 24-tool MCP server
+- MoonPay CLI — 54-tool crypto execution backend (swaps, DCA, bridges across 10+ chains)
 - wstETH (Lido) — yield-bearing asset
 - Base (mainnet + Sepolia) — deployment chain
 - ERC-8004 — on-chain agent identity + trust-gated payments
@@ -69,4 +77,4 @@ Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Sol
 ## Team
 - Oscar (human) — architect, orchestrator, funder
 - Bagel (AI agent, Cursor) — contract developer, on-chain architecture
-- Claude Code (AI agent, CLI) — systems engineer (10 packages, 24 MCP tools, 16 endpoints)
+- Claude Code (AI agent, CLI) — systems engineer (10 packages, 24 MCP tools, 22 endpoints)
