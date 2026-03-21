@@ -26,7 +26,7 @@
 
 **Tool count: 11** — 3 treasury, 7 staking, 1 governance.
 
-## 3. Synthesis Open Track ($14,500)
+## 3. Synthesis Open Track (~$28,000)
 
 | Criteria | How We Fit |
 |----------|-----------|
@@ -35,7 +35,7 @@
 | Genuine utility | Solves a real problem: agents need bounded financial authority. Yield-only spending from staked assets is a novel primitive. |
 | Coherent build | Single monorepo, 32 commits over 7 days, consistent architecture from contract to MCP to CLI to autonomous loop |
 
-## 4. Agents With Receipts — ERC-8004 (Protocol Labs, $8,004)
+## 4. Agents With Receipts — ERC-8004 (Protocol Labs, $4,000)
 
 | Requirement | How We Meet It |
 |-------------|---------------|
@@ -46,3 +46,31 @@
 | DevSpot compatibility | `agent.json` (manifest) + `agent_log.json` (execution logs) present in repo root |
 
 **Safety guardrails:** Policy engine enforces agent match, destination whitelist, per-tx cap, daily cap, approval thresholds. Governance-aware loop pauses spending during risky protocol votes.
+
+## 5. Uniswap ($5,000)
+
+| Requirement | How We Meet It |
+|-------------|---------------|
+| Use the Uniswap Trading API | Full integration: `POST /quote`, `POST /check_approval`, `POST /swap` via `packages/trading-engine/` |
+| On-chain swap execution | `executeSwapLive()` — check approval → get quote → sign EIP-712 permitData → POST /swap → broadcast tx via viem WalletClient |
+| Live on Base | wstETH → USDC swaps via Uniswap V3 pools on Base (chain 8453). Live quotes returning real prices. |
+| Meaningful use case | Agent deploys yield-only into bounded trading strategies (DCA, swap-to-stable, rebalance). Principal never touches Uniswap. |
+
+**Endpoints:** `GET /swap/quote` (live Uniswap prices), `POST /swap/execute` (policy-gated yield swap), `GET /swap/tokens`, `GET /swap/strategies`.
+**MCP tools:** `get_swap_quote`, `preview_yield_swap`, `execute_yield_swap` — all with dry_run support.
+**Policy controls:** Separate `maxSwapPerAction` (0.01 wstETH) and `maxSlippageBps` (100 = 1%) caps for swaps vs transfers.
+**E2E test:** `scripts/test-swap-e2e.sh` — 7-step integration test with optional `LIVE_SWAP=true` on-chain execution.
+
+## 6. Agent Services on Base ($5,000)
+
+| Requirement | How We Meet It |
+|-------------|---------------|
+| Agent-as-a-service on Base | Treasury API is a discoverable, payable service. Other agents pay USDC to use it via x402. |
+| x402 payment protocol | `packages/x402-gateway/` — HTTP 402 payment gating using Coinbase's x402 standard. Server returns 402 + payment instructions, client signs USDC payment. |
+| USDC payments on Base | Pricing: swap quotes $0.01, swap execution $0.05, strategy preview $0.01, identity verification $0.01. All in USDC on Base. |
+| Multi-agent architecture | 3-role system (proposer/executor/auditor) with freeze/unfreeze. Auditor can halt spending. API: `/agents`, `/agents/:id/freeze`, `/agents/:id/unfreeze`. |
+| On Base mainnet | AgentTreasury deployed at `0x455d76a24e862a8d552a0722823ac4d13e482426`. USDC payments at `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`. |
+
+**Free endpoints:** /health, /policy, /treasury, /swap/tokens, /audit, /x402/pricing.
+**Paid endpoints:** /swap/quote, /swap/execute, /strategy/preview, /verify/:address.
+**MoonPay integration:** Additional execution backend via MoonPay CLI — 54 crypto tools across 10+ chains, policy-gated through same engine.

@@ -57,7 +57,7 @@ Synthesis Agent Treasury — yield-only spending for AI agents, backed by wstETH
 **Bounty research:** Claude Code analyzed all 46 hackathon bounties. Identified 3 realistic targets:
 - Lido stETH Agent Treasury ($3K)
 - Lido MCP Server ($5K)
-- Synthesis Open Track ($14.5K)
+- Synthesis Open Track (~$28K)
 
 ### Day 2 — Innovation Push
 
