@@ -117,3 +117,15 @@
 | API endpoints | `GET /delegation` (framework info + caveat mapping), `POST /delegation/create` (create delegation with policy-matched caveats) |
 
 **Key insight:** Our policy engine constraints map 1:1 to MetaMask delegation caveats. The delegation framework provides the onchain enforcement layer that makes our offchain policy engine trustless.
+
+## 11. Best Agent on Celo (Celo, $5,000)
+
+| Requirement | How We Meet It |
+|-------------|---------------|
+| Agentic application on Celo | AgentTreasuryCelo deployed on Celo mainnet: [`0xc976e4...`](https://celoscan.io/address/0xc976e463bd209e09cb15a168a275890b872aa1f0). Same yield-only spending pattern, adapted for Celo's stablecoin ecosystem. |
+| Stablecoin-native infrastructure | Uses waCelUSDC (Wrapped Aave Celo USDC / stataUSDC) as the yield-bearing asset. USDC lending yield from Aave V3 on Celo. |
+| Economic agency | Agent autonomously manages USDC lending yield — spends only accrued interest, never principal. Same 3 permission enforcements (recipient whitelist, per-tx cap, yield ceiling). |
+| On-chain interaction | Live contract reads via ERC-4626 `convertToAssets()` for exchange rate. No external oracle needed — rate is computed on-chain from Aave's liquidity index. |
+| Real-world applicability | Multi-chain agent treasury: Base (ETH staking yield via Lido) + Celo (USDC lending yield via Aave). Same agent, same policy engine, different yield sources. Demonstrates chain-agnostic design. |
+
+**Deploy TX:** [`0x4a6058...`](https://celoscan.io/tx/0x4a6058ba5169e2db9dff908ed4bc5b2f8d96db70828244e84fde2e7de1095d12)

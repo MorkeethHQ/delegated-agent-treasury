@@ -9,7 +9,7 @@ import {
   type Chain,
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { baseSepolia, base } from 'viem/chains';
+import { baseSepolia, base, celo } from 'viem/chains';
 import { AGENT_TREASURY_ABI, MOCK_WSTETH_ABI } from './abi.js';
 
 export { AGENT_TREASURY_ABI, MOCK_WSTETH_ABI } from './abi.js';
@@ -22,11 +22,13 @@ export interface ExecutorConfig {
   rpcUrl: string;
   agentPrivateKey: `0x${string}`;
   ownerPrivateKey?: `0x${string}`;
-  chain?: 'base-sepolia' | 'base';
+  chain?: 'base-sepolia' | 'base' | 'celo';
 }
 
 function getChain(name?: string): Chain {
-  return name === 'base' ? base : baseSepolia;
+  if (name === 'base') return base;
+  if (name === 'celo') return celo;
+  return baseSepolia;
 }
 
 export function createExecutor(config: ExecutorConfig) {
