@@ -15,6 +15,7 @@ import {
 import { createExecutor, type Executor } from '../../../packages/executor/src/index.js';
 import { verifyCounterpartyIdentity } from '../../../packages/executor/src/erc8004.js';
 import { createTreasuryDelegation, policyToCaveatMapping, describeDelegation } from '../../../packages/executor/src/delegation.js';
+import { resolveENS, reverseResolveENS, enrichWithENS, getENSIdentities } from '../../../packages/executor/src/ens.js';
 import type { ActionPlan, AuditEvent, Policy, DistributionPlan, AgentProfile } from '../../../packages/shared/src/index.js';
 import { loadStrategy, computeDistribution } from '../../../packages/strategy-engine/src/index.js';
 import {
@@ -265,7 +266,8 @@ async function handleTreasuryState(_req: IncomingMessage, res: ServerResponse): 
     return sendJson(res, 503, { error: 'Executor not configured — set contract env vars' });
   }
   const state = await executor.treasuryState();
-  return sendJson(res, 200, { treasury: state });
+  const enriched = await enrichWithENS(state as unknown as Record<string, unknown>, ['agent']);
+  return sendJson(res, 200, { treasury: enriched });
 }
 
 // --- Strategy handlers ---
@@ -700,6 +702,26 @@ async function handleDelegationInfo(_req: IncomingMessage, res: ServerResponse):
   });
 }
 
+// --- ENS handlers ---
+
+async function handleENSResolve(nameOrAddress: string, res: ServerResponse): Promise<void> {
+  try {
+    const result = await resolveENS(nameOrAddress);
+    return sendJson(res, 200, result);
+  } catch (error) {
+    return sendJson(res, 400, { error: error instanceof Error ? error.message : String(error) });
+  }
+}
+
+async function handleENSIdentities(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const identities = getENSIdentities();
+  return sendJson(res, 200, {
+    identities,
+    owner: 'morke.eth',
+    note: 'ENS subdomains under morke.eth provide human-readable identity for all treasury participants. Agents are identified by name, not hex address.',
+  });
+}
+
 // --- x402 Pricing handler ---
 
 async function handleX402Pricing(_req: IncomingMessage, res: ServerResponse): Promise<void> {
@@ -876,6 +898,17 @@ const server = createServer(async (req, res) => {
 
     if (req.method === 'POST' && url === '/delegation/create') {
       return await handleDelegationCreate(req, res);
+    }
+
+    // --- ENS routes ---
+
+    if (req.method === 'GET' && url === '/ens/identities') {
+      return await handleENSIdentities(req, res);
+    }
+
+    if (req.method === 'GET' && url.startsWith('/ens/resolve/')) {
+      const nameOrAddress = decodeURIComponent(url.split('/ens/resolve/')[1]?.split('?')[0] ?? '');
+      if (nameOrAddress) return await handleENSResolve(nameOrAddress, res);
     }
 
     return sendJson(res, 404, { error: 'Not found' });

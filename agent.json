@@ -23,7 +23,8 @@
     "erc8004-verified-payments",
     "multi-agent-orchestration",
     "uniswap-trading",
-    "x402-payment-gating"
+    "x402-payment-gating",
+    "ens-identity"
   ],
   "interfaces": {
     "api": "http://localhost:3001",
