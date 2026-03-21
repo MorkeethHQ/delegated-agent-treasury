@@ -27,12 +27,12 @@ echo -e "${BOLD}============================================${RESET}"
 echo -e "${BOLD}  Synthesis Agent Treasury — Live Demo${RESET}"
 echo -e "${BOLD}============================================${RESET}"
 echo -e "${DIM}Principal-protected yield treasury with autonomous trading on Base${RESET}"
-echo -e "${DIM}10 packages · 24 MCP tools · 22 API endpoints · 6 bounty tracks${RESET}"
+echo -e "${DIM}10 packages · 24 MCP tools · 22 API endpoints · 9 bounty tracks${RESET}"
 echo -e "${DIM}Built by 2 AI agents + 1 human orchestrator${RESET}"
 pause 3
 
 # ── 1. Health ──
-step "1/12  System Health"
+step "1/14  System Health"
 narrate "Checking API server and on-chain executor connection..."
 curl -s "$API/health" | pj "
   console.log('  API:      ' + (d.ok ? '✓ healthy' : '✗ down'));
@@ -41,7 +41,7 @@ curl -s "$API/health" | pj "
 pause
 
 # ── 2. Policy ──
-step "2/12  Active Policy Configuration"
+step "2/14  Active Policy Configuration"
 narrate "The policy engine controls what the agent can and cannot do."
 curl -s "$API/policy" | pj "
   const p=d.policy;
@@ -57,7 +57,7 @@ curl -s "$API/policy" | pj "
 pause
 
 # ── 3. Treasury ──
-step "3/12  On-Chain Treasury State"
+step "3/14  On-Chain Treasury State"
 narrate "Reading live state from the AgentTreasury contract on Base..."
 curl -s "$API/treasury" | pj "
   if(d.error){
@@ -73,7 +73,7 @@ curl -s "$API/treasury" | pj "
 pause 3
 
 # ── 4. Auto-approved spend ──
-step "4/12  Small Transfer → Auto-Approved"
+step "4/14  Small Transfer → Auto-Approved"
 narrate "Agent submits a 0.005 wstETH spend. Below the approval threshold → auto-executes."
 curl -s -X POST "$API/plans/evaluate" \
   -H 'content-type: application/json' \
@@ -86,7 +86,7 @@ curl -s -X POST "$API/plans/evaluate" \
 pause
 
 # ── 5. Approval-required spend ──
-step "5/12  Larger Transfer → Requires Human Approval"
+step "5/14  Larger Transfer → Requires Human Approval"
 narrate "Agent submits 0.009 wstETH. Above threshold → policy engine escalates to human."
 LARGE_RESULT=$(curl -s -X POST "$API/plans/evaluate" \
   -H 'content-type: application/json' \
@@ -99,7 +99,7 @@ echo "$LARGE_RESULT" | pj "
 pause
 
 # ── 6. Human approves ──
-step "6/12  Human Approves the Pending Request"
+step "6/14  Human Approves the Pending Request"
 narrate "A human operator reviews and approves via CLI or API."
 APPROVAL_ID=$(curl -s "$API/approvals?status=pending" | pj "if(d.approvals.length)console.log(d.approvals[0].approvalId);")
 if [ -n "$APPROVAL_ID" ]; then
@@ -117,7 +117,7 @@ fi
 pause
 
 # ── 7. Yield Strategy ──
-step "7/12  Yield Strategy Engine"
+step "7/14  Yield Strategy Engine"
 narrate "Multi-bucket distribution — agent routes yield to ops, grants, reserve."
 curl -s "$API/strategy" | pj "
   if(d.error){ console.log('  (No strategy loaded)'); } else {
@@ -131,7 +131,7 @@ curl -s "$API/strategy" | pj "
 pause
 
 # ── 8. Strategy Preview ──
-step "8/12  Strategy Preview (Dry Run)"
+step "8/14  Strategy Preview (Dry Run)"
 narrate "Preview how 0.1 wstETH yield would be distributed across buckets."
 curl -s "$API/strategy/preview?yield=0.1&perTxCap=0.05" | pj "
   if(d.error){ console.log('  ' + d.error); } else {
@@ -144,7 +144,7 @@ curl -s "$API/strategy/preview?yield=0.1&perTxCap=0.05" | pj "
 pause
 
 # ── 9. Uniswap Yield Swap ──
-step "9/12  Yield Swap via Uniswap (DCA)"
+step "9/14  Yield Swap via Uniswap (DCA)"
 narrate "Agent swaps 0.01 wstETH yield into USDC via Uniswap on Base."
 curl -s -X POST "$API/swap/execute" \
   -H 'content-type: application/json' \
@@ -160,7 +160,7 @@ curl -s -X POST "$API/swap/execute" \
 pause
 
 # ── 10. ERC-8004 Identity ──
-step "10/12  ERC-8004 Trust Verification"
+step "10/14  ERC-8004 Trust Verification"
 narrate "Before paying a recipient, verify their on-chain agent identity."
 curl -s "$API/verify/0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6" | pj "
   console.log('  Address:  0x4fD6...DCe6');
@@ -172,7 +172,7 @@ curl -s "$API/verify/0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6" | pj "
 pause
 
 # ── 11. Swap Quote ──
-step "11/12  Live Uniswap Quote"
+step "11/14  Live Uniswap Quote"
 narrate "Real-time pricing from Uniswap on Base — no bridge, same chain as treasury."
 curl -s "$API/swap/quote?tokenIn=0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452&tokenOut=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913&amount=10000000000000000" \
   | pj "
@@ -185,8 +185,43 @@ curl -s "$API/swap/quote?tokenIn=0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452&toke
 "
 pause
 
-# ── 12. Denied destination ──
-step "12/12  Blocked Destination → Denied"
+# ── 12. Multi-agent registry ──
+step "12/14  Multi-Agent Architecture"
+narrate "Three agent roles: proposer, executor, auditor. Each with distinct capabilities."
+curl -s "$API/agents" | pj "
+  d.agents.forEach(a => {
+    console.log('  ' + a.name.padEnd(10) + ' [' + a.role + '] ' + (a.frozen ? '🔒 FROZEN' : '✓ active'));
+    console.log('             ' + a.capabilities.join(', '));
+  });
+"
+pause
+
+# ── 13. Freeze/unfreeze ──
+step "13/14  Auditor Freezes Agent → Spending Denied"
+narrate "The auditor detects anomalous behavior and freezes the proposer."
+curl -s -X POST "$API/agents/bagel/freeze" \
+  -H 'content-type: application/json' \
+  -d '{"requestedBy":"auditor-1"}' \
+  | pj "
+  console.log('  ' + d.message);
+"
+narrate "Now the frozen agent tries to spend..."
+curl -s -X POST "$API/plans/evaluate" \
+  -H 'content-type: application/json' \
+  -d '{"planId":"demo-frozen","agentId":"bagel","type":"transfer","amount":0.001,"destination":"0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6","reason":"Test while frozen"}' \
+  | pj "
+  console.log('  Decision: ' + d.result.decision.toUpperCase());
+  console.log('  Reason:   ' + d.result.reasons.join('; '));
+  console.log('  → Agent is locked out until admin unfreezes.');
+"
+# Unfreeze for the rest of the demo
+curl -s -X POST "$API/agents/bagel/unfreeze" \
+  -H 'content-type: application/json' \
+  -d '{"requestedBy":"admin"}' > /dev/null
+pause
+
+# ── 14. Denied destination ──
+step "14/14  Blocked Destination → Denied"
 narrate "Agent tries to send to a denied address. Policy engine blocks it immediately."
 curl -s -X POST "$API/plans/evaluate" \
   -H 'content-type: application/json' \
@@ -224,6 +259,7 @@ echo -e "  ${GREEN}✓${RESET} Live swap quotes on Base"
 echo -e "  ${GREEN}✓${RESET} ERC-8004 trust verification"
 echo -e "  ${RED}✗${RESET} Denied spend (blocked destination)"
 echo -e "  ${GREEN}✓${RESET} Multi-agent roles (proposer/executor/auditor)"
+echo -e "  ${RED}✗${RESET} Auditor freeze → agent denied"
 echo -e "  ${GREEN}✓${RESET} Full audit trail captured"
 echo ""
 echo -e "  ${BOLD}Key invariant:${RESET} Agent can ONLY spend yield."
