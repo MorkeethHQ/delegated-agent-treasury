@@ -53,7 +53,7 @@
 |-------------|---------------|
 | Use the Uniswap Trading API | Full integration: `POST /quote`, `POST /check_approval`, `POST /swap` via `packages/trading-engine/` |
 | On-chain swap execution | `executeSwapLive()` — check approval → get quote → sign EIP-712 permitData → POST /swap → broadcast tx via viem WalletClient |
-| Live on Base | wstETH → USDC swaps via Uniswap V3 pools on Base (chain 8453). Live quotes returning real prices. |
+| Live on Base | WETH → USDC swap confirmed on Base mainnet: [`0x9e3874...`](https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9). Full flow: wrap → Permit2 approve → sign EIP-712 → POST /swap → broadcast. |
 | Meaningful use case | Agent deploys yield-only into bounded trading strategies (DCA, swap-to-stable, rebalance). Principal never touches Uniswap. |
 
 **Endpoints:** `GET /swap/quote` (live Uniswap prices), `POST /swap/execute` (policy-gated yield swap), `GET /swap/tokens`, `GET /swap/strategies`.
@@ -92,7 +92,7 @@
 |-------------|---------------|
 | Autonomous trading on Base | Agent deploys yield into Uniswap V3 trading strategies — DCA-USDC (50%), swap-to-ETH (30%), rebalance-cbETH (20%) |
 | Policy-gated execution | Separate `maxSwapPerAction` (0.01 wstETH) and `maxSlippageBps` (100 = 1%) caps for swaps |
-| Live on-chain | Real Uniswap swap executed on Base mainnet via Trading API (quote → Permit2 → sign → broadcast) |
+| Live on-chain | Real Uniswap swap on Base mainnet: [`0x9e3874...`](https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9) — 0.001 WETH → 2.157 USDC |
 | Risk controls | Principal never touches trading. Only accrued yield is deployed. Per-tx caps, daily limits, slippage bounds. |
 | Configurable strategies | `config/sample-trading-strategies.json` — 3 strategies with allocation percentages, thresholds, slippage limits |
 

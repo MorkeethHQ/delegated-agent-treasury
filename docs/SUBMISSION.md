@@ -73,6 +73,8 @@ Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Sol
 - wstETH on Base: [`0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452`](https://basescan.org/address/0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452)
 - x402 Pricing: `GET /x402/pricing` on API
 - Uniswap Swap Quote: `GET /swap/quote` on API
+- Live Uniswap Swap TX: [`0x9e3874...`](https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9) — WETH→USDC on Base mainnet
+- Permit2 Approval TX: [`0x536b75...`](https://basescan.org/tx/0x536b75fd78f78106db68efcd3cdd7d162e8c6fe074e81dffa5841f8b888f462d)
 
 ## Team
 - Oscar (human) — architect, orchestrator, funder
