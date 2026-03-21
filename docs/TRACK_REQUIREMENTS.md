@@ -47,7 +47,7 @@
 
 **Safety guardrails:** Policy engine enforces agent match, destination whitelist, per-tx cap, daily cap, approval thresholds. Governance-aware loop pauses spending during risky protocol votes.
 
-## 5. Uniswap ($5,000)
+## 5. Agentic Finance — Best Uniswap API Integration (Uniswap, $5,000)
 
 | Requirement | How We Meet It |
 |-------------|---------------|
@@ -74,3 +74,34 @@
 **Free endpoints:** /health, /policy, /treasury, /swap/tokens, /audit, /x402/pricing.
 **Paid endpoints:** /swap/quote, /swap/execute, /strategy/preview, /verify/:address.
 **MoonPay integration:** Additional execution backend via MoonPay CLI — 54 crypto tools across 10+ chains, policy-gated through same engine.
+
+## 7. Let the Agent Cook — No Humans Required (Protocol Labs, $4,000)
+
+| Requirement | How We Meet It |
+|-------------|---------------|
+| Multi-tool agent orchestration | 24 MCP tools across treasury, staking, governance, trading, strategy, identity, agents |
+| ERC-8004 identity | Registered on Base mainnet. Agent ID: `10ee7e7e703b4fc493e19f512b5ae09d`. Trust-gated payments verify counterparties. |
+| Agent manifest | `agent.json` in repo root — ERC-8004 identity, capabilities, interfaces, operators |
+| Execution logs | `agent_log.json` — structured execution logs with phases and timestamps |
+| Safety guardrails | Policy engine (caps, thresholds, whitelists), frozen agent denial, governance-aware pause, approval escalation |
+| Autonomous operation | Agent loop monitors yield + governance, auto-executes below threshold, escalates above. Multi-agent roles: proposer/executor/auditor with freeze/unfreeze. |
+
+## 8. Autonomous Trading Agent (Base, $5,000)
+
+| Requirement | How We Meet It |
+|-------------|---------------|
+| Autonomous trading on Base | Agent deploys yield into Uniswap V3 trading strategies — DCA-USDC (50%), swap-to-ETH (30%), rebalance-cbETH (20%) |
+| Policy-gated execution | Separate `maxSwapPerAction` (0.01 wstETH) and `maxSlippageBps` (100 = 1%) caps for swaps |
+| Live on-chain | Real Uniswap swap executed on Base mainnet via Trading API (quote → Permit2 → sign → broadcast) |
+| Risk controls | Principal never touches trading. Only accrued yield is deployed. Per-tx caps, daily limits, slippage bounds. |
+| Configurable strategies | `config/sample-trading-strategies.json` — 3 strategies with allocation percentages, thresholds, slippage limits |
+
+## 9. MoonPay CLI Agents (MoonPay, $3,500)
+
+| Requirement | How We Meet It |
+|-------------|---------------|
+| MoonPay CLI integration | `packages/moonpay-bridge/` — full bridge with CLI detection, graceful degradation, policy-gated execution |
+| Multi-chain support | 10+ chains: Base, Ethereum, Arbitrum, Polygon, Optimism, BNB, Avalanche, Solana, Tron |
+| MCP tools | 3 tools: `moonpay_status`, `moonpay_swap`, `moonpay_dca` — all policy-gated with dry_run |
+| API endpoints | `GET /moonpay/status`, `POST /moonpay/swap`, `GET /moonpay/tools` |
+| 54 crypto tools exposed | Bridge catalogs all MoonPay tool categories: wallet, trading, DCA, orders, portfolio, market, onramp, offramp, transfers |
