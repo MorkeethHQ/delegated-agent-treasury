@@ -1,8 +1,13 @@
 # Synthesis API
 
-Planned endpoints:
-- `POST /plans/evaluate`
-- `POST /approvals/:id/respond`
-- `GET /approvals`
-- `GET /audit-events`
-- `GET /health`
+REST API server for the Synthesis Agent Treasury. 27 endpoints covering treasury management, policy evaluation, approval workflows, yield trading, multi-agent orchestration, and ENS identity resolution.
+
+```bash
+# Start (API-only mode, no contract env vars needed)
+node dist/apps/api/src/server.js
+
+# Start with on-chain execution
+node --env-file=.env dist/apps/api/src/server.js
+```
+
+See the [main README](../../README.md) for the full endpoint table, or [skill.md](../../skill.md) for the agent-callable interface.

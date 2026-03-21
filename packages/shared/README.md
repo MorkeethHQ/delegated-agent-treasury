@@ -1,12 +1,5 @@
 # @synthesis/shared
 
-Shared types, schemas, and validation helpers for the Synthesis MVP.
+Shared types, schemas, and validation helpers used across all packages.
 
-Planned types:
-- Policy
-- SpendingRule
-- DestinationRule
-- ActionPlan
-- EvaluationResult
-- ApprovalRequest
-- AuditEvent
+Types: Policy, SpendingRule, DestinationRule, ActionPlan, EvaluationResult, ApprovalRequest, AuditEvent, DistributionPlan, AgentProfile.

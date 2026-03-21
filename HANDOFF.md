@@ -110,7 +110,7 @@
 ## Key Env Vars
 
 ```bash
-UNISWAP_API_KEY=REMOVED_UNISWAP_KEY
+UNISWAP_API_KEY=<set in .env>
 ENABLE_X402=true  # to activate payment gating
 ```
 

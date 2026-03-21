@@ -316,16 +316,16 @@ SDK: `@metamask/smart-accounts-kit` | Standards: ERC-7710, ERC-7715
 
 ## Hackathon tracks
 
-Built for the [Synthesis hackathon](https://synthesis.md/) — submissions across 13 partner tracks:
+Built for the [Synthesis hackathon](https://synthesis.md/) — submissions across 11 partner tracks:
 
-- **Lido** — yield-only treasury primitive + MCP server for staking/governance
-- **Uniswap** — agentic finance via Trading API with live mainnet swaps
-- **Protocol Labs** — ERC-8004 verifiable agent identity + autonomous multi-tool orchestration
-- **Base** — agent services with x402 micropayments + autonomous trading strategies
-- **MetaMask** — delegation framework caveats as onchain policy enforcement
-- **Celo** — stablecoin yield treasury via Aave on Celo
+- **Lido** — stETH Agent Treasury ($3K) + Lido MCP Server ($5K)
+- **Uniswap** — Agentic Finance via Trading API with live mainnet swaps
+- **Protocol Labs** — ERC-8004 agent identity + autonomous multi-tool orchestration (2 tracks)
+- **Base** — Agent Services with x402 micropayments + Autonomous Trading Agent (2 tracks)
+- **MetaMask** — Delegation Framework caveats as onchain policy enforcement (ERC-7710)
+- **Celo** — Stablecoin yield treasury via Aave stataUSDC
 - **MoonPay** — 54-tool CLI bridge across 10+ chains
-- **ENS** — agent identity via ENS subdomains (morke.eth)
+- **ENS** — Agent identity via ENS subdomains (morke.eth) — integrated across all endpoints
 - **Synthesis Open Track** — cross-sponsor integration
 
 ## Roadmap
