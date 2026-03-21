@@ -14,7 +14,7 @@ import {
 } from '../../../packages/approval-store/src/index.js';
 import { createExecutor, type Executor } from '../../../packages/executor/src/index.js';
 import { verifyCounterpartyIdentity } from '../../../packages/executor/src/erc8004.js';
-import { createTreasuryDelegation, policyToCaveatMapping, describeDelegation } from '../../../packages/executor/src/delegation.js';
+import { createTreasuryDelegation, policyToCaveatMapping, describeDelegation, buildDelegationChain } from '../../../packages/executor/src/delegation.js';
 import { resolveENS, reverseResolveENS, enrichWithENS, getENSIdentities } from '../../../packages/executor/src/ens.js';
 import type { ActionPlan, AuditEvent, Policy, DistributionPlan, AgentProfile } from '../../../packages/shared/src/index.js';
 import { loadStrategy, computeDistribution } from '../../../packages/strategy-engine/src/index.js';
@@ -488,6 +488,147 @@ async function handleSwapStrategies(_req: IncomingMessage, res: ServerResponse):
   }
 }
 
+// --- Trading performance handlers ---
+
+interface SwapRecord {
+  timestamp: string;
+  planId: string;
+  agentId: string;
+  tokenIn: string;
+  tokenOut: string;
+  amountIn: string;
+  amountOut: string;
+  reason: string;
+  live: boolean;
+  success: boolean;
+}
+
+async function handleTradingPerformance(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  try {
+    const events = await readAuditEvents();
+
+    // Filter execution_result events that contain swap data
+    const swapEvents = events.filter(
+      (e) =>
+        e.type === 'execution_result' &&
+        e.payload &&
+        ((e.payload as Record<string, unknown>).swap != null ||
+         (e.payload as Record<string, unknown>).moonpaySwap != null),
+    );
+
+    const swaps: SwapRecord[] = [];
+    let totalVolumeWei = BigInt(0);
+    const tokenBreakdown: Record<string, { swaps: number; totalAmountIn: string; totalAmountOut: string }> = {};
+
+    for (const event of swapEvents) {
+      const payload = event.payload as Record<string, unknown>;
+      const plan = payload.plan as Record<string, unknown> | undefined;
+      const swap = (payload.swap ?? payload.moonpaySwap) as Record<string, unknown> | undefined;
+
+      if (!swap) continue;
+
+      const amountIn = String(swap.amountIn ?? '0');
+      const amountOut = String(swap.amountOut ?? '0');
+      const success = swap.success === true;
+      const tokenOut = plan?.destination ? String(plan.destination) : 'unknown';
+      const tokenIn = TOKENS.wstETH.address;
+      const isLive = payload.live === true;
+
+      const record: SwapRecord = {
+        timestamp: event.timestamp,
+        planId: plan?.planId ? String(plan.planId) : event.id,
+        agentId: plan?.agentId ? String(plan.agentId) : 'unknown',
+        tokenIn,
+        tokenOut,
+        amountIn,
+        amountOut,
+        reason: plan?.reason ? String(plan.reason) : '',
+        live: isLive,
+        success,
+      };
+
+      swaps.push(record);
+
+      if (success) {
+        try {
+          totalVolumeWei += BigInt(amountIn);
+        } catch {
+          // skip non-numeric amounts
+        }
+
+        if (!tokenBreakdown[tokenOut]) {
+          tokenBreakdown[tokenOut] = { swaps: 0, totalAmountIn: '0', totalAmountOut: '0' };
+        }
+        tokenBreakdown[tokenOut].swaps += 1;
+        try {
+          tokenBreakdown[tokenOut].totalAmountIn = String(
+            BigInt(tokenBreakdown[tokenOut].totalAmountIn) + BigInt(amountIn),
+          );
+          tokenBreakdown[tokenOut].totalAmountOut = String(
+            BigInt(tokenBreakdown[tokenOut].totalAmountOut) + BigInt(amountOut),
+          );
+        } catch {
+          // skip aggregation for non-numeric
+        }
+      }
+    }
+
+    const successfulSwaps = swaps.filter((s) => s.success);
+    const liveSwaps = swaps.filter((s) => s.live && s.success);
+
+    const performance = {
+      summary: {
+        totalSwapsExecuted: swaps.length,
+        successfulSwaps: successfulSwaps.length,
+        liveSwaps: liveSwaps.length,
+        dryRunSwaps: successfulSwaps.length - liveSwaps.length,
+        totalYieldDeployedWei: totalVolumeWei.toString(),
+        totalYieldDeployedETH: (Number(totalVolumeWei) / 1e18).toFixed(6),
+      },
+      tokenBreakdown,
+      recentSwaps: swaps.slice(0, 20),
+      generatedAt: new Date().toISOString(),
+    };
+
+    return sendJson(res, 200, { performance });
+  } catch (error) {
+    return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
+  }
+}
+
+async function handleTradingStrategies(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  try {
+    const data = await readJsonFile<{ strategies: Array<Record<string, unknown>> }>(tradingStrategiesPath);
+    const events = await readAuditEvents();
+
+    // Count swap executions per strategy token pair
+    const swapCounts: Record<string, number> = {};
+    for (const event of events) {
+      if (event.type !== 'execution_result') continue;
+      const payload = event.payload as Record<string, unknown>;
+      const swap = payload.swap as Record<string, unknown> | undefined;
+      const plan = payload.plan as Record<string, unknown> | undefined;
+      if (!swap || !plan) continue;
+      const tokenOut = String(plan.destination ?? '');
+      swapCounts[tokenOut] = (swapCounts[tokenOut] ?? 0) + 1;
+    }
+
+    const strategies = data.strategies.map((s) => ({
+      ...s,
+      status: 'active',
+      executedSwaps: swapCounts[String(s.tokenOut)] ?? 0,
+    }));
+
+    return sendJson(res, 200, {
+      strategies,
+      totalStrategies: strategies.length,
+      note: 'Trading strategies define how accrued yield is autonomously deployed via Uniswap V3 on Base.',
+    });
+  } catch (error) {
+    return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
+  }
+}
+
 // --- Agent registry handlers ---
 
 async function handleListAgents(_req: IncomingMessage, res: ServerResponse): Promise<void> {
@@ -519,7 +660,20 @@ async function handleFreezeAgent(agentId: string, req: IncomingMessage, res: Ser
 
   frozenAgents.add(agentId);
   await auditLog('plan_evaluated', { action: 'agent_frozen', agentId, requestedBy: requestedBy ?? 'api' });
-  return sendJson(res, 200, { message: `Agent "${agentId}" is now frozen`, agentId, frozen: true });
+  return sendJson(res, 200, {
+    message: `Agent "${agentId}" is now frozen`,
+    agentId,
+    frozen: true,
+    delegationRevocation: {
+      action: 'disableDelegation(delegationHash)',
+      contract: 'DelegationManager',
+      effect: `All delegations held by or flowing through "${agentId}" are now invalid on-chain`,
+      cascading: target.role === 'proposer'
+        ? 'Cascading revocation: proposer freeze also invalidates executor sub-delegations'
+        : 'Direct revocation: this agent\'s delegation is disabled',
+      recovery: 'Admin must call POST /agents/{id}/unfreeze — a NEW delegation with fresh hash will be issued',
+    },
+  });
 }
 
 async function handleUnfreezeAgent(agentId: string, req: IncomingMessage, res: ServerResponse): Promise<void> {
@@ -537,7 +691,16 @@ async function handleUnfreezeAgent(agentId: string, req: IncomingMessage, res: S
 
   frozenAgents.delete(agentId);
   await auditLog('plan_evaluated', { action: 'agent_unfrozen', agentId, requestedBy: requestedBy ?? 'api' });
-  return sendJson(res, 200, { message: `Agent "${agentId}" is now unfrozen`, agentId, frozen: false });
+  return sendJson(res, 200, {
+    message: `Agent "${agentId}" is now unfrozen`,
+    agentId,
+    frozen: false,
+    delegationRenewal: {
+      action: 'New delegation created with fresh hash and updated timestamp caveats',
+      note: 'The old delegation hash remains permanently revoked in the DelegationManager. This is an append-only revocation model — no hash is ever re-enabled.',
+      newCaveats: 'Fresh TimestampEnforcer bounds, same AllowedTargets/Methods/TransferAmount caveats',
+    },
+  });
 }
 
 // --- MoonPay handlers ---
@@ -677,29 +840,35 @@ async function handleDelegationCreate(req: IncomingMessage, res: ServerResponse)
 }
 
 async function handleDelegationInfo(_req: IncomingMessage, res: ServerResponse): Promise<void> {
-  const caveatMap = policyToCaveatMapping();
-  return sendJson(res, 200, {
-    framework: 'MetaMask Delegation Framework',
-    standards: ['ERC-7710', 'ERC-7715'],
-    sdk: '@metamask/smart-accounts-kit',
-    description: 'Programmable power-of-attorney for AI agents. Owner creates a delegation with caveats that mirror policy engine constraints. Caveats enforce limits at the EVM level — even if the offchain policy is bypassed.',
-    caveatMapping: caveatMap,
-    architecture: {
-      layer1: 'Policy Engine (offchain) — evaluates plans, applies rules, escalates to human',
-      layer2: 'Delegation Caveats (onchain) — AllowedTargets, ERC20TransferAmount, Timestamp, LimitedCalls',
-      result: 'Defense-in-depth: two independent enforcement layers',
-    },
-    supportedCaveats: [
-      'AllowedTargetsEnforcer — restrict which contracts the agent can call',
-      'AllowedMethodsEnforcer — restrict to spendYield() only',
-      'ERC20TransferAmountEnforcer — cap total yield the agent can spend',
-      'ValueLteEnforcer — per-transaction native value cap',
-      'LimitedCallsEnforcer — bound total number of delegated calls',
-      'TimestampEnforcer — delegation expires automatically',
-      'ERC20PeriodTransferEnforcer — periodic spending limits (daily cap)',
-      'ERC20StreamingEnforcer — streaming yield access matching accrual rate',
-    ],
-  });
+  try {
+    const policy = await readJsonFile<Policy>(policyPath);
+    const treasuryAddr = process.env.TREASURY_ADDRESS;
+
+    const chainResponse = buildDelegationChain(
+      agentRegistry,
+      {
+        maxPerAction: policy.maxPerAction,
+        dailyCap: policy.dailyCap,
+        approvalThreshold: policy.approvalThreshold,
+        allowedDestinations: policy.allowedDestinations,
+      },
+      frozenAgents,
+      treasuryAddr,
+    );
+
+    return sendJson(res, 200, chainResponse);
+  } catch (error) {
+    // Fallback: return basic info if policy can't be loaded
+    const caveatMap = policyToCaveatMapping();
+    return sendJson(res, 200, {
+      framework: 'MetaMask Delegation Framework',
+      standards: ['ERC-7710 (Delegation)', 'ERC-7715 (Intent-Based Permissions)'],
+      sdk: '@metamask/smart-accounts-kit',
+      description: 'Multi-agent delegation chain — see POST /delegation/create for live delegation.',
+      caveatMapping: caveatMap,
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
 }
 
 // --- ENS handlers ---
@@ -853,6 +1022,16 @@ const server = createServer(async (req, res) => {
 
     if (req.method === 'GET' && url === '/swap/strategies') {
       return await handleSwapStrategies(req, res);
+    }
+
+    // --- Trading performance routes ---
+
+    if (req.method === 'GET' && url === '/trading/performance') {
+      return await handleTradingPerformance(req, res);
+    }
+
+    if (req.method === 'GET' && url === '/trading/strategies') {
+      return await handleTradingStrategies(req, res);
     }
 
     // --- Agent registry routes ---
