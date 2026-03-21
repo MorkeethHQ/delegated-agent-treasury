@@ -198,7 +198,7 @@ The treasury supports three agent roles:
 
 Agents are registered in `config/agents.json`. The auditor can freeze any agent's spending — frozen agents have all plans denied until unfrozen by an admin.
 
-## API endpoints (23)
+## API endpoints (27)
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -209,7 +209,7 @@ Agents are registered in `config/agents.json`. The auditor can freeze any agent'
 | POST | `/approvals/:id/respond` | Approve or deny |
 | GET | `/audit` | Full audit event stream |
 | GET | `/policy` | Current policy config |
-| GET | `/treasury` | On-chain treasury state |
+| GET | `/treasury` | On-chain treasury state (ENS-enriched) |
 | GET | `/strategy` | Current yield strategy config |
 | GET | `/strategy/preview` | Dry-run yield distribution preview |
 | POST | `/strategy/distribute` | Trigger manual yield distribution |
@@ -225,6 +225,10 @@ Agents are registered in `config/agents.json`. The auditor can freeze any agent'
 | GET | `/agents/:id` | Get agent profile |
 | POST | `/agents/:id/freeze` | Auditor: freeze agent spending |
 | POST | `/agents/:id/unfreeze` | Admin: unfreeze agent spending |
+| GET | `/delegation` | MetaMask Delegation Framework info |
+| POST | `/delegation/create` | Create delegation with policy-matched caveats |
+| GET | `/ens/identities` | All ENS identities for treasury participants |
+| GET | `/ens/resolve/:name` | Resolve ENS name ↔ address |
 
 ## Smart contract
 
@@ -264,6 +268,29 @@ This ties the agent's on-chain spending authority to a discoverable, verifiable 
 | **MetaMask** | Delegation caveats as onchain policy enforcement (ERC-7710) | `packages/executor/src/delegation.ts` |
 | **Celo** | Stablecoin yield treasury via Aave stataUSDC | [`0xc976e4...`](https://celoscan.io/address/0xc976e463bd209e09cb15a168a275890b872aa1f0) |
 | **MoonPay** | 54-tool CLI bridge, 10+ chains, policy-gated | `packages/moonpay-bridge/` |
+| **ENS** | Agent identity via subdomains — morke.eth → treasury, agents, deployers | `packages/executor/src/ens.ts` + `GET /ens/identities` |
+
+## ENS Agent Identity
+
+Every participant in the treasury has a human-readable ENS name under `morke.eth`:
+
+| ENS Name | Address | Role |
+|----------|---------|------|
+| `morke.eth` | `0xf347...ef3` | Owner (human) |
+| `bagel.morke.eth` | `0x4fD6...ce6` | Agent signer (Bagel) |
+| `treasury.morke.eth` | `0x455d...426` | AgentTreasury contract (Base) |
+| `bageldeployer.morke.eth` | `0x3d7d...b43` | Bagel deployer |
+| `odawgagent.morke.eth` | `0x1101...70e` | Secondary agent wallet |
+
+The API resolves ENS names anywhere an address is accepted, and enriches responses with ENS names:
+
+```bash
+# Resolve ENS name to address
+curl http://localhost:3001/ens/resolve/bagel.morke.eth
+
+# List all ENS identities
+curl http://localhost:3001/ens/identities
+```
 
 ## MetaMask Delegation Framework
 
@@ -289,7 +316,7 @@ SDK: `@metamask/smart-accounts-kit` | Standards: ERC-7710, ERC-7715
 
 ## Hackathon tracks
 
-Built for the [Synthesis hackathon](https://synthesis.md/) — submissions across 11 partner tracks:
+Built for the [Synthesis hackathon](https://synthesis.md/) — submissions across 13 partner tracks:
 
 - **Lido** — yield-only treasury primitive + MCP server for staking/governance
 - **Uniswap** — agentic finance via Trading API with live mainnet swaps
@@ -298,6 +325,7 @@ Built for the [Synthesis hackathon](https://synthesis.md/) — submissions acros
 - **MetaMask** — delegation framework caveats as onchain policy enforcement
 - **Celo** — stablecoin yield treasury via Aave on Celo
 - **MoonPay** — 54-tool CLI bridge across 10+ chains
+- **ENS** — agent identity via ENS subdomains (morke.eth)
 - **Synthesis Open Track** — cross-sponsor integration
 
 ## Roadmap

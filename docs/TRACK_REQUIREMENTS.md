@@ -129,3 +129,18 @@
 | Real-world applicability | Multi-chain agent treasury: Base (ETH staking yield via Lido) + Celo (USDC lending yield via Aave). Same agent, same policy engine, different yield sources. Demonstrates chain-agnostic design. |
 
 **Deploy TX:** [`0x4a6058...`](https://celoscan.io/tx/0x4a6058ba5169e2db9dff908ed4bc5b2f8d96db70828244e84fde2e7de1095d12)
+
+## 12. ENS Identity ($400)
+
+| Requirement | How We Meet It |
+|-------------|---------------|
+| ENS names for agent identity | 5 subdomains under `morke.eth`: treasury, bagel, bageldeployer, odawgagent + owner |
+| Names replace hex addresses | API enriches all responses with ENS names. `GET /ens/resolve/:name` resolves both directions. |
+| Agent identity via ENS | `bagel.morke.eth` identifies the agent signer. `treasury.morke.eth` identifies the contract. Human-readable identity for every participant. |
+
+## 13. ENS Open Integration ($300)
+
+| Requirement | How We Meet It |
+|-------------|---------------|
+| Meaningful ENS integration | ENS is core to identity — every address in the treasury system has an ENS name. API endpoints accept ENS names, audit trail shows names not hex. |
+| Beyond an afterthought | `GET /ens/identities` maps the full treasury hierarchy. ENS resolution integrated into executor and API server. |
