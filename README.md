@@ -247,8 +247,31 @@ This ties the agent's on-chain spending authority to a discoverable, verifiable 
 | Let the Agent Cook (PL, $4K) | Autonomous loop + multi-agent + governance | `apps/agent-loop/` monitors yield + governance |
 | Autonomous Trading (Base, $5K) | Multi-strategy yield trading | `config/sample-trading-strategies.json` + live swap |
 | MoonPay CLI ($3.5K) | 54-tool bridge, 10+ chains | `packages/moonpay-bridge/` |
+| MetaMask Delegations ($10K) | Onchain policy caveats via ERC-7710 | `packages/executor/src/delegation.ts` |
 
-## Hackathon tracks (9)
+## MetaMask Delegation Framework
+
+Defense-in-depth: the policy engine enforces constraints offchain, and MetaMask Delegation caveats enforce them onchain. Even if the offchain layer is bypassed, the onchain caveats protect the treasury.
+
+| Policy Rule | Delegation Caveat | Enforcement |
+|-------------|-------------------|-------------|
+| Recipient whitelist | AllowedTargetsEnforcer | Onchain |
+| spendYield() only | AllowedMethodsEnforcer | Onchain |
+| Yield ceiling | ERC20TransferAmountEnforcer | Onchain |
+| Time-bounded access | TimestampEnforcer | Onchain |
+| Call count limit | LimitedCallsEnforcer | Onchain |
+
+```bash
+# View delegation framework info
+curl http://localhost:3001/delegation
+
+# Create a delegation with caveats matching current policy
+curl -X POST http://localhost:3001/delegation/create
+```
+
+SDK: `@metamask/smart-accounts-kit` | Standards: ERC-7710, ERC-7715
+
+## Hackathon tracks (10)
 
 - **stETH Agent Treasury** (Lido Labs Foundation, $3K) — yield-only spending from wstETH with permission controls
 - **Lido MCP** (Lido Labs Foundation, $5K) — 24 MCP tools for treasury, staking, governance, trading
@@ -259,6 +282,7 @@ This ties the agent's on-chain spending authority to a discoverable, verifiable 
 - **Let the Agent Cook** (Protocol Labs, $4K) — multi-agent orchestration, safety guardrails, autonomous operation
 - **Autonomous Trading Agent** (Base, $5K) — DCA + yield trading strategies on Base
 - **MoonPay CLI Agents** (MoonPay, $3.5K) — 54 crypto tools, multi-chain swaps/DCA/bridges
+- **Best Use of Delegations** (MetaMask, $10K) — delegation caveats as onchain policy enforcement
 
 ## Roadmap
 

@@ -14,6 +14,7 @@ import {
 } from '../../../packages/approval-store/src/index.js';
 import { createExecutor, type Executor } from '../../../packages/executor/src/index.js';
 import { verifyCounterpartyIdentity } from '../../../packages/executor/src/erc8004.js';
+import { createTreasuryDelegation, policyToCaveatMapping, describeDelegation } from '../../../packages/executor/src/delegation.js';
 import type { ActionPlan, AuditEvent, Policy, DistributionPlan, AgentProfile } from '../../../packages/shared/src/index.js';
 import { loadStrategy, computeDistribution } from '../../../packages/strategy-engine/src/index.js';
 import {
@@ -631,6 +632,74 @@ async function handleMoonPayTools(_req: IncomingMessage, res: ServerResponse): P
   }
 }
 
+// --- Delegation handler ---
+
+async function handleDelegationCreate(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  try {
+    const p = await readJsonFile<Policy>(policyPath);
+
+    const treasuryAddr = process.env.TREASURY_ADDRESS;
+    const wstethAddr = process.env.WSTETH_ADDRESS;
+    const agentAddr = executor?.agentAddress;
+    const ownerAddr = executor?.ownerAddress;
+
+    if (!treasuryAddr || !wstethAddr || !agentAddr || !ownerAddr) {
+      return sendJson(res, 400, { error: 'Executor not configured — delegation requires treasury + agent + owner' });
+    }
+
+    const delegation = createTreasuryDelegation({
+      treasuryAddress: treasuryAddr as Address,
+      wstETHAddress: wstethAddr as Address,
+      agentAddress: agentAddr,
+      allowedRecipients: p.allowedDestinations.map((d: string) => d as Address),
+      maxPerTx: String(p.maxPerAction),
+      maxTotal: String(p.dailyCap),
+      maxCalls: 50,
+      chain: (process.env.CHAIN as 'base' | 'base-sepolia') ?? 'base-sepolia',
+    }, ownerAddr);
+
+    const summary = describeDelegation(delegation);
+    const caveatMap = policyToCaveatMapping();
+
+    return sendJson(res, 200, {
+      delegation: summary,
+      caveatsCount: delegation.caveats.length,
+      policyToCaveatMapping: caveatMap,
+      note: 'MetaMask Delegation Framework — onchain enforcement of policy engine constraints. Defense-in-depth: offchain policy + onchain caveats.',
+      framework: 'ERC-7710 / ERC-7715',
+      sdk: '@metamask/smart-accounts-kit',
+    });
+  } catch (error) {
+    return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
+  }
+}
+
+async function handleDelegationInfo(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const caveatMap = policyToCaveatMapping();
+  return sendJson(res, 200, {
+    framework: 'MetaMask Delegation Framework',
+    standards: ['ERC-7710', 'ERC-7715'],
+    sdk: '@metamask/smart-accounts-kit',
+    description: 'Programmable power-of-attorney for AI agents. Owner creates a delegation with caveats that mirror policy engine constraints. Caveats enforce limits at the EVM level — even if the offchain policy is bypassed.',
+    caveatMapping: caveatMap,
+    architecture: {
+      layer1: 'Policy Engine (offchain) — evaluates plans, applies rules, escalates to human',
+      layer2: 'Delegation Caveats (onchain) — AllowedTargets, ERC20TransferAmount, Timestamp, LimitedCalls',
+      result: 'Defense-in-depth: two independent enforcement layers',
+    },
+    supportedCaveats: [
+      'AllowedTargetsEnforcer — restrict which contracts the agent can call',
+      'AllowedMethodsEnforcer — restrict to spendYield() only',
+      'ERC20TransferAmountEnforcer — cap total yield the agent can spend',
+      'ValueLteEnforcer — per-transaction native value cap',
+      'LimitedCallsEnforcer — bound total number of delegated calls',
+      'TimestampEnforcer — delegation expires automatically',
+      'ERC20PeriodTransferEnforcer — periodic spending limits (daily cap)',
+      'ERC20StreamingEnforcer — streaming yield access matching accrual rate',
+    ],
+  });
+}
+
 // --- x402 Pricing handler ---
 
 async function handleX402Pricing(_req: IncomingMessage, res: ServerResponse): Promise<void> {
@@ -797,6 +866,16 @@ const server = createServer(async (req, res) => {
 
     if (req.method === 'GET' && url === '/moonpay/tools') {
       return await handleMoonPayTools(req, res);
+    }
+
+    // --- Delegation routes ---
+
+    if (req.method === 'GET' && url === '/delegation') {
+      return await handleDelegationInfo(req, res);
+    }
+
+    if (req.method === 'POST' && url === '/delegation/create') {
+      return await handleDelegationCreate(req, res);
     }
 
     return sendJson(res, 404, { error: 'Not found' });
