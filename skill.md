@@ -185,7 +185,7 @@ Set up a Dollar Cost Averaging order via MoonPay CLI. Automatically buys a token
 
 ---
 
-## REST API (23 endpoints)
+## REST API (27 endpoints)
 
 Base URL: `{API_URL}` (default `http://localhost:3001`)
 
@@ -237,6 +237,29 @@ Base URL: `{API_URL}` (default `http://localhost:3001`)
 |--------|------|-------------|
 | `GET` | `/verify/{address}` | Verify ERC-8004 on-chain agent identity for an address |
 | `GET` | `/x402/pricing` | Get the x402 pricing table for all paid endpoints |
+
+### Agents
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/agents` | List all registered agents with roles and freeze status |
+| `GET` | `/agents/{id}` | Get agent profile by ID |
+| `POST` | `/agents/{id}/freeze` | Auditor: freeze agent spending |
+| `POST` | `/agents/{id}/unfreeze` | Admin: unfreeze agent spending |
+
+### Delegation
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/delegation` | MetaMask Delegation Framework info and caveat mapping |
+| `POST` | `/delegation/create` | Create delegation with policy-matched caveats (ERC-7710) |
+
+### ENS
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/ens/identities` | All ENS identities for treasury participants (morke.eth subdomains) |
+| `GET` | `/ens/resolve/{name}` | Resolve ENS name to address or address to ENS name |
 
 ---
 
@@ -306,3 +329,7 @@ The treasury is an `AgentTreasury` smart contract on Base backed by wstETH. Yiel
 **Base Sepolia (chain 84532, demo):**
 - AgentTreasury: `0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0`
 - MockWstETH: `0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d`
+
+**Celo Mainnet (chain 42220):**
+- AgentTreasuryCelo: `0xc976e463bd209e09cb15a168a275890b872aa1f0`
+- waCelUSDC (stataUSDC): `0xba3ae0F0A78579a5e8C4188dcde60DcCc0Dd4Fab`

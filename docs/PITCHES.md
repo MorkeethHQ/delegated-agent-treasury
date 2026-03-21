@@ -42,7 +42,7 @@ Yield-only spending is the primitive. What you build on top is up to you.
 - Natural rate-limiting — yield accrues slowly (~3-4% APY), so spend authority is bounded by real economic activity
 - Principal is always safe — even a compromised agent key cannot drain the deposit
 
-**The MCP angle:** We built an MCP server with 18 tools that any Claude, Cursor, or MCP-compatible agent can call natively. Treasury management, Lido staking operations, multi-bucket yield strategies, ERC-8004 identity verification, and live Uniswap swap quotes + execution. All write operations support `dry_run` for simulation before execution.
+**The MCP angle:** We built an MCP server with 24 tools that any Claude, Cursor, or MCP-compatible agent can call natively. Treasury management, Lido staking operations, multi-bucket yield strategies, ERC-8004 identity verification, Uniswap trading, multi-agent orchestration, and MoonPay multi-chain operations. All write operations support `dry_run` for simulation before execution.
 
 **The collaboration model:** This project was built by a human directing two AI agents:
 - Oscar (human) — architect, orchestrator, funder. Made strategic decisions. Killed the web UI in favor of agent-native interfaces. Funded the Base mainnet deployment.
