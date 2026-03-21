@@ -124,6 +124,23 @@ node dist/apps/cli/src/cli.js demo
 
 This will: mint mock wstETH → deposit → set permissions → simulate yield → agent spends from yield → verify principal untouched.
 
+### Judge scripts
+
+```bash
+# Full 14-step live demo (start API first, then run in another terminal)
+npm run build && node --env-file=.env dist/apps/api/src/server.js
+bash scripts/screen-demo.sh
+
+# Storytelling demo for screen recording (same API server)
+bash scripts/record-demo.sh
+
+# E2E Uniswap integration test (dry-run or live with LIVE_SWAP=true)
+bash scripts/test-swap-e2e.sh
+
+# Unit tests
+npm run build && npm test
+```
+
 ## Architecture
 
 ```
@@ -143,7 +160,7 @@ packages/
   approval-store/           — In-memory + file-persisted approval lifecycle
   audit-log/                — Append-only JSONL event logging
   executor/                 — Viem integration layer (API ↔ contract) + ERC-8004 identity verification
-  mcp-server/               — MCP server: 21+ tools for treasury, staking, strategy, trust, trading, MoonPay
+  mcp-server/               — MCP server: 24 tools for treasury, staking, strategy, trust, trading, MoonPay
   strategy-engine/          — Multi-bucket yield distribution engine
   trading-engine/           — Uniswap Trading API client (quotes, swaps, DCA)
   moonpay-bridge/           — MoonPay CLI bridge: 54 crypto tools via MCP (swaps, DCA, bridges, fiat on/off ramp)
@@ -217,6 +234,20 @@ The treasury agent is registered on Base mainnet via [ERC-8004](https://eips.eth
 
 This ties the agent's on-chain spending authority to a discoverable, verifiable identity — judges and counterparties can verify who (or what) is spending from the treasury.
 
+## Bounty track alignment
+
+| Track | Feature | Evidence |
+|-------|---------|----------|
+| stETH Agent Treasury (Lido, $3K) | Yield-only spending, principal locked | `AgentTreasury.sol`: `require(amount <= availableYield())` |
+| Lido MCP (Lido, $5K) | 11 staking/governance tools, dry_run | `packages/mcp-server/src/tools/staking.ts` + `governance.ts` |
+| Synthesis Open (~$28K) | Cross-sponsor system | Lido + Protocol Labs + Base + Uniswap in one project |
+| ERC-8004 (Protocol Labs, $4K) | On-chain identity + trust-gated payments | Agent `10ee7e7e703b4fc493e19f512b5ae09d` on Base mainnet |
+| Agentic Finance (Uniswap, $5K) | Uniswap Trading API + live swap | TX [`0x9e3874...`](https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9) |
+| Agent Services on Base ($5K) | x402 USDC payment-gated API | `packages/x402-gateway/` + `/x402/pricing` |
+| Let the Agent Cook (PL, $4K) | Autonomous loop + multi-agent + governance | `apps/agent-loop/` monitors yield + governance |
+| Autonomous Trading (Base, $5K) | Multi-strategy yield trading | `config/sample-trading-strategies.json` + live swap |
+| MoonPay CLI ($3.5K) | 54-tool bridge, 10+ chains | `packages/moonpay-bridge/` |
+
 ## Hackathon tracks (9)
 
 - **stETH Agent Treasury** (Lido Labs Foundation, $3K) — yield-only spending from wstETH with permission controls
@@ -231,7 +262,7 @@ This ties the agent's on-chain spending authority to a discoverable, verifiable 
 
 ## Roadmap
 
-**Current (hackathon):** Dual-chain treasury — Base Sepolia (demo) + Base mainnet (production, real wstETH yield).
+**Current (hackathon):** Multi-chain treasury — Base mainnet (wstETH yield) + Base Sepolia (demo) + Celo (stablecoin yield via Aave stataUSDC).
 
 **Post-hackathon:**
 - Multi-agent support — parent agents allocate yield budgets to sub-agents

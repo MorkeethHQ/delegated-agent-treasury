@@ -22,7 +22,7 @@ Every action is logged to an append-only audit trail.
 
 ---
 
-## MCP Tools (21 tools)
+## MCP Tools (24 tools)
 
 Connect via MCP server at `packages/mcp-server`. These are the direct on-chain and protocol tools an agent can call.
 
@@ -185,7 +185,7 @@ Set up a Dollar Cost Averaging order via MoonPay CLI. Automatically buys a token
 
 ---
 
-## REST API (19 endpoints)
+## REST API (23 endpoints)
 
 Base URL: `{API_URL}` (default `http://localhost:3001`)
 
