@@ -253,20 +253,17 @@ The treasury agent is registered on Base mainnet via [ERC-8004](https://eips.eth
 
 This ties the agent's on-chain spending authority to a discoverable, verifiable identity — judges and counterparties can verify who (or what) is spending from the treasury.
 
-## Bounty track alignment
+## Integration depth
 
-| Track | Feature | Evidence |
-|-------|---------|----------|
-| stETH Agent Treasury (Lido, $3K) | Yield-only spending, principal locked | `AgentTreasury.sol`: `require(amount <= availableYield())` |
-| Lido MCP (Lido, $5K) | 11 staking/governance tools, dry_run | `packages/mcp-server/src/tools/staking.ts` + `governance.ts` |
-| Synthesis Open (~$28K) | Cross-sponsor system | Lido + Protocol Labs + Base + Uniswap in one project |
-| ERC-8004 (Protocol Labs, $4K) | On-chain identity + trust-gated payments | Agent `10ee7e7e703b4fc493e19f512b5ae09d` on Base mainnet |
-| Agentic Finance (Uniswap, $5K) | Uniswap Trading API + live swap | TX [`0x9e3874...`](https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9) |
-| Agent Services on Base ($5K) | x402 USDC payment-gated API | `packages/x402-gateway/` + `/x402/pricing` |
-| Let the Agent Cook (PL, $4K) | Autonomous loop + multi-agent + governance | `apps/agent-loop/` monitors yield + governance |
-| Autonomous Trading (Base, $5K) | Multi-strategy yield trading | `config/sample-trading-strategies.json` + live swap |
-| MoonPay CLI ($3.5K) | 54-tool bridge, 10+ chains | `packages/moonpay-bridge/` |
-| MetaMask Delegations ($10K) | Onchain policy caveats via ERC-7710 | `packages/executor/src/delegation.ts` |
+| Partner | What we built | Evidence |
+|---------|---------------|----------|
+| **Lido** | Yield-only treasury + 11 MCP staking tools + governance | `AgentTreasury.sol` + `packages/mcp-server/src/tools/staking.ts` |
+| **Uniswap** | Full Trading API: quote → Permit2 → EIP-712 → swap | Live TX [`0x9e3874...`](https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9) |
+| **Protocol Labs** | ERC-8004 identity + trust-gated payments + autonomous loop | Agent `10ee7e7e703b4fc493e19f512b5ae09d` on Base |
+| **Base** | Treasury + trading + x402 agent-as-a-service, all on Base mainnet | `packages/x402-gateway/` + live swaps |
+| **MetaMask** | Delegation caveats as onchain policy enforcement (ERC-7710) | `packages/executor/src/delegation.ts` |
+| **Celo** | Stablecoin yield treasury via Aave stataUSDC | [`0xc976e4...`](https://celoscan.io/address/0xc976e463bd209e09cb15a168a275890b872aa1f0) |
+| **MoonPay** | 54-tool CLI bridge, 10+ chains, policy-gated | `packages/moonpay-bridge/` |
 
 ## MetaMask Delegation Framework
 
@@ -290,19 +287,18 @@ curl -X POST http://localhost:3001/delegation/create
 
 SDK: `@metamask/smart-accounts-kit` | Standards: ERC-7710, ERC-7715
 
-## Hackathon tracks (11)
+## Hackathon tracks
 
-- **stETH Agent Treasury** (Lido Labs Foundation, $3K) — yield-only spending from wstETH with permission controls
-- **Lido MCP** (Lido Labs Foundation, $5K) — 24 MCP tools for treasury, staking, governance, trading
-- **Synthesis Open Track** (Synthesis Community, ~$28K) — community-funded prize pool
-- **Agents With Receipts — ERC-8004** (Protocol Labs, $4K) — ERC-8004 identity, agent.json, on-chain verifiability
-- **Agentic Finance** (Uniswap, $5K) — yield-to-swap via Uniswap Trading API on Base
-- **Agent Services on Base** (Base, $5K) — agent treasury as a payable service via x402
-- **Let the Agent Cook** (Protocol Labs, $4K) — multi-agent orchestration, safety guardrails, autonomous operation
-- **Autonomous Trading Agent** (Base, $5K) — DCA + yield trading strategies on Base
-- **MoonPay CLI Agents** (MoonPay, $3.5K) — 54 crypto tools, multi-chain swaps/DCA/bridges
-- **Best Use of Delegations** (MetaMask, $10K) — delegation caveats as onchain policy enforcement
-- **Best Agent on Celo** (Celo, $5K) — stablecoin yield treasury on Celo via Aave stataUSDC
+Built for the [Synthesis hackathon](https://synthesis.md/) — submissions across 11 partner tracks:
+
+- **Lido** — yield-only treasury primitive + MCP server for staking/governance
+- **Uniswap** — agentic finance via Trading API with live mainnet swaps
+- **Protocol Labs** — ERC-8004 verifiable agent identity + autonomous multi-tool orchestration
+- **Base** — agent services with x402 micropayments + autonomous trading strategies
+- **MetaMask** — delegation framework caveats as onchain policy enforcement
+- **Celo** — stablecoin yield treasury via Aave on Celo
+- **MoonPay** — 54-tool CLI bridge across 10+ chains
+- **Synthesis Open Track** — cross-sponsor integration
 
 ## Roadmap
 
