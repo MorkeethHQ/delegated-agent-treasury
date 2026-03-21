@@ -20,6 +20,7 @@ import {
   getQuote,
   getIndicativeQuote,
   executeSwap,
+  executeSwapLive,
   TOKENS,
 } from '../../../packages/trading-engine/src/index.js';
 import { createSynthesisGateway } from '../../../packages/x402-gateway/src/index.js';
@@ -416,8 +417,28 @@ async function handleSwapExecute(req: IncomingMessage, res: ServerResponse): Pro
     }
 
     // Approved — get quote and optionally execute
+    if (!dryRun && executor) {
+      // Live execution: sign and broadcast via the executor's wallet client
+      const swapResult = await executeSwapLive(
+        tokenIn,
+        tokenOut,
+        amount,
+        executor.agentWalletClient,
+      );
+      await auditLog('execution_result', { plan, result: evalResult, swap: swapResult, live: true });
+      return sendJson(res, 200, { result: evalResult, swap: swapResult, live: true });
+    }
+
+    if (!dryRun && !executor) {
+      return sendJson(res, 503, {
+        error: 'Live swap execution requires executor — set contract env vars',
+        result: evalResult,
+      });
+    }
+
+    // Dry run: quote only
     const swapperAddress = executor?.agentAddress ?? '0x0000000000000000000000000000000000000000';
-    const swapResult = await executeSwap(tokenIn, tokenOut, amount, swapperAddress, dryRun);
+    const swapResult = await executeSwap(tokenIn, tokenOut, amount, swapperAddress, true);
     await auditLog('execution_result', { plan, result: evalResult, swap: swapResult });
 
     return sendJson(res, 200, { result: evalResult, swap: swapResult });

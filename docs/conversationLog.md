@@ -175,3 +175,54 @@ Oscar decides direction
 - Deployed on Base Sepolia + Base mainnet
 - Sepolia E2E spend proof: `0x1fd5edb8cfb87839b43424907da7dab61fde5109bbc0aa925aa2aed5f57c4d64`
 - Submission script ready — 4 tracks, all fields validated
+
+### Session 5: Phase 2 & 3 — From Treasury to Platform (2026-03-20)
+
+With 60 hours remaining, Oscar pivoted from closing to building. Three parallel Claude Code agents ran overnight batch work while Oscar orchestrated.
+
+**Yield Strategy Engine:**
+- Multi-bucket distribution: operations 40%, grants 30%, reserve 30%
+- Configurable thresholds and per-tx clamping per bucket
+- Preview endpoint for dry-run distribution planning
+- New `packages/yield-strategy` package
+
+**ERC-8004 Trust-Gated Payments:**
+- Before paying any recipient, policy engine verifies on-chain agent identity in ERC-8004 registry
+- Unverified recipients escalate to human approval automatically
+- Turned ERC-8004 from "identity badge" to "active security layer"
+- New `/verify/:address` API endpoint
+
+**Uniswap Yield Trading (GMX → Uniswap pivot):**
+- Original plan: GMX perps on Arbitrum (required by "Agents that Pay" track)
+- Pivot: Uniswap V3 swaps on Base — same chain as treasury, no bridging
+- DCA into USDC, swap to WETH, rebalance into cbETH — all policy-gated
+- Live quotes confirmed: 0.01 wstETH ≈ $26.58 USDC
+- New `packages/uniswap-engine` package with quote + execute
+- New `/swap/quote` and `/swap/execute` API endpoints
+
+**x402 Payment Gateway:**
+- Treasury became a payable service via Coinbase's x402 protocol
+- Other agents pay USDC per API call: swap quotes $0.01, execution $0.05
+- New `packages/x402-gateway` package
+- Re-qualifies for "Agents that Pay" and "Agent Services on Base" tracks (previously dropped)
+
+**Swap Policy Controls:**
+- Bagel designed separate risk controls for swaps vs transfers
+- `maxSwapPerAction` and `maxSlippageBps` operate independently from transfer caps
+- Policy engine now distinguishes action types (transfer vs swap)
+
+**Overnight batch (3 parallel agents):**
+- Agent 1: Uniswap engine + swap routes
+- Agent 2: Yield strategy engine + bucket distribution
+- Agent 3: x402 gateway + ERC-8004 trust verification
+- Oscar coordinated merges and resolved conflicts between agents
+
+**Oscar:** "The system grew from 6 packages to 9, from 11 MCP tools to 18, from 8 API endpoints to 16."
+
+**Updated artifacts:**
+- 9 packages in monorepo
+- 18 MCP tools
+- 16 API endpoints
+- 6 bounty tracks targeted (up from 4)
+- Demo script expanded from 5 steps to 12 steps
+- Project thesis: "A treasury agent that protects principal and autonomously deploys only accrued yield into bounded strategies."

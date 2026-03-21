@@ -2,6 +2,8 @@
 export interface TradingStrategy {
   strategyId: string;
   type: 'dca' | 'swap-to-stable' | 'rebalance';
+  label: string;       // human-readable name
+  description?: string; // optional description
   tokenIn: string;   // default wstETH
   tokenOut: string;   // target token
   allocationPercent: number; // % of available yield to use

@@ -1,6 +1,7 @@
 // Uniswap Trading API client for Base chain
 // API endpoint: https://trade-api.gateway.uniswap.org/v1
 
+import type { WalletClient, Account } from 'viem';
 import type { TradingStrategy } from '../../shared/src/trading.js';
 
 export type { TradingStrategy } from '../../shared/src/trading.js';
@@ -244,6 +245,137 @@ export async function executeSwap(
       amountIn: quote.amountIn,
       amountOut: quote.amountOut,
       txHash: '0x_execution_requires_wallet_signer',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      amountIn,
+      amountOut: '0',
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+/**
+ * Execute a real swap via Uniswap Trading API using a viem WalletClient.
+ *
+ * Flow:
+ *   1. Check token approval for Permit2
+ *   2. Get executable quote with permitData
+ *   3. Sign permitData (EIP-712) with wallet
+ *   4. POST /swap with { quote, permitData, signature }
+ *   5. Broadcast the returned transaction
+ */
+export async function executeSwapLive(
+  tokenIn: string,
+  tokenOut: string,
+  amountIn: string,
+  walletClient: WalletClient & { account: Account },
+): Promise<SwapResult> {
+  const swapperAddress = walletClient.account.address;
+
+  try {
+    // Step 1: Check approval status
+    const approvalNeeded = await checkApproval(swapperAddress, tokenIn, tokenOut, amountIn);
+
+    // If approval is needed, broadcast the approval transaction first
+    if (approvalNeeded) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const approvalTx = approvalNeeded.approval as any;
+      if (approvalTx && approvalTx.to && approvalTx.data) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const approvalHash = await walletClient.sendTransaction({
+          account: walletClient.account,
+          chain: walletClient.chain,
+          to: approvalTx.to,
+          data: approvalTx.data,
+          value: BigInt(approvalTx.value ?? '0'),
+          gas: approvalTx.gas ? BigInt(approvalTx.gas) : undefined,
+        } as any);
+        console.log(`[swap-live] Permit2 approval tx: ${approvalHash}`);
+      }
+    }
+
+    // Step 2: Get executable quote
+    const quoteResponse = await fetch(`${UNISWAP_API_URL}/quote`, {
+      method: 'POST',
+      headers: {
+        'x-api-key': getApiKey(),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        type: 'EXACT_INPUT',
+        amount: amountIn,
+        tokenInChainId: BASE_CHAIN_ID,
+        tokenOutChainId: BASE_CHAIN_ID,
+        tokenIn,
+        tokenOut,
+        swapper: swapperAddress,
+        slippageTolerance: 0.5,
+      }),
+    });
+
+    if (!quoteResponse.ok) {
+      const errorText = await quoteResponse.text();
+      throw new Error(`Quote failed (${quoteResponse.status}): ${errorText}`);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const quoteData: any = await quoteResponse.json();
+
+    // Step 3: Sign permitData if present
+    let signature: string | undefined;
+    if (quoteData.permitData) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      signature = await walletClient.signTypedData({
+        account: walletClient.account,
+        domain: quoteData.permitData.domain,
+        types: quoteData.permitData.types,
+        primaryType: 'PermitSingle',
+        message: quoteData.permitData.values,
+      } as any);
+    }
+
+    // Step 4: Submit to /swap endpoint
+    const swapResponse = await fetch(`${UNISWAP_API_URL}/swap`, {
+      method: 'POST',
+      headers: {
+        'x-api-key': getApiKey(),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        quote: quoteData.quote,
+        permitData: quoteData.permitData,
+        signature,
+      }),
+    });
+
+    if (!swapResponse.ok) {
+      const errorText = await swapResponse.text();
+      throw new Error(`Swap submission failed (${swapResponse.status}): ${errorText}`);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const swapData: any = await swapResponse.json();
+
+    // Step 5: Broadcast the transaction
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const txHash = await walletClient.sendTransaction({
+      account: walletClient.account,
+      chain: walletClient.chain,
+      to: swapData.swap.to,
+      data: swapData.swap.data,
+      value: BigInt(swapData.swap.value ?? '0'),
+      gas: swapData.swap.gas ? BigInt(swapData.swap.gas) : undefined,
+    } as any);
+
+    const amountOut = String(quoteData.quote?.output?.amount ?? quoteData.quote?.amountOut ?? '0');
+
+    return {
+      success: true,
+      txHash,
+      amountIn,
+      amountOut,
     };
   } catch (error) {
     return {

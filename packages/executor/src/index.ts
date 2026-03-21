@@ -251,6 +251,8 @@ export function createExecutor(config: ExecutorConfig) {
     setupPermissions,
     simulateYield,
     mintMockWstETH,
+    // Wallet clients (for live swap execution)
+    agentWalletClient: agentWallet,
     // Addresses
     agentAddress: agentAccount.address,
     ownerAddress: ownerAccount?.address,

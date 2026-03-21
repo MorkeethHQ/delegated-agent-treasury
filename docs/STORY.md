@@ -135,3 +135,21 @@ That's the future we're building for.
 - MCP (Model Context Protocol)
 - ERC-8004 on-chain agent identity
 - 48 hours, zero lines of human-written code
+
+---
+
+### Session 5 — Phase 2 & 3: From Treasury to Platform (2026-03-20)
+
+With 60 hours remaining, Oscar pivoted from closing to building. The team identified three expansion vectors:
+
+**Yield Strategy Engine** — Instead of sending yield to one recipient, the agent now routes it across named buckets (operations 40%, grants 30%, reserve 30%) with configurable thresholds and per-tx clamping.
+
+**ERC-8004 Trust-Gated Payments** — Before paying any recipient, the policy engine verifies their on-chain agent identity in the ERC-8004 registry. Unverified recipients get escalated to human approval. This turned our ERC-8004 integration from "nice identity badge" to "active security layer."
+
+**Uniswap Yield Trading** — The big pivot: instead of just transferring yield, the agent deploys it into trading strategies via Uniswap on Base. DCA into USDC, swap to WETH, rebalance into cbETH — all policy-gated with separate swap caps and slippage limits. Live Uniswap quotes confirmed: 0.01 wstETH ≈ $26.58 USDC.
+
+**x402 Payment Gateway** — The treasury became a payable service. Other agents pay USDC per API call via Coinbase's x402 protocol. Swap quotes cost $0.01, execution $0.05.
+
+**Policy evolution** — Bagel designed separate risk controls for swaps vs transfers: `maxSwapPerAction` and `maxSlippageBps` operate independently from transfer caps. The policy engine now distinguishes action types.
+
+The system grew from 6 packages to 9, from 11 MCP tools to 18, from 8 API endpoints to 16. The project thesis crystallized: "A treasury agent that protects principal and autonomously deploys only accrued yield into bounded strategies."
