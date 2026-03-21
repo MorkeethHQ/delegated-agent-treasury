@@ -65,8 +65,8 @@ export async function reverseResolveENS(address: string): Promise<string | null>
  * Enrich an object's address fields with ENS names.
  * Takes any object and returns it with `ensName` fields added where addresses are recognized.
  */
-export async function enrichWithENS<T extends Record<string, unknown>>(obj: T, addressFields: string[]): Promise<T & Record<string, unknown>> {
-  const enriched = { ...obj } as T & Record<string, unknown>;
+export async function enrichWithENS(obj: Record<string, unknown>, addressFields: string[]): Promise<Record<string, unknown>> {
+  const enriched: Record<string, unknown> = { ...obj };
   for (const field of addressFields) {
     const value = obj[field];
     if (typeof value === 'string' && value.startsWith('0x')) {
