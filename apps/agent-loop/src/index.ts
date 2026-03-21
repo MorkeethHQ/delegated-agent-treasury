@@ -9,9 +9,11 @@
  */
 
 import { resolve } from 'node:path';
-import { access } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import { loadStrategy, computeDistribution } from '../../../packages/strategy-engine/src/index.js';
+import { getIndicativeQuote, TOKENS } from '../../../packages/trading-engine/src/index.js';
 import type { YieldStrategyConfig } from '../../../packages/shared/src/index.js';
+import type { TradingStrategy } from '../../../packages/shared/src/index.js';
 
 const API = process.env.API_URL ?? 'http://localhost:3001';
 const INTERVAL_MS = Number(process.env.LOOP_INTERVAL_MS ?? 5 * 60 * 1000); // 5 min default
@@ -63,6 +65,20 @@ async function tryLoadStrategy(): Promise<YieldStrategyConfig | null> {
   try {
     await access(strategyPath);
     return await loadStrategy(strategyPath);
+  } catch {
+    return null;
+  }
+}
+
+// --- Trading strategy loader ---
+
+async function tryLoadTradingStrategies(): Promise<TradingStrategy[] | null> {
+  const path = resolve(process.cwd(), 'config', 'sample-trading-strategies.json');
+  try {
+    await access(path);
+    const raw = await readFile(path, 'utf-8');
+    const config = JSON.parse(raw) as { strategies: TradingStrategy[] };
+    return config.strategies;
   } catch {
     return null;
   }
@@ -140,6 +156,12 @@ async function tick(): Promise<void> {
     await tickWithStrategy(strategy, yieldAvailable, perTxCap);
   } else {
     await tickSingleRecipient(yieldAvailable, perTxCap);
+  }
+
+  // 4. Try trading strategies (DCA, swap-to-stable, rebalance)
+  const tradingStrategies = await tryLoadTradingStrategies();
+  if (tradingStrategies && tradingStrategies.length > 0) {
+    await tickWithTradingStrategies(tradingStrategies, yieldAvailable, perTxCap);
   }
 }
 
@@ -243,11 +265,55 @@ async function tickSingleRecipient(yieldAvailable: number, perTxCap: number): Pr
   }
 }
 
-// --- Trading strategies integration (future) ---
-// TODO: Load trading strategies from /swap/strategies API endpoint and execute
-// DCA / swap-to-stable / rebalance actions as part of the autonomous loop.
-// This would run after yield distribution, using the remaining yield allocation
-// to perform token swaps via the trading engine (Uniswap).
+// --- Trading strategies execution ---
+
+async function tickWithTradingStrategies(
+  strategies: TradingStrategy[],
+  yieldAvailable: number,
+  perTxCap: number,
+): Promise<void> {
+  log('INFO', `Evaluating ${strategies.length} trading strategies`);
+
+  for (const strategy of strategies) {
+    const amount = yieldAvailable * (strategy.allocationPercent / 100);
+
+    // Skip if below threshold (convert from wei to float for comparison)
+    if (amount < strategy.minAmountThreshold / 1e18) {
+      log('SKIP', `Strategy "${strategy.label}": amount ${amount.toFixed(6)} below threshold`);
+      continue;
+    }
+
+    // Clamp to per-tx cap
+    const clampedAmount = perTxCap > 0 ? Math.min(amount, perTxCap) : amount;
+
+    // Convert to wei string for the API
+    const amountWei = Math.floor(clampedAmount * 1e18).toString();
+
+    log('INFO', `Strategy "${strategy.label}": ${clampedAmount.toFixed(6)} wstETH → ${strategy.type}`);
+
+    try {
+      // Submit through policy engine via API
+      const result = await api<EvalResult>('/swap/execute', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          agentId: AGENT_ID,
+          tokenOut: strategy.tokenOut,
+          amount: amountWei,
+          strategy: strategy.strategyId,
+          reason: `Trading strategy [${strategy.strategyId}] "${strategy.label}" — ${yieldAvailable.toFixed(6)} yield available`,
+          dryRun: true,  // Always dry run in autonomous mode for safety
+        }),
+      });
+
+      log('INFO', `Strategy "${strategy.label}" result: ${result.result.decision}`, {
+        reasons: result.result.reasons,
+      });
+    } catch (err) {
+      log('ERROR', `Strategy "${strategy.label}" failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+}
 
 // --- Main ---
 

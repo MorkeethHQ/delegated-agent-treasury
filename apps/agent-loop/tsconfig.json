@@ -6,6 +6,7 @@
   "include": [
     "src/**/*.ts",
     "../../packages/shared/src/**/*.ts",
-    "../../packages/strategy-engine/src/**/*.ts"
+    "../../packages/strategy-engine/src/**/*.ts",
+    "../../packages/trading-engine/src/**/*.ts"
   ]
 }

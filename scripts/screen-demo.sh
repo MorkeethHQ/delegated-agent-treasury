@@ -26,7 +26,8 @@ clear
 echo -e "${BOLD}============================================${RESET}"
 echo -e "${BOLD}  Synthesis Agent Treasury — Live Demo${RESET}"
 echo -e "${BOLD}============================================${RESET}"
-echo -e "${DIM}Yield-only spending for AI agents on Base${RESET}"
+echo -e "${DIM}Principal-protected yield treasury with autonomous trading on Base${RESET}"
+echo -e "${DIM}9 packages · 18 MCP tools · 16 API endpoints · 6 bounty tracks${RESET}"
 echo -e "${DIM}Built by 2 AI agents + 1 human orchestrator${RESET}"
 pause 3
 
