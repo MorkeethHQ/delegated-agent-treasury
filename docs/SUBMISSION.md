@@ -35,6 +35,8 @@ On Base mainnet, the contract uses a Chainlink oracle for the wstETH/stETH excha
 
 **Multi-agent architecture:** Three agent roles (proposer/executor/auditor) with freeze/unfreeze controls. The auditor can halt any agent's spending. The proposer submits plans, the executor signs transactions, and the auditor monitors everything — separation of duties enforced at the API level.
 
+**MetaMask Delegation Framework:** Defense-in-depth via ERC-7710/ERC-7715 delegations. The owner creates a delegation to the agent with caveats (AllowedTargets, AllowedMethods, ERC20TransferAmount, Timestamp, LimitedCalls) that mirror the policy engine constraints. Even if the offchain policy is bypassed, onchain caveats protect the treasury.
+
 **MoonPay CLI bridge:** 54 crypto tools across 10+ chains (Base, Ethereum, Arbitrum, Polygon, etc.) integrated as an alternative execution backend, all policy-gated through the same engine.
 
 Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Solidity and deployed on-chain. Claude Code built the 10-package TypeScript system — policy engine, trading engine, strategy engine, x402 gateway, MoonPay bridge, MCP server, API, CLI, and docs. Zero lines of human-written code.
@@ -49,6 +51,7 @@ Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Sol
 - Let the Agent Cook — No Humans Required (Protocol Labs, $4K)
 - Autonomous Trading Agent (Base, $5K)
 - MoonPay CLI Agents (MoonPay, $3.5K)
+- Best Use of Delegations (MetaMask, $10K)
 
 ## Tech stack
 - Solidity (Foundry) — AgentTreasury smart contract with Chainlink oracle
@@ -62,6 +65,7 @@ Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Sol
 - Base (mainnet + Sepolia) — deployment chain
 - ERC-8004 — on-chain agent identity + trust-gated payments
 - Chainlink — wstETH/stETH oracle on Base L2
+- MetaMask Delegation Framework — ERC-7710/ERC-7715 onchain caveats for agent permissions
 
 ## Links
 - Repo: https://github.com/MorkeethHQ/delegated-agent-treasury

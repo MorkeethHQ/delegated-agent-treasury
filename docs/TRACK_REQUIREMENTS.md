@@ -105,3 +105,15 @@
 | MCP tools | 3 tools: `moonpay_status`, `moonpay_swap`, `moonpay_dca` — all policy-gated with dry_run |
 | API endpoints | `GET /moonpay/status`, `POST /moonpay/swap`, `GET /moonpay/tools` |
 | 54 crypto tools exposed | Bridge catalogs all MoonPay tool categories: wallet, trading, DCA, orders, portfolio, market, onramp, offramp, transfers |
+
+## 10. Best Use of Delegations (MetaMask, $10,000)
+
+| Requirement | How We Meet It |
+|-------------|---------------|
+| Use MetaMask Delegation Framework | `@metamask/smart-accounts-kit` integrated in `packages/executor/src/delegation.ts`. Creates delegations with caveats matching policy engine constraints. |
+| Intent-based delegations | Owner delegates spendYield() authority to agent with 6 caveats: AllowedTargets (treasury contract only), AllowedMethods (spendYield only), ERC20TransferAmount (yield ceiling), Timestamp (auto-expiry), LimitedCalls (call cap). |
+| Novel permission model | Defense-in-depth: offchain policy engine (TypeScript) + onchain delegation caveats (EVM). Two independent enforcement layers — if either is bypassed, the other still protects. |
+| Sub-delegation potential | Multi-agent architecture (proposer/executor/auditor) maps to delegation chains: owner → proposer (suggest), proposer → executor (sign), auditor can revoke. |
+| API endpoints | `GET /delegation` (framework info + caveat mapping), `POST /delegation/create` (create delegation with policy-matched caveats) |
+
+**Key insight:** Our policy engine constraints map 1:1 to MetaMask delegation caveats. The delegation framework provides the onchain enforcement layer that makes our offchain policy engine trustless.
