@@ -6,6 +6,8 @@
     "erc8004": {
       "participantId": "10ee7e7e703b4fc493e19f512b5ae09d",
       "registrationTxn": "https://basescan.org/tx/0x4027641718bb5cfb9fdf7f4871f6506685b5367cab1a3a030b9bb0fe779ee934",
+      "registeredAt": "2026-03-20T09:50:17Z",
+      "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
       "chain": "base",
       "chainId": 8453
     }
@@ -17,7 +19,11 @@
     "approval-workflow",
     "lido-staking",
     "governance-queries",
-    "audit-logging"
+    "audit-logging",
+    "erc8004-verified-payments",
+    "multi-agent-orchestration",
+    "uniswap-trading",
+    "x402-payment-gating"
   ],
   "interfaces": {
     "api": "http://localhost:3001",

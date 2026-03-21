@@ -1,5 +1,6 @@
 {
   "name": "synthesis",
+  "description": "Yield-only agent treasury on Base — policy-gated spending, ERC-8004 identity, Lido staking, Uniswap trading, x402 micropayments",
   "private": true,
   "type": "module",
   "version": "0.1.0",
