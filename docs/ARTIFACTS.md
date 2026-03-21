@@ -136,7 +136,7 @@
 |-------|---------|------|-----|
 | stETH Agent Treasury | Lido ($3K) | `5e445a077b5248e0974904915f76e1a0` | Strong |
 | Lido MCP | Lido ($5K) | `ee885a40e4bc4d3991546cec7a4433e2` | Strong |
-| Synthesis Open Track | Community ($14.5K) | `fdb76d08812b43f6a5f454744b66f590` | Universal |
-| Agents With Receipts — ERC-8004 | Protocol Labs ($8K) | `3bf41be958da497bbb69f1a150c76af9` | Strong |
+| Synthesis Open Track | Community (~$28K) | `fdb76d08812b43f6a5f454744b66f590` | Universal |
+| Agents With Receipts — ERC-8004 | Protocol Labs ($4K) | `3bf41be958da497bbb69f1a150c76af9` | Strong |
 | Uniswap | Uniswap ($5K) | — | Strong |
 | Agent Services on Base | Base ($5K) | — | Strong |

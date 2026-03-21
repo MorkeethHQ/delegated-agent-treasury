@@ -81,14 +81,14 @@
 
 ---
 
-## Bounty Targets (6 tracks, $40.5K potential)
+## Bounty Targets (6 tracks, ~$50K potential)
 
 | Track | Prize | Status |
 |-------|-------|--------|
-| Synthesis Open Track | $14.5K | Ready |
+| Synthesis Open Track | ~$28K | Ready |
 | Lido stETH Treasury | $3K | Ready |
 | Lido MCP Server | $5K | Ready (18 tools) |
-| ERC-8004 Agents With Receipts | $8K | Ready (trust-gating) |
+| ERC-8004 Agents With Receipts | $4K | Ready (trust-gating) |
 | Uniswap | $5K | Ready (live quotes, dry-run swaps) |
 | Agent Services on Base | $5K | Ready (x402 gateway) |
 

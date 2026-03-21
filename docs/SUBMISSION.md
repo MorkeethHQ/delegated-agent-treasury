@@ -38,8 +38,8 @@ Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Sol
 ## Tracks
 - Lido: stETH Agent Treasury ($3K)
 - Lido: MCP Server ($5K)
-- Synthesis Open Track ($14.5K)
-- Protocol Labs: Agents With Receipts — ERC-8004 ($8K)
+- Synthesis Open Track (~$28K)
+- Protocol Labs: Agents With Receipts — ERC-8004 ($4K)
 - Uniswap ($5K) — yield-to-swap via Trading API on Base
 - Agent Services on Base ($5K) — x402 payment-gated agent service
 
