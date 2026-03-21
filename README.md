@@ -116,6 +116,25 @@ export AGENT_PRIVATE_KEY=0x...
 export OWNER_PRIVATE_KEY=0x...   # for setup/demo only
 ```
 
+### Celo Mainnet (stablecoin yield via Aave)
+
+| Contract | Address |
+|----------|---------|
+| AgentTreasuryCelo | [`0xc976e463bd209e09cb15a168a275890b872aa1f0`](https://celoscan.io/address/0xc976e463bd209e09cb15a168a275890b872aa1f0) |
+| waCelUSDC (stataUSDC) | [`0xba3ae0F0A78579a5e8C4188dcde60DcCc0Dd4Fab`](https://celoscan.io/address/0xba3ae0F0A78579a5e8C4188dcde60DcCc0Dd4Fab) |
+| Chain | Celo (42220) |
+| Deploy TX | [`0x4a6058...`](https://celoscan.io/tx/0x4a6058ba5169e2db9dff908ed4bc5b2f8d96db70828244e84fde2e7de1095d12) |
+
+Same yield-only spending pattern as Base, different yield source: USDC lending yield from Aave instead of ETH staking yield from Lido. Uses ERC-4626 `convertToAssets()` for the exchange rate instead of Chainlink oracle.
+
+```bash
+export CHAIN=celo
+export RPC_URL=https://forno.celo.org
+export TREASURY_ADDRESS=0xc976e463bd209e09cb15a168a275890b872aa1f0
+export WSTETH_ADDRESS=0xba3ae0F0A78579a5e8C4188dcde60DcCc0Dd4Fab
+export AGENT_PRIVATE_KEY=0x...
+```
+
 ### Run the demo
 
 ```bash
@@ -271,7 +290,7 @@ curl -X POST http://localhost:3001/delegation/create
 
 SDK: `@metamask/smart-accounts-kit` | Standards: ERC-7710, ERC-7715
 
-## Hackathon tracks (10)
+## Hackathon tracks (11)
 
 - **stETH Agent Treasury** (Lido Labs Foundation, $3K) — yield-only spending from wstETH with permission controls
 - **Lido MCP** (Lido Labs Foundation, $5K) — 24 MCP tools for treasury, staking, governance, trading
@@ -283,6 +302,7 @@ SDK: `@metamask/smart-accounts-kit` | Standards: ERC-7710, ERC-7715
 - **Autonomous Trading Agent** (Base, $5K) — DCA + yield trading strategies on Base
 - **MoonPay CLI Agents** (MoonPay, $3.5K) — 54 crypto tools, multi-chain swaps/DCA/bridges
 - **Best Use of Delegations** (MetaMask, $10K) — delegation caveats as onchain policy enforcement
+- **Best Agent on Celo** (Celo, $5K) — stablecoin yield treasury on Celo via Aave stataUSDC
 
 ## Roadmap
 

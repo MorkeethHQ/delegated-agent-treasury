@@ -52,6 +52,7 @@ Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Sol
 - Autonomous Trading Agent (Base, $5K)
 - MoonPay CLI Agents (MoonPay, $3.5K)
 - Best Use of Delegations (MetaMask, $10K)
+- Best Agent on Celo (Celo, $5K)
 
 ## Tech stack
 - Solidity (Foundry) — AgentTreasury smart contract with Chainlink oracle
@@ -79,6 +80,8 @@ Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Sol
 - Uniswap Swap Quote: `GET /swap/quote` on API
 - Live Uniswap Swap TX: [`0x9e3874...`](https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9) — WETH→USDC on Base mainnet
 - Permit2 Approval TX: [`0x536b75...`](https://basescan.org/tx/0x536b75fd78f78106db68efcd3cdd7d162e8c6fe074e81dffa5841f8b888f462d)
+- Celo Treasury: [`0xc976e4...`](https://celoscan.io/address/0xc976e463bd209e09cb15a168a275890b872aa1f0)
+- Celo Deploy TX: [`0x4a6058...`](https://celoscan.io/tx/0x4a6058ba5169e2db9dff908ed4bc5b2f8d96db70828244e84fde2e7de1095d12)
 
 ## Team
 - Oscar (human) — architect, orchestrator, funder

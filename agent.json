@@ -36,6 +36,11 @@
       "agentTreasury": "0x455d76a24e862a8d552a0722823ac4d13e482426",
       "wstETH": "0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452"
     },
+    "celo-mainnet": {
+      "agentTreasury": "0xc976e463bd209e09cb15a168a275890b872aa1f0",
+      "yieldToken": "0xba3ae0F0A78579a5e8C4188dcde60DcCc0Dd4Fab",
+      "yieldSource": "Aave V3 USDC lending (stataUSDC/waCelUSDC)"
+    },
     "base-sepolia": {
       "agentTreasury": "0x6fb8ec31c54cce7e2a37f6cad47c2556205b7ae0",
       "mockWstETH": "0x4b8e084234edc18285cb57d8b29a59c2f1fb7a2d"
