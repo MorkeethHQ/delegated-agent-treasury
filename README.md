@@ -33,6 +33,8 @@ Agent submits action plan → policy engine evaluates
 
 **Uniswap Yield Trading** — the agent can swap yield into any token on Base via Uniswap. Supports DCA, swap-to-stable, and rebalance strategies. Every swap goes through the policy engine. Live quotes from Uniswap Trading API, same chain as treasury — no bridging.
 
+**MoonPay CLI Integration** — alternative execution backend via [MoonPay CLI](https://www.npmjs.com/package/@moonpay/cli), providing 54 crypto tools across 10+ chains. Supports multi-chain swaps, DCA, bridges, portfolio management, and fiat on/off ramps. MoonPay runs as a separate MCP server (`mp mcp`), and our bridge wraps every action through the policy engine. Install: `npm i -g @moonpay/cli && mp login && mp mcp`.
+
 ## Quick start
 
 ```bash
@@ -141,13 +143,26 @@ packages/
   approval-store/           — In-memory + file-persisted approval lifecycle
   audit-log/                — Append-only JSONL event logging
   executor/                 — Viem integration layer (API ↔ contract) + ERC-8004 identity verification
-  mcp-server/               — MCP server: 18 tools for treasury, staking, strategy, trust, trading
+  mcp-server/               — MCP server: 21+ tools for treasury, staking, strategy, trust, trading, MoonPay
   strategy-engine/          — Multi-bucket yield distribution engine
   trading-engine/           — Uniswap Trading API client (quotes, swaps, DCA)
+  moonpay-bridge/           — MoonPay CLI bridge: 54 crypto tools via MCP (swaps, DCA, bridges, fiat on/off ramp)
   x402-gateway/             — x402 payment gating for agent-as-a-service
 ```
 
-## API endpoints (16)
+## Multi-agent architecture
+
+The treasury supports three agent roles:
+
+| Role | Capabilities | Example |
+|------|-------------|---------|
+| **Proposer** | Submit plans, monitor treasury, execute strategies | Autonomous yield agent |
+| **Executor** | Sign transactions, execute approved plans | On-chain signer |
+| **Auditor** | Read all activity, flag anomalies, freeze agents | Compliance watchdog |
+
+Agents are registered in `config/agents.json`. The auditor can freeze any agent's spending — frozen agents have all plans denied until unfrozen by an admin.
+
+## API endpoints (23)
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -166,7 +181,14 @@ packages/
 | GET | `/swap/tokens` | Supported tokens on Base |
 | GET | `/swap/quote` | Live Uniswap swap quote |
 | POST | `/swap/execute` | Execute yield swap (policy-gated, dry_run) |
+| GET | `/moonpay/status` | MoonPay CLI connection status and config |
+| POST | `/moonpay/swap` | Execute swap via MoonPay CLI (policy-gated) |
+| GET | `/moonpay/tools` | List available MoonPay tools |
 | GET | `/x402/pricing` | x402 payment pricing table |
+| GET | `/agents` | List all registered agents with roles |
+| GET | `/agents/:id` | Get agent profile |
+| POST | `/agents/:id/freeze` | Auditor: freeze agent spending |
+| POST | `/agents/:id/unfreeze` | Admin: unfreeze agent spending |
 
 ## Smart contract
 
@@ -198,7 +220,7 @@ This ties the agent's on-chain spending authority to a discoverable, verifiable 
 ## Hackathon tracks
 
 - **stETH Agent Treasury** (Lido, $3K) — yield-only spending from wstETH with permission controls
-- **Lido MCP Server** (Lido, $5K) — 18 MCP tools for treasury, staking, governance, trading
+- **Lido MCP Server** (Lido, $5K) — 24 MCP tools for treasury, staking, governance, trading
 - **Synthesis Open Track** ($14.5K) — community-funded prize pool
 - **Agents With Receipts** (Protocol Labs, $8K) — ERC-8004 identity, agent.json, on-chain verifiability
 - **Uniswap** ($5K) — yield-to-swap via Uniswap Trading API on Base

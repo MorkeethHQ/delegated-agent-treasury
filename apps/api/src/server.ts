@@ -14,7 +14,7 @@ import {
 } from '../../../packages/approval-store/src/index.js';
 import { createExecutor, type Executor } from '../../../packages/executor/src/index.js';
 import { verifyCounterpartyIdentity } from '../../../packages/executor/src/erc8004.js';
-import type { ActionPlan, AuditEvent, Policy, DistributionPlan } from '../../../packages/shared/src/index.js';
+import type { ActionPlan, AuditEvent, Policy, DistributionPlan, AgentProfile } from '../../../packages/shared/src/index.js';
 import { loadStrategy, computeDistribution } from '../../../packages/strategy-engine/src/index.js';
 import {
   getQuote,
@@ -24,13 +24,38 @@ import {
   TOKENS,
 } from '../../../packages/trading-engine/src/index.js';
 import { createSynthesisGateway } from '../../../packages/x402-gateway/src/index.js';
+import {
+  getMoonPayConfig,
+  getMoonPayStatus,
+  executeMoonPaySwap,
+  executeMoonPayDCA,
+  listMoonPayTools,
+  type MoonPaySwapParams,
+  type MoonPayDCAParams,
+} from '../../../packages/moonpay-bridge/src/index.js';
 
 const root = process.cwd();
 const policyPath = resolve(root, 'config', 'sample-policy.json');
 const strategyPath = resolve(root, 'config', 'sample-yield-strategy.json');
 const tradingStrategiesPath = resolve(root, 'config', 'sample-trading-strategies.json');
+const agentsConfigPath = resolve(root, 'config', 'agents.json');
 const auditLogPath = resolve(root, 'data', 'audit-events.jsonl');
 const approvalsPath = resolve(root, 'data', 'approvals.json');
+
+// --- Multi-agent state ---
+
+let agentRegistry: AgentProfile[] = [];
+const frozenAgents = new Set<string>();
+
+async function loadAgentRegistry(): Promise<void> {
+  try {
+    const data = await readJsonFile<{ agents: AgentProfile[] }>(agentsConfigPath);
+    agentRegistry = data.agents;
+    console.log(`Agent registry loaded — ${agentRegistry.length} agents`);
+  } catch {
+    console.log('Agent registry not found — running without multi-agent config');
+  }
+}
 
 // --- x402 Payment Gateway ---
 
@@ -132,7 +157,7 @@ async function handleEvaluate(req: IncomingMessage, res: ServerResponse): Promis
     }
   }
 
-  const result = evaluatePlan(policy, plan, { spentToday: 0, recipientVerified });
+  const result = evaluatePlan(policy, plan, { spentToday: 0, recipientVerified, frozenAgents });
   await auditLog('plan_evaluated', { plan, result, recipientVerified });
 
   // Auto-execute if approved and executor is available
@@ -320,7 +345,7 @@ async function handleStrategyDistribute(req: IncomingMessage, res: ServerRespons
         recipientVerified = identity.verified;
       }
 
-      const evalResult = evaluatePlan(policy, actionPlan, { spentToday: 0, recipientVerified });
+      const evalResult = evaluatePlan(policy, actionPlan, { spentToday: 0, recipientVerified, frozenAgents });
       await auditLog('plan_evaluated', { plan: actionPlan, result: evalResult });
 
       if (evalResult.decision === 'approved' && executor) {
@@ -403,7 +428,7 @@ async function handleSwapExecute(req: IncomingMessage, res: ServerResponse): Pro
 
     await auditLog('plan_submitted', { plan, swapDetails: { tokenIn, tokenOut, amount, dryRun } });
 
-    const evalResult = evaluatePlan(policy, plan, { spentToday: 0 });
+    const evalResult = evaluatePlan(policy, plan, { spentToday: 0, frozenAgents });
     await auditLog('plan_evaluated', { plan, result: evalResult });
 
     if (evalResult.decision === 'denied') {
@@ -455,6 +480,152 @@ async function handleSwapStrategies(_req: IncomingMessage, res: ServerResponse):
   try {
     const strategies = await readJsonFile<unknown>(tradingStrategiesPath);
     return sendJson(res, 200, strategies);
+  } catch (error) {
+    return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
+  }
+}
+
+// --- Agent registry handlers ---
+
+async function handleListAgents(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const agents = agentRegistry.map((a) => ({
+    ...a,
+    frozen: frozenAgents.has(a.agentId),
+  }));
+  return sendJson(res, 200, { agents });
+}
+
+async function handleGetAgent(agentId: string, res: ServerResponse): Promise<void> {
+  const agent = agentRegistry.find((a) => a.agentId === agentId);
+  if (!agent) return sendJson(res, 404, { error: 'Agent not found' });
+  return sendJson(res, 200, { agent: { ...agent, frozen: frozenAgents.has(agent.agentId) } });
+}
+
+async function handleFreezeAgent(agentId: string, req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const body = await parseBody(req);
+  const { requestedBy } = body ? JSON.parse(body) as { requestedBy?: string } : { requestedBy: undefined };
+
+  // Verify the requester is an auditor or admin
+  const requester = requestedBy ? agentRegistry.find((a) => a.agentId === requestedBy) : undefined;
+  if (requester && requester.role !== 'auditor' && requester.role !== 'admin') {
+    return sendJson(res, 403, { error: 'Only auditor or admin agents can freeze spending' });
+  }
+
+  const target = agentRegistry.find((a) => a.agentId === agentId);
+  if (!target) return sendJson(res, 404, { error: 'Agent not found' });
+
+  frozenAgents.add(agentId);
+  await auditLog('plan_evaluated', { action: 'agent_frozen', agentId, requestedBy: requestedBy ?? 'api' });
+  return sendJson(res, 200, { message: `Agent "${agentId}" is now frozen`, agentId, frozen: true });
+}
+
+async function handleUnfreezeAgent(agentId: string, req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const body = await parseBody(req);
+  const { requestedBy } = body ? JSON.parse(body) as { requestedBy?: string } : { requestedBy: undefined };
+
+  // Only admin can unfreeze
+  const requester = requestedBy ? agentRegistry.find((a) => a.agentId === requestedBy) : undefined;
+  if (requester && requester.role !== 'admin') {
+    return sendJson(res, 403, { error: 'Only admin agents can unfreeze spending' });
+  }
+
+  const target = agentRegistry.find((a) => a.agentId === agentId);
+  if (!target) return sendJson(res, 404, { error: 'Agent not found' });
+
+  frozenAgents.delete(agentId);
+  await auditLog('plan_evaluated', { action: 'agent_unfrozen', agentId, requestedBy: requestedBy ?? 'api' });
+  return sendJson(res, 200, { message: `Agent "${agentId}" is now unfrozen`, agentId, frozen: false });
+}
+
+// --- MoonPay handlers ---
+
+const moonpayConfigPath = resolve(root, 'config', 'moonpay-config.json');
+
+async function handleMoonPayStatus(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  try {
+    const [config, status] = await Promise.all([
+      getMoonPayConfig(moonpayConfigPath),
+      getMoonPayStatus(),
+    ]);
+    return sendJson(res, 200, { config, status });
+  } catch (error) {
+    return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
+  }
+}
+
+async function handleMoonPaySwap(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  try {
+    const body = await parseBody(req);
+    const { agentId, fromToken, toToken, amount, chain, reason, dryRun = true } = JSON.parse(body) as {
+      agentId: string;
+      fromToken: string;
+      toToken: string;
+      amount: string;
+      chain?: string;
+      reason: string;
+      dryRun?: boolean;
+    };
+
+    if (!agentId || !fromToken || !toToken || !amount || !reason) {
+      return sendJson(res, 400, { error: 'Missing required fields: agentId, fromToken, toToken, amount, reason' });
+    }
+
+    // Evaluate through policy engine
+    const policy = await readJsonFile<Policy>(policyPath);
+    const plan: ActionPlan = {
+      planId: `moonpay-swap-${Date.now()}`,
+      agentId,
+      type: 'swap',
+      amount: 0,
+      destination: toToken,
+      reason: `[MoonPay] ${reason}`,
+    };
+
+    await auditLog('plan_submitted', { plan, moonpay: { fromToken, toToken, amount, chain, dryRun } });
+
+    const evalResult = evaluatePlan(policy, plan, { spentToday: 0, frozenAgents });
+    await auditLog('plan_evaluated', { plan, result: evalResult });
+
+    if (evalResult.decision === 'denied') {
+      return sendJson(res, 403, { result: evalResult, message: 'MoonPay swap denied by policy engine' });
+    }
+
+    if (evalResult.decision === 'approval_required') {
+      const approval = await createApproval(plan, evalResult);
+      await auditLog('approval_requested', { approval });
+      return sendJson(res, 200, { result: evalResult, approval, message: 'MoonPay swap requires approval' });
+    }
+
+    // Approved — execute via MoonPay bridge
+    const swapParams: MoonPaySwapParams = {
+      fromToken,
+      toToken,
+      amount,
+      chain: chain ?? 'base',
+    };
+
+    const swapResult = await executeMoonPaySwap(swapParams, dryRun);
+    await auditLog('execution_result', { plan, result: evalResult, moonpaySwap: swapResult });
+
+    return sendJson(res, 200, { result: evalResult, swap: swapResult });
+  } catch (error) {
+    return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
+  }
+}
+
+async function handleMoonPayTools(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  try {
+    const config = await getMoonPayConfig(moonpayConfigPath);
+    const tools = listMoonPayTools();
+    return sendJson(res, 200, {
+      config: {
+        enabled: config.enabled,
+        supportedChains: config.supportedChains,
+      },
+      tools,
+      totalTools: tools.length,
+      note: 'MoonPay CLI exposes 54 crypto tools across 17 skills via MCP. Install: npm i -g @moonpay/cli && mp mcp',
+    });
   } catch (error) {
     return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
   }
@@ -593,6 +764,41 @@ const server = createServer(async (req, res) => {
       return await handleSwapStrategies(req, res);
     }
 
+    // --- Agent registry routes ---
+
+    if (req.method === 'GET' && url === '/agents') {
+      return await handleListAgents(req, res);
+    }
+
+    if (req.method === 'GET' && url.match(/^\/agents\/[^/]+$/) && !url.includes('/freeze') && !url.includes('/unfreeze')) {
+      const agentId = url.split('/agents/')[1]?.split('?')[0];
+      if (agentId) return await handleGetAgent(agentId, res);
+    }
+
+    if (req.method === 'POST' && url.match(/^\/agents\/[^/]+\/freeze$/)) {
+      const agentId = url.split('/agents/')[1]?.split('/freeze')[0];
+      if (agentId) return await handleFreezeAgent(agentId, req, res);
+    }
+
+    if (req.method === 'POST' && url.match(/^\/agents\/[^/]+\/unfreeze$/)) {
+      const agentId = url.split('/agents/')[1]?.split('/unfreeze')[0];
+      if (agentId) return await handleUnfreezeAgent(agentId, req, res);
+    }
+
+    // --- MoonPay routes ---
+
+    if (req.method === 'GET' && url === '/moonpay/status') {
+      return await handleMoonPayStatus(req, res);
+    }
+
+    if (req.method === 'POST' && url === '/moonpay/swap') {
+      return await handleMoonPaySwap(req, res);
+    }
+
+    if (req.method === 'GET' && url === '/moonpay/tools') {
+      return await handleMoonPayTools(req, res);
+    }
+
     return sendJson(res, 404, { error: 'Not found' });
   } catch (error) {
     return sendJson(res, 400, {
@@ -606,6 +812,7 @@ const server = createServer(async (req, res) => {
 
 async function start(): Promise<void> {
   await loadApprovals(approvalsPath);
+  await loadAgentRegistry();
   initExecutor();
   const port = Number(process.env.PORT ?? 3001);
   server.listen(port, () => {

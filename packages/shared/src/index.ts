@@ -1,3 +1,14 @@
+export type AgentRole = 'proposer' | 'executor' | 'auditor' | 'admin';
+
+export interface AgentProfile {
+  agentId: string;
+  role: AgentRole;
+  name: string;
+  capabilities: string[];
+  walletAddress?: string;
+  description?: string;
+}
+
 export type ActionType = 'transfer' | 'swap' | 'contract_call';
 
 export interface Policy {

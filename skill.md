@@ -22,7 +22,7 @@ Every action is logged to an append-only audit trail.
 
 ---
 
-## MCP Tools (18 tools)
+## MCP Tools (21 tools)
 
 Connect via MCP server at `packages/mcp-server`. These are the direct on-chain and protocol tools an agent can call.
 
@@ -152,9 +152,40 @@ Execute a yield swap through the policy engine. Swaps yield tokens on Uniswap vi
   - `dry_run` (boolean, default true) — If true, simulate only
 - **Returns:** `{ result, swap }` with policy evaluation and swap execution details
 
+### MoonPay (3 tools)
+
+MoonPay CLI provides 54 crypto tools across 10+ chains. These MCP tools wrap MoonPay operations through our policy engine.
+
+#### `moonpay_status`
+Check whether MoonPay CLI is installed, authenticated, and what tools are available.
+- **Parameters:** none
+- **Returns:** `{ config, status: { installed, cliVersion, authenticated, availableTools, setupInstructions? } }`
+
+#### `moonpay_swap`
+Execute a token swap via MoonPay CLI across 10+ chains (Base, Ethereum, Arbitrum, Polygon, Optimism, etc.). Goes through policy engine for approval.
+- **Parameters:**
+  - `fromToken` (string) — Symbol or address of input token (e.g. "ETH", "USDC")
+  - `toToken` (string) — Symbol or address of output token (e.g. "USDC", "wstETH")
+  - `amount` (string) — Amount of input token (e.g. "0.1")
+  - `chain` (string, default "base") — Chain to execute on
+  - `reason` (string) — Reason for the swap (audit trail)
+  - `dry_run` (boolean, default true) — If true, simulate only
+- **Returns:** `{ result, swap }` with policy evaluation and MoonPay execution details
+
+#### `moonpay_dca`
+Set up a Dollar Cost Averaging order via MoonPay CLI. Automatically buys a token at a set frequency.
+- **Parameters:**
+  - `token` (string) — Token to DCA into (e.g. "ETH", "BTC")
+  - `amount` (string) — Amount per purchase
+  - `frequency` (enum: `daily`, `weekly`, `monthly`)
+  - `chain` (string, default "base") — Chain to execute on
+  - `reason` (string) — Reason for the DCA (audit trail)
+  - `dry_run` (boolean, default true) — If true, simulate only
+- **Returns:** `{ result, swap }` with policy evaluation and DCA setup details
+
 ---
 
-## REST API (16 endpoints)
+## REST API (19 endpoints)
 
 Base URL: `{API_URL}` (default `http://localhost:3001`)
 
@@ -191,6 +222,14 @@ Base URL: `{API_URL}` (default `http://localhost:3001`)
 | `GET` | `/swap/tokens` | List available tokens for swapping on Base (addresses, symbols) |
 | `GET` | `/swap/quote` | Get a Uniswap quote (`?tokenIn=&tokenOut=&amount=`) |
 | `POST` | `/swap/execute` | Execute a policy-gated yield swap via Uniswap |
+
+### MoonPay
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/moonpay/status` | Check if MoonPay CLI is installed, authenticated, and available tools |
+| `POST` | `/moonpay/swap` | Execute a multi-chain swap via MoonPay CLI (policy-gated) |
+| `GET` | `/moonpay/tools` | List all available MoonPay tools (54 tools across 17 skills) |
 
 ### Identity & Payments
 

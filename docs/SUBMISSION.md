@@ -7,7 +7,7 @@ Synthesis Agent Treasury
 Principal-protected, yield-activated agent treasury with autonomous trading strategies on Base.
 
 ## Description (short)
-A treasury where AI agents can only spend accrued yield — never principal. Agents deploy yield into Uniswap trading strategies on Base, all policy-gated with separate swap caps and slippage limits. Trust-gated payments via ERC-8004 identity verification. Other agents pay USDC to use the service via x402. 18 MCP tools, 16 API endpoints, live on Base mainnet with real Lido staking yield. Built by two AI agents orchestrated by one human.
+A treasury where AI agents can only spend accrued yield — never principal. Agents deploy yield into Uniswap trading strategies on Base, all policy-gated with separate swap caps and slippage limits. Trust-gated payments via ERC-8004 identity verification. Other agents pay USDC to use the service via x402. 24 MCP tools, 22 API endpoints, live on Base mainnet with real Lido staking yield. Built by two AI agents orchestrated by one human.
 
 ## Description (long)
 AI agents are increasingly autonomous, but their financial authority is binary — either no access or full wallet control. Neither works for production systems.
@@ -29,7 +29,7 @@ Synthesis Agent Treasury creates bounded financial autonomy. A human deposits ws
 
 **Autonomous governance-aware agent:** The agent loop monitors treasury yield, queries Lido governance for risky proposals, and autonomously decides to spend, swap, or hold. Dangerous governance votes pause spending automatically.
 
-**MCP-native:** 18 MCP tools covering treasury management, Lido staking (stake, wrap, unwrap, withdraw), governance, multi-bucket strategies, ERC-8004 identity verification, and Uniswap trading — natively callable from Claude, Cursor, or any MCP-compatible agent. All write operations support dry_run simulation.
+**MCP-native:** 24 MCP tools covering treasury management, Lido staking (stake, wrap, unwrap, withdraw), governance, multi-bucket strategies, ERC-8004 identity verification, and Uniswap trading — natively callable from Claude, Cursor, or any MCP-compatible agent. All write operations support dry_run simulation.
 
 On Base mainnet, the contract uses a Chainlink oracle for the wstETH/stETH exchange rate, solving the L2 challenge of bridged wstETH not exposing native rate functions.
 
@@ -45,7 +45,7 @@ Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Sol
 
 ## Tech stack
 - Solidity (Foundry) — AgentTreasury smart contract with Chainlink oracle
-- TypeScript / Node.js — 9 packages: API, CLI, policy engine, strategy engine, trading engine, x402 gateway, audit trail, executor, MCP server
+- TypeScript / Node.js — 10 packages: API, CLI, policy engine, strategy engine, trading engine, x402 gateway, audit trail, executor, MCP server
 - Viem — on-chain interaction (treasury + ERC-8004 registry)
 - Uniswap Trading API — yield swap execution on Base
 - x402 (Coinbase) — HTTP 402 payment-gated agent service
@@ -69,4 +69,4 @@ Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Sol
 ## Team
 - Oscar (human) — architect, orchestrator, funder
 - Bagel (AI agent, Cursor) — contract developer, on-chain architecture
-- Claude Code (AI agent, CLI) — systems engineer (9 packages, 18 MCP tools, 16 endpoints)
+- Claude Code (AI agent, CLI) — systems engineer (10 packages, 24 MCP tools, 16 endpoints)

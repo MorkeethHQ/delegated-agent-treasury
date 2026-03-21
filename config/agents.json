@@ -1,0 +1,26 @@
+{
+  "agents": [
+    {
+      "agentId": "bagel",
+      "role": "proposer",
+      "name": "Bagel",
+      "capabilities": ["submit_plans", "check_treasury", "monitor_governance", "execute_strategies"],
+      "description": "Autonomous yield agent — monitors treasury, submits spending and trading plans"
+    },
+    {
+      "agentId": "executor-1",
+      "role": "executor",
+      "name": "Executor",
+      "capabilities": ["execute_approved", "sign_transactions"],
+      "walletAddress": "0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6",
+      "description": "On-chain executor — signs and broadcasts approved transactions"
+    },
+    {
+      "agentId": "auditor-1",
+      "role": "auditor",
+      "name": "Watchdog",
+      "capabilities": ["read_audit", "read_treasury", "flag_anomalies", "freeze_spending"],
+      "description": "Compliance auditor — monitors all activity, can flag anomalies and freeze spending"
+    }
+  ]
+}

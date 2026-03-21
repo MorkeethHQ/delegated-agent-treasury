@@ -1,0 +1,7 @@
+{
+  "enabled": false,
+  "note": "Install MoonPay CLI: npm install -g @moonpay/cli && mp login && mp mcp",
+  "mcpEndpoint": "http://localhost:3002",
+  "supportedChains": ["base", "ethereum", "arbitrum", "polygon", "optimism", "bnb", "avalanche", "solana", "tron", "bitcoin"],
+  "tools": ["swap", "bridge", "dca", "balance", "portfolio", "onramp", "offramp", "limit_order", "stop_loss", "price_alert"]
+}
