@@ -1,10 +1,10 @@
 # HANDOFF.md — Morning Checklist
 
-## Status as of 2026-03-20 ~11pm
+## Status as of 2026-03-21 morning
 
-**Everything builds clean. Everything is pushed to main.**
+**Everything builds clean. All 3 morning agents delivered. Ready to push.**
 
-### What's Built (Phase 1 + 2 + 3)
+### What's Built (Phase 1 + 2 + 3 + Morning)
 
 | Feature | Package | Status |
 |---------|---------|--------|
@@ -12,14 +12,17 @@
 | Policy engine | `policy-engine/` | Working — transfer + swap caps |
 | Approval store | `approval-store/` | Working |
 | Audit logger | `audit-log/` | Working |
-| REST API | `apps/api/` | 16 endpoints |
+| REST API | `apps/api/` | 22 endpoints |
 | CLI | `apps/cli/` | 9 commands |
 | Agent loop | `apps/agent-loop/` | Governance-aware, strategy-aware |
-| MCP server | `mcp-server/` | 18 tools |
+| MCP server | `mcp-server/` | 24 tools |
 | Executor | `executor/` | Viem + ERC-8004 identity |
 | Strategy engine | `strategy-engine/` | Multi-bucket yield distribution |
 | Trading engine | `trading-engine/` | Uniswap API (quotes + dry-run swaps) |
 | x402 gateway | `x402-gateway/` | USDC payment-gated API |
+| MoonPay bridge | `moonpay-bridge/` | 54 crypto tools, swaps/DCA across 10+ chains |
+| Multi-agent roles | `config/agents.json` | Proposer/executor/auditor + freeze/unfreeze |
+| E2E test script | `scripts/test-swap-e2e.sh` | 7-step Uniswap integration test |
 
 ### What's Tested
 

@@ -4,6 +4,7 @@ export interface EvaluatePlanOptions {
   spentToday?: number;
   recipientVerified?: boolean;
   slippageBps?: number;  // actual slippage for swap validation
+  frozenAgents?: Set<string>;  // agents that are frozen by auditor
 }
 
 export function evaluatePlan(
@@ -11,6 +12,11 @@ export function evaluatePlan(
   plan: ActionPlan,
   options: EvaluatePlanOptions = {},
 ): EvaluationResult {
+  // Frozen agent check — auditor can freeze any agent's spending
+  if (options.frozenAgents?.has(plan.agentId)) {
+    return { decision: 'denied', reasons: ['Agent is frozen by auditor.'], appliedRules: ['agent_frozen'] };
+  }
+
   const reasons: string[] = [];
   const appliedRules: string[] = [];
   const spentToday = options.spentToday ?? 0;

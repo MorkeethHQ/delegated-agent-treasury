@@ -31,7 +31,7 @@
 | Criteria | How We Fit |
 |----------|-----------|
 | Cross-sponsor compatibility | Lido (wstETH treasury + staking + governance) + Protocol Labs (ERC-8004 identity) + Base (mainnet deployment) |
-| Well-designed agent system | Policy engine → approval workflow → on-chain execution → audit trail. Clean separation of concerns across 9 packages. |
+| Well-designed agent system | Policy engine → approval workflow → on-chain execution → audit trail. Clean separation of concerns across 10 packages. |
 | Genuine utility | Solves a real problem: agents need bounded financial authority. Yield-only spending from staked assets is a novel primitive. |
 | Coherent build | Single monorepo, 32 commits over 7 days, consistent architecture from contract to MCP to CLI to autonomous loop |
 

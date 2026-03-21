@@ -1,0 +1,14 @@
+{
+  "name": "@synthesis/moonpay-bridge",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@synthesis/shared": "0.1.0"
+  },
+  "scripts": {
+    "build": "node ../../node_modules/typescript/bin/tsc -p tsconfig.json",
+    "check": "node ../../node_modules/typescript/bin/tsc -p tsconfig.json --noEmit"
+  }
+}

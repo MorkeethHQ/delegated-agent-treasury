@@ -25,7 +25,7 @@
 | Unit tests | 12 |
 | Demo scripts | 3 |
 
-## Packages (9)
+## Packages (10)
 
 | Package | Purpose |
 |---------|---------|
@@ -34,20 +34,21 @@
 | `approval-store` | In-memory + file-persisted approval lifecycle |
 | `audit-log` | Append-only JSONL event logging |
 | `executor` | Viem integration layer (API ↔ contract) + ERC-8004 identity verification |
-| `mcp-server` | 18-tool MCP server for treasury, staking, governance, strategy, trust, trading |
+| `mcp-server` | 24-tool MCP server for treasury, staking, governance, strategy, trust, trading, agents, moonpay |
 | `strategy-engine` | Multi-bucket yield distribution engine |
 | `trading-engine` | Uniswap Trading API client — quotes, swaps, DCA on Base |
 | `x402-gateway` | x402 payment gating — HTTP 402 payment protocol for agent-as-a-service |
+| `moonpay-bridge` | MoonPay CLI bridge — 54 crypto tools, swaps/DCA/bridge across 10+ chains |
 
 ## Apps (3)
 
 | App | Purpose |
 |-----|---------|
-| `api` | REST API: 16 endpoints — evaluate, approvals, respond, audit, policy, treasury, strategy, verify, swap, x402 |
+| `api` | REST API: 22 endpoints — evaluate, approvals, respond, audit, policy, treasury, strategy, verify, swap, x402, agents, moonpay |
 | `cli` | CLI: 9 commands — health, policy, evaluate, approvals, approve, deny, audit, treasury, demo |
 | `agent-loop` | Autonomous governance-aware yield spending agent — monitors treasury + Lido governance, decides spend/hold |
 
-## MCP Tools (18)
+## MCP Tools (24)
 
 ### Treasury (3)
 - `get_treasury_state` — available yield, principal, total spent, per-tx cap
@@ -79,7 +80,17 @@
 - `preview_yield_swap` — preview DCA/strategy execution with current yield
 - `execute_yield_swap` — execute policy-gated swap (supports dry_run)
 
-## API Endpoints (16)
+### Agents (3)
+- `list_agents` — list all registered agents with roles, capabilities, frozen status
+- `get_agent_profile` — get a specific agent's profile by ID
+- `freeze_agent` — freeze an agent's spending (auditor/admin only)
+
+### MoonPay (3)
+- `moonpay_status` — check MoonPay CLI installation, authentication, available tools
+- `moonpay_swap` — execute token swap via MoonPay CLI (policy-gated, supports dry_run)
+- `moonpay_dca` — set up Dollar Cost Averaging order via MoonPay CLI
+
+## API Endpoints (22)
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -99,6 +110,14 @@
 | GET | `/swap/quote` | Live Uniswap swap quote |
 | POST | `/swap/execute` | Policy-gated yield swap execution |
 | GET | `/x402/pricing` | x402 payment pricing table |
+| GET | `/swap/strategies` | Configured trading strategies |
+| GET | `/agents` | List all registered agents |
+| GET | `/agents/:id` | Get agent profile |
+| POST | `/agents/:id/freeze` | Freeze agent spending (auditor only) |
+| POST | `/agents/:id/unfreeze` | Unfreeze agent spending (admin only) |
+| GET | `/moonpay/status` | MoonPay CLI status + config |
+| POST | `/moonpay/swap` | Policy-gated MoonPay swap |
+| GET | `/moonpay/tools` | Available MoonPay tools |
 
 ## Scripts
 
@@ -109,6 +128,7 @@
 | `scripts/mainnet-verify.sh` | Base mainnet treasury verification |
 | `scripts/register-erc8004.sh` | Devfolio agent registration |
 | `scripts/submit.sh` | Hackathon project submission |
+| `scripts/test-swap-e2e.sh` | E2E Uniswap swap test — live quotes, policy-gated execution, optional on-chain swap |
 
 ## Hackathon Tracks (6)
 
