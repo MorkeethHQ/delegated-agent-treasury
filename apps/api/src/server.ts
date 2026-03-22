@@ -1047,7 +1047,7 @@ async function handleDelegationExecute(req: IncomingMessage, res: ServerResponse
     const policy = await readJsonFile<Policy>(policyPath);
     const plan: ActionPlan = {
       planId: `delegation-${Date.now()}`,
-      agentId: 'executor',
+      agentId: policy.agentId,
       type: 'transfer',
       amount,
       destination: to,
