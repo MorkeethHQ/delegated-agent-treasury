@@ -2,57 +2,56 @@
 
 ## 30 seconds
 
-AI agents need to spend money, but giving them a wallet is reckless. We built a multi-chain treasury where a human deposits yield-bearing assets and the agent can only spend the accrued yield — never the principal. On Base, wstETH earns Lido staking yield. On Celo, stataUSDC earns Aave lending yield. The agent deploys yield into Uniswap trading strategies, all policy-gated with swap caps, slippage limits, and ERC-8004 trust verification. Other agents pay USDC to use the service via x402. Both the owner and agent EOAs are live EIP-7702 smart accounts on Base mainnet via MetaMask's DeleGator framework — real on-chain delegation with caveats enforcing permissions as a second layer. Live on Base mainnet and Celo mainnet with real yield accruing. Built entirely by two AI agents orchestrated by one human.
+AI agents are getting wallets. That's the wrong abstraction. Agents don't need wallets. They need bounded authority.
+
+We built a treasury where productive capital — Lido wstETH — earns yield, and agents can spend only what the capital earns. Principal is structurally locked at the EVM level. Three onchain controls cap every transaction. MetaMask Delegation caveats enforce the same limits as a second layer. ERC-8004 identity gates trust decisions before payment. Other agents pay USDC to access this financial service via x402.
+
+Live on Base mainnet and Celo mainnet. Real yield accruing. Real transactions executed.
 
 ## 2 minutes
 
-**Problem:** AI agents are increasingly autonomous, but their financial authority is binary — either zero access or full wallet control. Neither works.
+**Problem:** Agent financial authority today is binary — zero access or full wallet control. Both fail. Zero access means agents can't act. Full access means a single bug drains everything.
 
-**Solution:** Synthesis Agent Treasury creates bounded financial autonomy. A human deposits wstETH into a smart contract on Base. As Lido staking rewards accrue, the wstETH value increases. The agent can spend *only the yield* — the principal is structurally locked at the contract level.
+**The primitive:** A treasury that holds productive capital and gives agents authority over only the yield it generates. That's it. Everything else is enforcement and execution built on top.
 
-**Three permission layers:**
-1. Recipient whitelist — agent can only send to pre-approved addresses
-2. Per-transaction cap — each spend is bounded
-3. Yield ceiling — spending can never exceed what the treasury has earned
+Five layers make this work:
 
-On top of the contract sits a policy engine that evaluates every action — transfers and swaps have separate caps and controls. Small amounts auto-execute. Larger amounts require human approval. Denied requests are blocked with reasons. Every action hits an append-only audit log.
+1. **Treasury Primitive** — Lido wstETH sits in a smart contract on Base, earning staking yield. The agent's entire spending power comes from what this capital produces. The treasury regenerates passively. No recurring top-ups from the human operator.
 
-**Not just spending — deploying:** The agent doesn't just transfer yield — it deploys it into trading strategies via Uniswap on Base. DCA into USDC, swap to stable, rebalance — all with separate swap caps (`maxSwapPerAction`) and slippage limits (`maxSlippageBps`). The policy engine treats transfers and swaps as distinct action types with independent risk controls.
+2. **Control Layer** — Yield ceiling, per-tx cap, recipient whitelist. Transfers and swaps have independent risk controls. A multi-role system (proposer/executor/auditor) enforces separation of duties. The auditor can freeze spending.
 
-**Trust-gated payments:** Before sending to any recipient, the agent verifies their on-chain identity via the ERC-8004 registry. Unverified counterparties are escalated to human approval.
+3. **Trust Layer** — Identity is used for decisioning, not just registration. ERC-8004 verification happens per-transaction. Offchain policy becomes onchain caveats via MetaMask Delegation — AllowedTargets, AllowedMethods, ERC20TransferAmount, Timestamp, LimitedCalls. Even if the policy engine is bypassed, the caveats hold.
 
-**Agent-as-a-service:** Other agents can pay USDC to use this treasury via x402 (HTTP 402 payment protocol). Swap quotes cost $0.01, execution costs $0.05. The treasury becomes a discoverable, payable service on Base.
+4. **Execution Layer** — Uniswap for policy-gated yield deployment. x402 so other agents pay USDC to access this financial service. MoonPay as an alternative backend proving the control layer is execution-agnostic.
 
-**Autonomous, not just permissioned:** The agent runs an autonomous loop — monitors treasury yield, queries Lido governance for risky proposals, and decides to spend, swap, or hold. If a dangerous governance vote is active, spending pauses automatically.
+5. **Portability Layer** — Same primitive on Celo with stablecoin-native yield (stataUSDC). Different chain, different asset, same bounded authority.
 
-**How we built it:** One human (Oscar) orchestrating two AI agents — Bagel wrote the Solidity contracts and deployed to Base, Claude Code built the approval backend, policy engine, MCP server, CLI, and docs. Zero lines of human-written code.
-
-**MetaMask: real on-chain delegation:** Both the owner EOA and agent EOA are live EIP-7702 smart accounts on Base mainnet via MetaMask's EIP7702StatelessDeleGator v1.3.0. This isn't just SDK integration — these are confirmed delegation transactions on Base mainnet. MetaMask delegation caveats (AllowedTargets, AllowedMethods, ERC20TransferAmount, Timestamp, LimitedCalls) provide a second, independent enforcement layer: even if the offchain policy engine is bypassed, the onchain caveats protect the treasury.
-
-**What makes it real:** Live on Base mainnet — treasury funded with wstETH, agent configured, yield accruing from Lido staking rewards. The contract uses a Chainlink oracle for the L2 exchange rate. The agent has a verifiable on-chain identity via ERC-8004. Both the owner and agent are EIP-7702 smart accounts via MetaMask DeleGator. The MCP server makes the treasury natively callable from any AI agent that supports Model Context Protocol.
-
-Yield-only spending is the primitive. What you build on top is up to you.
+**What makes it real:** Treasury funded with wstETH on Base mainnet. Chainlink oracle live. Agent has executed Uniswap swaps, spendYield transfers, and x402-gated requests. Both owner and agent EOAs are confirmed EIP-7702 smart accounts via MetaMask DeleGator. All onchain, all verifiable.
 
 ## 5 minutes
 
-*[Use the 2-minute pitch above, then expand with these sections]*
+*Start with the 2-minute pitch above, then continue:*
 
-**Why wstETH?** stETH rebases — your balance changes daily, which makes accounting and smart contract math unreliable. wstETH is the wrapped, non-rebasing version. The balance stays constant, but its value in stETH increases over time. This means we can track yield precisely: `yield = deposited - (deposited * initialRate / currentRate)`. The math is clean, deterministic, and fully on-chain.
+**Why this matters now.** Every agent framework is converging on the same question: how does the agent pay for things? The default answer — give it a hot wallet with funds — is a liability. One prompt injection, one logic bug, and the balance is gone. There's no structural protection, just hope.
 
-**The yield-only insight:** Most treasury systems give agents a budget that depletes. Ours regenerates. As long as the principal stays deposited, yield keeps accruing. The agent's spending power refills passively. This means:
-- No recurring top-ups from the human operator
-- Natural rate-limiting — yield accrues slowly (~3-4% APY), so spend authority is bounded by real economic activity
-- Principal is always safe — even a compromised agent key cannot drain the deposit
+We took a different approach. Instead of funding an agent, we funded a position. Lido wstETH earns staking yield at ~3-4% APY. The smart contract tracks the exchange rate at deposit time and computes available yield deterministically: `yield = deposited - (deposited * initialRate / currentRate)`. The agent can spend up to that amount. The principal cannot move. This is not an allowance that depletes — it's a budget that regenerates from real economic activity.
 
-**The MCP angle:** We built an MCP server with 24 tools that any Claude, Cursor, or MCP-compatible agent can call natively. Treasury management, Lido staking operations, multi-bucket yield strategies, ERC-8004 identity verification, Uniswap trading, multi-agent orchestration, and MoonPay multi-chain operations. All write operations support `dry_run` for simulation before execution.
+**Why wstETH specifically.** stETH rebases — balances change daily, which breaks smart contract math. wstETH wraps it into a non-rebasing token where the balance stays constant but value increases. Clean accounting. On Base L2, bridged wstETH doesn't expose native rate functions, so the contract reads a Chainlink oracle. This is a solved problem, not a workaround.
 
-**The collaboration model:** This project was built by a human directing two AI agents:
-- Oscar (human) — architect, orchestrator, funder. Made strategic decisions. Killed the web UI in favor of agent-native interfaces. Funded the Base mainnet deployment.
-- Bagel (AI, Cursor) — contract developer. Wrote Solidity, deployed on-chain, handled transaction flows.
-- Claude Code (AI, CLI) — systems engineer. Built the approval backend, policy engine, audit trail, MCP server, CLI, and all documentation.
+**The control stack in practice.** A policy engine sits between the agent and the contract. Every action is classified — transfer or swap — and evaluated against its own set of caps. A transfer might have a 0.01 wstETH per-tx limit. A swap might allow 0.05 WETH with 50bps max slippage. These are independent controls. The multi-bucket strategy engine can route yield across operations, grants, and reserves with percentage-based allocation.
 
-They communicated through a shared Git repo. Oscar relayed context between them — contract addresses, ABI decisions, scope changes. No Slack, no Jira, no meetings. Just intent and code.
+Three agent roles enforce separation: the proposer plans, the executor signs, the auditor watches. The auditor can freeze any agent at any time. This isn't role-based access control on a dashboard — it's structural separation enforced at the API level.
 
-**What's next:** Multi-agent support (parent agents allocating yield budgets to sub-agents), time-windowed permissions, cross-chain wstETH on Arbitrum and Optimism, richer trading strategies via Synthetix perps, and a visual policy editor.
+**Trust decisions at transaction time.** The ERC-8004 registry on Base stores verifiable agent identities. Before every payment, the policy engine checks: is this recipient registered? What's their verification status? Unverified recipients trigger human escalation. This means trust is re-evaluated continuously, not granted once at onboarding.
 
-**The bottom line:** AI agents need financial authority. Not unlimited, not zero. A treasury that protects principal and autonomously deploys only accrued yield — into payments, distributions, and trading strategies — using identity-aware policy rules, bounded risk controls, and full receipts.
+**Onchain caveats as defense in depth.** Both the owner and agent EOAs are live EIP-7702 smart accounts on Base mainnet via MetaMask's DeleGator framework. The delegation carries caveats — AllowedTargets restricts which contracts the agent can call, ERC20TransferAmount caps token movement, Timestamp bounds validity, LimitedCalls caps total invocations. These caveats mirror the offchain policy but enforce independently. If someone bypasses the API, the chain still says no.
+
+**The commercial layer.** x402 turns this treasury into a payable service. Another agent sends an HTTP request, gets a 402 response with a USDC payment requirement, pays it, and receives the financial service — a swap quote, a trade execution. Other agents pay USDC to access this financial capability. This is agent-to-agent commerce with real money, not a demo.
+
+**Portability proof.** The same treasury contract deploys on Celo with stataUSDC (Aave-wrapped stablecoin) as the yield source instead of wstETH. The agent has executed real spendYield and Uniswap transactions on Celo mainnet. Same control layer, same policy engine. The primitive is not chain-specific or asset-specific.
+
+**How it was built.** One human orchestrating two AI agents. Oscar made architectural decisions — kill the web UI, go agent-native, fund the mainnet deployment. Bagel (Cursor) wrote Solidity and deployed contracts. Claude Code built the 10-package TypeScript system. They coordinated through a shared Git repo. No meetings, no tickets. Intent and code.
+
+**Evidence:** Treasury contract live on Base mainnet. Uniswap swap executed onchain. Permit2 approval confirmed. x402 gateway serving priced endpoints. ERC-8004 identity registered. MetaMask EIP-7702 delegations confirmed for both EOAs. Celo treasury deployed with yield spent. MoonPay transfer executed. All transaction hashes in the submission links.
+
+**The bottom line.** This project gives agents bounded financial authority over productive on-chain capital. Not unlimited access. Not zero access. Structural limits enforced by math, policy, identity, and onchain caveats — with proof that it works across chains, assets, and execution backends.

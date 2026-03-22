@@ -4,42 +4,59 @@
 Synthesis Agent Treasury
 
 ## Tagline
-Principal-protected, yield-activated agent treasury with autonomous trading strategies on Base.
+Bounded financial authority over productive on-chain capital for autonomous agents.
 
 ## Description (short)
-A treasury where AI agents can only spend accrued yield — never principal. Agents deploy yield into Uniswap trading strategies on Base, all policy-gated with separate swap caps and slippage limits. Trust-gated payments via ERC-8004 identity verification. Other agents pay USDC to use the service via x402. MetaMask Delegation caveats enforce permissions onchain. ENS subdomains (morke.eth) for agent identity. 24 MCP tools, 34 API endpoints, live on Base mainnet + Celo mainnet. Built by two AI agents orchestrated by one human.
+Agents don't need wallets. They need bounded authority. Synthesis Agent Treasury locks principal in yield-bearing positions (Lido wstETH on Base, stataUSDC on Celo) and gives agents permission to spend only what the capital earns. Three contract-level controls — yield ceiling, per-tx cap, recipient whitelist — make overspend structurally impossible. MetaMask Delegation caveats enforce the same boundaries onchain as a second layer. Agents deploy yield through policy-gated Uniswap swaps. Other agents pay USDC to access this financial service via x402. ERC-8004 identity gates trust decisions before any payment executes. Live on Base mainnet and Celo mainnet with real yield accruing.
 
 ## Description (long)
-AI agents are increasingly autonomous, but their financial authority is binary — either no access or full wallet control. Neither works for production systems.
 
-Synthesis Agent Treasury creates bounded financial autonomy. A human deposits wstETH into a smart contract on Base. As Lido staking rewards accrue, the wstETH exchange rate increases. The agent can spend only the yield — the principal is structurally locked at the EVM level.
+This project gives agents bounded financial authority over productive on-chain capital.
 
-**Three on-chain enforcements protect every transaction:**
-1. Recipient whitelist — agent can only send to pre-approved addresses
-2. Per-transaction cap — each spend is bounded
-3. Yield ceiling — spending can never exceed what the treasury has earned
+AI agents are increasingly autonomous, but their financial authority is binary — either no access or full wallet control. Neither works for production systems. We built a five-layer stack that solves this.
 
-**Not just spending — deploying:** The agent deploys yield into trading strategies via Uniswap on Base. DCA into USDC, swap to stable, rebalance — all with separate swap caps (`maxSwapPerAction`) and slippage limits (`maxSlippageBps`). The policy engine treats transfers and swaps as distinct action types with independent risk controls.
+### Layer 1 — Treasury Primitive (Lido / stETH)
 
-**Multi-bucket yield distribution:** A configurable strategy engine routes yield across named buckets (operations, grants, reserve) with percentage-based allocation, threshold gating, and per-tx clamping.
+The source of productive capital. A human deposits wstETH into a smart contract on Base. Lido staking rewards cause the wstETH exchange rate to rise over time, generating yield passively. The agent's entire spending power derives from this yield. Principal is structurally locked at the EVM level — even a compromised agent key cannot drain the deposit. The treasury regenerates: as long as principal stays deposited, spending authority refills from real economic activity at ~3-4% APY. On Celo, the same primitive uses stataUSDC earning Aave lending yield.
 
-**Trust-gated payments:** Before sending to any recipient, the policy engine verifies their on-chain agent identity via the ERC-8004 registry on Base. Unverified counterparties are escalated to human approval.
+On Base L2, bridged wstETH doesn't expose native rate functions, so the contract reads a Chainlink oracle for the wstETH/stETH exchange rate. Yield math is deterministic: `yield = deposited - (deposited * initialRate / currentRate)`.
 
-**Agent-as-a-service:** Other agents pay USDC to use this treasury via x402 (HTTP 402 payment protocol by Coinbase). Swap quotes cost $0.01, execution $0.05. The treasury becomes a discoverable, payable service on Base.
+### Layer 2 — Control Layer (Caps, Whitelists, Approvals, Freeze)
 
-**Autonomous governance-aware agent:** The agent loop monitors treasury yield, queries Lido governance for risky proposals, and autonomously decides to spend, swap, or hold. Dangerous governance votes pause spending automatically.
+Three onchain enforcements protect every transaction:
+1. **Yield ceiling** — spending can never exceed what the treasury has earned
+2. **Per-transaction cap** — each spend is bounded to a configured maximum
+3. **Recipient whitelist** — the agent can only send to pre-approved addresses
 
-**MCP-native:** 24 MCP tools covering treasury management, Lido staking (stake, wrap, unwrap, withdraw), governance, multi-bucket strategies, ERC-8004 identity verification, and Uniswap trading — natively callable from Claude, Cursor, or any MCP-compatible agent. All write operations support dry_run simulation.
+On top of the contract sits a policy engine that evaluates every action. Transfers and swaps have separate caps and independent risk controls (`maxSwapPerAction`, `maxSlippageBps`). Small amounts auto-execute. Larger amounts require human approval. Denied requests are blocked with reasons. Every action hits an append-only audit log.
 
-On Base mainnet, the contract uses a Chainlink oracle for the wstETH/stETH exchange rate, solving the L2 challenge of bridged wstETH not exposing native rate functions.
+A multi-bucket strategy engine routes yield across named buckets (operations, grants, reserve) with percentage-based allocation, threshold gating, and per-tx clamping.
 
-**Multi-agent architecture:** Three agent roles (proposer/executor/auditor) with freeze/unfreeze controls. The auditor can halt any agent's spending. The proposer submits plans, the executor signs transactions, and the auditor monitors everything — separation of duties enforced at the API level.
+Three agent roles (proposer/executor/auditor) enforce separation of duties. The auditor can freeze any agent's spending. The proposer submits plans. The executor signs transactions. All enforced at the API level.
 
-**MetaMask Delegation Framework:** Defense-in-depth via ERC-7710/ERC-7715 delegations. The owner creates a delegation to the agent with caveats (AllowedTargets, AllowedMethods, ERC20TransferAmount, Timestamp, LimitedCalls) that mirror the policy engine constraints. Even if the offchain policy is bypassed, onchain caveats protect the treasury. Both the owner EOA and agent EOA are now live EIP-7702 smart accounts on Base mainnet via MetaMask's EIP7702StatelessDeleGator v1.3.0 — this is real on-chain delegation, not just SDK integration.
+### Layer 3 — Trust Layer (ERC-8004, Delegations, Audit)
 
-**MoonPay CLI bridge:** 54 crypto tools across 10+ chains (Base, Ethereum, Arbitrum, Polygon, etc.) integrated as an alternative execution backend, all policy-gated through the same engine.
+Identity is used for decisioning, not just registration. Before sending to any recipient, the policy engine verifies their onchain agent identity via the ERC-8004 registry on Base. Unverified counterparties are escalated to human approval. This means trust is evaluated per-transaction, not granted once and forgotten.
 
-Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Solidity and deployed on-chain. Claude Code built the 10-package TypeScript system — policy engine, trading engine, strategy engine, x402 gateway, MoonPay bridge, MCP server, API, CLI, and docs. Zero lines of human-written code.
+Offchain policy becomes onchain caveats. Both the owner EOA and agent EOA are live EIP-7702 smart accounts on Base mainnet via MetaMask's EIP7702StatelessDeleGator v1.3.0. The owner creates a delegation to the agent with caveats — AllowedTargets, AllowedMethods, ERC20TransferAmount, Timestamp, LimitedCalls — that mirror the policy engine constraints. Even if the offchain policy is bypassed, onchain caveats protect the treasury. This is real onchain delegation confirmed in transactions on Base mainnet, not SDK integration alone.
+
+Every action produces a receipt in the append-only audit trail. Governance awareness adds another dimension: the agent loop monitors Lido governance for risky proposals and autonomously pauses spending when dangerous votes are active.
+
+### Layer 4 — Execution Layer (Uniswap, x402, MoonPay)
+
+**Uniswap — policy-gated yield deployment.** The agent deploys yield into trading strategies via Uniswap on Base: DCA into USDC, swap to stable, rebalance. Each swap is bounded by its own cap and slippage limit, independent from transfer controls. This is yield deployment under policy, not a trading bot.
+
+**x402 — agent-to-agent commercial layer.** Other agents pay USDC to access this financial service via Coinbase's HTTP 402 payment protocol. Swap quotes cost $0.01, execution costs $0.05. The treasury is a discoverable, payable service on Base. This proves agents can offer financial capability to other agents and get paid for it.
+
+**MoonPay — alternative execution backend.** 54 crypto tools across 10+ chains (Base, Ethereum, Arbitrum, Polygon, etc.) integrated as an alternative execution path, all policy-gated through the same engine. This proves the control layer is backend-agnostic.
+
+### Layer 5 — Portability Layer (Base, Celo)
+
+The same treasury primitive deploys to multiple chains. On Celo, the contract uses stataUSDC (Aave-wrapped stablecoin) instead of wstETH, proving the yield-only spending model works across different asset types and chain environments. The agent has executed real spendYield and Uniswap swap transactions on Celo mainnet. Same control layer, same policy engine, different chain and asset — the primitive is portable.
+
+---
+
+**How it was built:** One human (Oscar) orchestrating two AI agents. Bagel (Cursor) wrote Solidity and deployed onchain. Claude Code built the 10-package TypeScript system — policy engine, trading engine, strategy engine, x402 gateway, MoonPay bridge, MCP server, API, CLI, and docs. Zero lines of human-written code. They communicated through a shared Git repo with Oscar relaying context between them.
 
 ## Tracks
 - stETH Agent Treasury (Lido Labs Foundation, $3K)
@@ -57,16 +74,17 @@ Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Sol
 ## Tech stack
 - Solidity (Foundry) — AgentTreasury smart contract with Chainlink oracle
 - TypeScript / Node.js — 10 packages: API, CLI, policy engine, strategy engine, trading engine, x402 gateway, audit trail, executor, MCP server
-- Viem — on-chain interaction (treasury + ERC-8004 registry)
-- Uniswap Trading API — yield swap execution on Base
-- x402 (Coinbase) — HTTP 402 payment-gated agent service
+- Viem — onchain interaction (treasury + ERC-8004 registry)
+- Uniswap Trading API — policy-gated yield deployment on Base
+- x402 (Coinbase) — HTTP 402 payment-gated agent-to-agent commerce
 - MCP SDK — 24-tool MCP server
-- MoonPay CLI — 54-tool crypto execution backend (swaps, DCA, bridges across 10+ chains)
-- wstETH (Lido) — yield-bearing asset
-- Base (mainnet + Sepolia) — deployment chain
-- ERC-8004 — on-chain agent identity + trust-gated payments
+- MoonPay CLI — alternative execution backend (swaps, DCA, bridges across 10+ chains)
+- wstETH (Lido) — yield-bearing productive capital
+- Base (mainnet + Sepolia) — primary deployment chain
+- Celo (mainnet) — portability proof with stablecoin-native yield
+- ERC-8004 — onchain agent identity for trust-gated payment decisions
 - Chainlink — wstETH/stETH oracle on Base L2
-- MetaMask Delegation Framework — ERC-7710/ERC-7715 onchain caveats for agent permissions
+- MetaMask Delegation Framework — ERC-7710/ERC-7715 onchain caveats as second enforcement layer
 
 ## Links
 - Repo: https://github.com/MorkeethHQ/delegated-agent-treasury
@@ -91,5 +109,5 @@ Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Sol
 
 ## Team
 - Oscar (human) — architect, orchestrator, funder
-- Bagel (AI agent, Cursor) — contract developer, on-chain architecture
+- Bagel (AI agent, Cursor) — contract developer, onchain architecture
 - Claude Code (AI agent, CLI) — systems engineer (10 packages, 24 MCP tools, 35 endpoints)
