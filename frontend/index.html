@@ -3,329 +3,324 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Claw Bound Onchain Money Maker</title>
+<title>Open Bound Onchain Money Maker</title>
 <style>
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  :root{--bg:#fafafa;--bg2:#ffffff;--bg3:#f5f5f5;--fg:#111;--fg2:#555;--fg3:#888;--accent:#111;--green:#16a34a;--border:#e5e5e5;--radius:8px}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.6}
-  a{color:var(--fg);text-decoration:underline;text-underline-offset:2px}
-  a:hover{color:var(--green)}
-  .container{max-width:960px;margin:0 auto;padding:0 24px}
-  section{padding:64px 0;border-bottom:1px solid var(--border)}
-  code,pre{font-family:'SF Mono',Monaco,'Cascadia Code',monospace;font-size:.85rem}
-  pre{background:var(--fg);color:#e5e5e5;padding:20px 24px;border-radius:var(--radius);overflow-x:auto;line-height:1.5}
-  .mono{font-family:'SF Mono',Monaco,monospace;font-size:.85rem}
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#09090b;--bg2:#18181b;--bg3:#27272a;--fg:#fafafa;--fg2:#a1a1aa;--fg3:#71717a;--border:#27272a;--accent:#a78bfa;--green:#4ade80;--blue:#60a5fa}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:var(--fg2);text-decoration:none;transition:color .15s}
+  a:hover{color:var(--fg)}
+  ::selection{background:rgba(167,139,250,.3)}
+  code{font-family:'SF Mono',Monaco,monospace;font-size:.8em;background:var(--bg3);padding:2px 6px;border-radius:4px}
+  pre{font-family:'SF Mono',Monaco,monospace;font-size:.82rem;background:var(--bg2);border:1px solid var(--border);padding:24px;border-radius:12px;overflow-x:auto;line-height:1.6;color:var(--fg2)}
+  pre strong{color:var(--fg)}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:0 32px}
+
+  /* Nav */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(9,9,11,.8);border-bottom:1px solid var(--border)}
+  nav .inner{max-width:1080px;margin:0 auto;padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between}
+  nav .logo{font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:10px}
+  nav .logo .mark{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--blue));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+  nav .links{display:flex;gap:24px;font-size:.85rem;color:var(--fg3)}
+  nav .links a:hover{color:var(--fg)}
+  .live-badge{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;color:var(--green);font-weight:500;padding:4px 10px;border:1px solid rgba(74,222,128,.2);border-radius:99px;background:rgba(74,222,128,.05)}
+  .live-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
   /* Hero */
-  .hero{padding:120px 0 80px;text-align:center;border-bottom:1px solid var(--border)}
-  .hero h1{font-size:2.8rem;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:16px}
-  .hero .sub{font-size:1.15rem;color:var(--fg2);max-width:580px;margin:0 auto 40px;line-height:1.5}
-  .hero .live{display:inline-flex;align-items:center;gap:8px;font-size:.9rem;color:var(--green);font-weight:600}
-  .hero .live .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-  .stats{display:flex;gap:40px;justify-content:center;margin:40px 0;flex-wrap:wrap}
-  .stat{text-align:center}
-  .stat .n{font-size:2rem;font-weight:800;letter-spacing:-.02em}
-  .stat .l{font-size:.8rem;color:var(--fg3);text-transform:uppercase;letter-spacing:.06em}
-
-  /* Two-column split */
-  .split{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin:32px 0}
-  @media(max-width:700px){.split{grid-template-columns:1fr}}
-  .split-card{border:1px solid var(--border);border-radius:var(--radius);padding:32px;background:var(--bg2)}
-  .split-card h3{font-size:1.1rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-  .split-card ul{list-style:none;padding:0}
-  .split-card li{padding:6px 0;color:var(--fg2);font-size:.95rem;border-bottom:1px solid var(--border)}
-  .split-card li:last-child{border:none}
-  .tag{display:inline-block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:4px;background:var(--fg);color:var(--bg);margin-right:6px}
-  .tag-human{background:#2563eb;color:#fff}
-  .tag-agent{background:#111;color:#fff}
+  .hero{padding:160px 0 100px;position:relative}
+  .hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(167,139,250,.08),transparent 70%);pointer-events:none}
+  .hero h1{font-size:clamp(3rem,7vw,5.5rem);font-weight:800;letter-spacing:-.04em;line-height:1;margin-bottom:24px}
+  .hero h1 .gradient{background:linear-gradient(135deg,var(--accent) 0%,var(--blue) 50%,var(--green) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .hero .desc{font-size:1.15rem;color:var(--fg2);line-height:1.6;max-width:540px;margin-bottom:48px}
+  .hero .metrics{display:flex;gap:48px;flex-wrap:wrap}
+  .metric .val{font-size:2rem;font-weight:700;letter-spacing:-.02em}
+  .metric .label{font-size:.8rem;color:var(--fg3);margin-top:2px}
 
   /* Sections */
-  h2{font-size:1.8rem;font-weight:700;letter-spacing:-.02em;margin-bottom:8px}
-  .section-sub{color:var(--fg2);margin-bottom:32px}
+  section{padding:96px 0;border-top:1px solid var(--border)}
+  .section-label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--fg3);margin-bottom:12px}
+  h2{font-size:2.2rem;font-weight:700;letter-spacing:-.03em;line-height:1.15;margin-bottom:8px}
+  .section-desc{color:var(--fg2);font-size:1rem;margin-bottom:48px;max-width:560px;line-height:1.6}
 
-  /* Integration grid */
-  .int-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  @media(max-width:700px){.int-grid{grid-template-columns:1fr}}
-  .int-card{border:1px solid var(--border);border-radius:var(--radius);padding:20px;background:var(--bg2)}
-  .int-card h4{font-size:.95rem;margin-bottom:4px}
-  .int-card .role{font-size:.8rem;color:var(--green);font-weight:600;margin-bottom:8px}
-  .int-card p{font-size:.85rem;color:var(--fg2);line-height:1.45}
+  /* Two-col */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  @media(max-width:720px){.two-col{grid-template-columns:1fr}}
+  .card{border:1px solid var(--border);border-radius:12px;padding:28px;background:var(--bg2);transition:border-color .2s}
+  .card:hover{border-color:var(--bg3)}
+  .card-label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:3px 8px;border-radius:4px;display:inline-block;margin-bottom:16px}
+  .card-label.human{background:rgba(96,165,250,.12);color:var(--blue)}
+  .card-label.agent{background:rgba(167,139,250,.12);color:var(--accent)}
+  .card h3{font-size:1rem;font-weight:600;margin-bottom:12px}
+  .card li{color:var(--fg2);font-size:.9rem;padding:5px 0;list-style:none;border-bottom:1px solid rgba(39,39,42,.6)}
+  .card li:last-child{border:none}
+  .card li code{font-size:.75rem}
+
+  /* Integration list */
+  .int-list{display:grid;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .int-item{display:grid;grid-template-columns:160px 140px 1fr;padding:16px 20px;background:var(--bg);align-items:baseline;gap:16px}
+  @media(max-width:720px){.int-item{grid-template-columns:1fr;gap:4px}}
+  .int-item h4{font-size:.9rem;font-weight:600}
+  .int-item .role{font-size:.8rem;color:var(--accent);font-weight:500}
+  .int-item p{font-size:.85rem;color:var(--fg2);line-height:1.45}
 
   /* Proof table */
-  table{width:100%;border-collapse:collapse;font-size:.85rem}
-  th{text-align:left;padding:8px 12px;border-bottom:2px solid var(--fg);font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--fg3)}
-  td{padding:8px 12px;border-bottom:1px solid var(--border)}
-  tr.auto td{background:rgba(22,163,74,.06)}
-  .chain{font-size:.7rem;font-weight:700;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.04em}
-  .chain-base{background:#dbeafe;color:#1e40af}
-  .chain-celo{background:#dcfce7;color:#166534}
-  .chain-sep{background:#f3f4f6;color:#6b7280}
+  table{width:100%;border-collapse:collapse;font-size:.82rem}
+  th{text-align:left;padding:10px 14px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--fg3);border-bottom:1px solid var(--border)}
+  td{padding:10px 14px;border-bottom:1px solid var(--border)}
+  td a{color:var(--accent);font-family:'SF Mono',Monaco,monospace;font-size:.8rem}
+  td a:hover{color:var(--fg)}
+  tr.auto td{color:var(--green)}
+  tr.auto td a{color:var(--green)}
+  .chain{font-size:.65rem;font-weight:600;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.04em}
+  .c-base{background:rgba(96,165,250,.12);color:var(--blue)}
+  .c-celo{background:rgba(74,222,128,.12);color:var(--green)}
+  .c-sep{background:rgba(113,113,122,.12);color:var(--fg3)}
 
   /* Footer */
-  footer{padding:48px 0;text-align:center;color:var(--fg3);font-size:.85rem}
+  footer{border-top:1px solid var(--border);padding:40px 0;text-align:center;color:var(--fg3);font-size:.82rem}
   footer a{color:var(--fg2)}
+  footer .links{display:flex;gap:20px;justify-content:center;margin-bottom:12px}
 </style>
 </head>
 <body>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="container">
-    <p class="live"><span class="dot"></span> Live on Base mainnet</p>
-    <h1>Claw Bound Onchain Money Maker</h1>
-    <p class="sub">Your agent needs money to operate. Giving it your wallet is insane. Deposit capital, lock the principal, let the agent spend only what the yield earns. Budget regenerates forever.</p>
-    <div class="stats">
-      <div class="stat"><div class="n">18</div><div class="l">On-chain TXs</div></div>
-      <div class="stat"><div class="n">4</div><div class="l">Autonomous Spends</div></div>
-      <div class="stat"><div class="n">~3.5%</div><div class="l">APY Budget</div></div>
-      <div class="stat"><div class="n">0</div><div class="l">Lines of Human Code</div></div>
+<nav>
+  <div class="inner">
+    <div class="logo">
+      <div class="mark">OB</div>
+      Open Bound
     </div>
+    <div class="links">
+      <a href="#how">How it works</a>
+      <a href="#integrations">Integrations</a>
+      <a href="#proof">Proof</a>
+      <a href="#start">Run it</a>
+      <span class="live-badge"><span class="dot"></span> Base mainnet</span>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- HERO -->
+<section class="hero" style="border:none">
+  <h1>Open Bound<br><span class="gradient">Onchain Money Maker</span></h1>
+  <p class="desc">Your agent needs money to operate. Giving it your wallet is insane. Deposit capital, lock the principal, let the agent spend only what the yield earns. Budget that regenerates forever.</p>
+  <div class="metrics">
+    <div class="metric"><div class="val">18</div><div class="label">On-chain transactions</div></div>
+    <div class="metric"><div class="val">4</div><div class="label">Autonomous spends</div></div>
+    <div class="metric"><div class="val">~3.5%</div><div class="label">APY budget rate</div></div>
+    <div class="metric"><div class="val">0</div><div class="label">Lines of human code</div></div>
   </div>
 </section>
 
 <!-- FOR HUMANS / FOR AGENTS -->
-<section>
-  <div class="container">
-    <h2>Two interfaces. One treasury.</h2>
-    <p class="section-sub">Humans set the rules. Agents execute within them.</p>
-    <div class="split">
-      <div class="split-card">
-        <h3><span class="tag tag-human">For Humans</span> Owner Dashboard</h3>
-        <ul>
-          <li>Deposit wstETH into the treasury contract</li>
-          <li>Set per-transaction spending caps</li>
-          <li>Whitelist approved recipient addresses</li>
-          <li>Review and approve large spending plans</li>
-          <li>Freeze any agent instantly via circuit breaker</li>
-          <li>Monitor all activity via audit trail</li>
-          <li>Principal is always withdrawable. You stay in control.</li>
-        </ul>
-      </div>
-      <div class="split-card">
-        <h3><span class="tag tag-agent">For Agents</span> Autonomous Operator</h3>
-        <ul>
-          <li>Query available yield: <code>GET /treasury</code></li>
-          <li>Submit spending plans: <code>POST /plans/evaluate</code></li>
-          <li>Auto-approved if within caps, escalated if not</li>
-          <li>Deploy yield via Uniswap swaps</li>
-          <li>Discover capabilities: <code>GET /onboarding/status</code></li>
-          <li>24 MCP tools for native agent integration</li>
-          <li>Budget regenerates from staking yield. Never runs out.</li>
-        </ul>
-      </div>
+<section id="how">
+  <div class="section-label">Two interfaces</div>
+  <h2>For humans. For agents.</h2>
+  <p class="section-desc">Humans set the rules. Agents execute within them. Same treasury, different entry points.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <span class="card-label human">For Humans</span>
+      <h3>You control the treasury</h3>
+      <ul>
+        <li>Deposit wstETH &mdash; lock principal, yield becomes the budget</li>
+        <li>Set per-transaction spending caps</li>
+        <li>Whitelist approved recipient addresses</li>
+        <li>Review and approve large spending plans</li>
+        <li>Freeze any agent instantly</li>
+        <li>Full audit trail of every action</li>
+        <li>Principal always withdrawable. You stay in control.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="card-label agent">For Agents</span>
+      <h3>Autonomous operator</h3>
+      <ul>
+        <li>Query available yield &mdash; <code>GET /treasury</code></li>
+        <li>Submit spending plans &mdash; <code>POST /plans/evaluate</code></li>
+        <li>Auto-approved if within caps, escalated if over</li>
+        <li>Deploy yield via Uniswap swaps</li>
+        <li>Self-discovery &mdash; <code>GET /onboarding/status</code></li>
+        <li>24 MCP tools for native agent integration</li>
+        <li>Budget regenerates from staking yield. Never runs out.</li>
+      </ul>
     </div>
   </div>
 </section>
 
 <!-- HOW IT WORKS -->
 <section>
-  <div class="container">
-    <h2>How it works</h2>
-    <p class="section-sub">Five layers. One product.</p>
-    <div class="int-grid">
-      <div class="int-card" style="grid-column:1/-1">
-        <h4>1. Treasury Primitive</h4>
-        <div class="role">Lido wstETH on Base</div>
-        <p>Human deposits wstETH. Lido staking rewards cause the exchange rate to rise, generating yield at ~3.5% APY. The contract records the rate at deposit time. Available yield = current value minus principal value. The agent can spend up to that delta. Principal is structurally locked at the EVM level.</p>
-      </div>
-      <div class="int-card">
-        <h4>2. Control Layer</h4>
-        <div class="role">Policy Engine</div>
-        <p>Every action passes through a policy engine: per-tx caps, daily aggregate limits, recipient whitelist, approval thresholds. Small spends auto-execute. Large spends require human approval. Denied actions are blocked and logged.</p>
-      </div>
-      <div class="int-card">
-        <h4>3. Trust Layer</h4>
-        <div class="role">ERC-8004 + MetaMask Delegations</div>
-        <p>On-chain agent identity gates trust decisions. MetaMask Delegation caveats (ERC-7710) enforce the same constraints onchain as the policy engine does offchain. Even if the offchain layer is bypassed, onchain caveats protect the treasury.</p>
-      </div>
-      <div class="int-card">
-        <h4>4. Execution Layer</h4>
-        <div class="role">Uniswap + MoonPay + x402</div>
-        <p>Agents deploy yield through policy-gated Uniswap swaps on Base. MoonPay CLI provides an alternative multi-chain execution backend. x402 lets other agents pay USDC to access this treasury as a service.</p>
-      </div>
-      <div class="int-card">
-        <h4>5. Portability</h4>
-        <div class="role">Base + Celo</div>
-        <p>Base is the primary home (ETH staking yield). Celo proves portability (stataUSDC lending yield from Aave). Different yield source, different risk profile, identical spending constraint.</p>
-      </div>
-    </div>
+  <div class="section-label">Architecture</div>
+  <h2>Five layers. One product.</h2>
+  <p class="section-desc">From the yield source to cross-chain portability. Every layer serves bounded authority.</p>
+
+  <div class="int-list">
+    <div class="int-item"><h4>Treasury Primitive</h4><div class="role">Lido wstETH</div><p>Human deposits wstETH. Staking rewards generate yield at ~3.5% APY. Agent spends up to the yield delta. Principal locked at the EVM level. $10K deposit = ~$350/yr autonomous budget.</p></div>
+    <div class="int-item"><h4>Control Layer</h4><div class="role">Policy Engine</div><p>Every action evaluated: per-tx caps, daily limits, recipient whitelist, approval thresholds. Small spends auto-execute. Large spends require human sign-off. Denied actions are blocked and logged.</p></div>
+    <div class="int-item"><h4>Trust Layer</h4><div class="role">ERC-8004 + Delegations</div><p>On-chain agent identity gates trust decisions. MetaMask ERC-7710 caveats enforce constraints onchain. Even if the offchain layer is bypassed, onchain caveats protect the treasury. Defense-in-depth.</p></div>
+    <div class="int-item"><h4>Execution Layer</h4><div class="role">Uniswap + x402</div><p>Policy-gated Uniswap swaps deploy yield into target tokens. x402 micropayments let other agents pay for access. MoonPay CLI provides an alternative multi-chain execution backend.</p></div>
+    <div class="int-item"><h4>Portability</h4><div class="role">Base + Celo</div><p>Base is home (ETH staking yield). Celo proves portability (stataUSDC lending yield from Aave). Different yield source, different risk profile, identical spending constraint.</p></div>
   </div>
 </section>
 
-<!-- PARTNER INTEGRATIONS -->
-<section>
-  <div class="container">
-    <h2>Partner Integrations</h2>
-    <p class="section-sub">Every integration serves one thesis: bounded financial authority for agents</p>
-    <div class="int-grid">
-      <div class="int-card">
-        <h4>Lido wstETH</h4>
-        <div class="role">The treasury primitive</div>
-        <p>Staking yield is the source of all agent spending authority. Budget regenerates from real economic activity at ~3.5% APY. $10K deposit = ~$350/yr autonomous budget.</p>
-      </div>
-      <div class="int-card">
-        <h4>MetaMask Delegations</h4>
-        <div class="role">On-chain authority mirror</div>
-        <p>EIP-7702 smart accounts + ERC-7710 caveats enforce the same boundaries onchain. AllowedTargets, ERC20TransferAmount, Timestamp, LimitedCalls. Defense-in-depth.</p>
-      </div>
-      <div class="int-card">
-        <h4>Uniswap Trading API</h4>
-        <div class="role">Yield deployment rail</div>
-        <p>Policy-gated swaps turn passive yield into active capital deployment. Live WETH-to-USDC swap with full Permit2 flow on Base mainnet.</p>
-      </div>
-      <div class="int-card">
-        <h4>ERC-8004</h4>
-        <div class="role">Trust gate</div>
-        <p>On-chain agent identity gates every trust decision. Unverified counterparties escalate to human approval. Agent ID: <code class="mono">10ee7e7e...09d</code></p>
-      </div>
-      <div class="int-card">
-        <h4>x402 Protocol</h4>
-        <div class="role">Agent commerce layer</div>
-        <p>Other agents pay USDC to access treasury financial capabilities. The treasury becomes a discoverable service on Base, not just a wallet.</p>
-      </div>
-      <div class="int-card">
-        <h4>Celo + Aave</h4>
-        <div class="role">Portability proof</div>
-        <p>Same yield-only model with stataUSDC. Proves the primitive works for stablecoin treasuries, not just ETH. Different asset class, same boundary.</p>
-      </div>
-      <div class="int-card">
-        <h4>MoonPay CLI</h4>
-        <div class="role">Alternative execution backend</div>
-        <p>Same policy gates, different rail. Multi-chain swaps, bridges, fiat ramps. Proves the control layer is backend-agnostic.</p>
-      </div>
-      <div class="int-card">
-        <h4>ENS</h4>
-        <div class="role">Human-readable identity</div>
-        <p>5 subdomains under morke.eth. morke.eth (owner), bagel.morke.eth (agent), treasury.morke.eth (contract). Every API response is ENS-enriched.</p>
-      </div>
-    </div>
+<!-- INTEGRATIONS -->
+<section id="integrations">
+  <div class="section-label">Partner stack</div>
+  <h2>Every integration serves one thesis</h2>
+  <p class="section-desc">Bounded financial authority for autonomous agents. Nothing else.</p>
+
+  <div class="int-list">
+    <div class="int-item"><h4>Lido wstETH</h4><div class="role">Treasury primitive</div><p>Staking yield is the source of all agent spending authority. Budget regenerates from real economic activity.</p></div>
+    <div class="int-item"><h4>MetaMask</h4><div class="role">On-chain authority</div><p>EIP-7702 smart accounts + ERC-7710 caveats. AllowedTargets, ERC20TransferAmount, Timestamp, LimitedCalls.</p></div>
+    <div class="int-item"><h4>Uniswap</h4><div class="role">Yield deployment</div><p>Policy-gated swaps via Trading API. Live WETH-to-USDC swap with full Permit2 EIP-712 flow on Base mainnet.</p></div>
+    <div class="int-item"><h4>ERC-8004</h4><div class="role">Trust gate</div><p>On-chain agent identity gates every trust decision. Unverified counterparties escalate to human approval.</p></div>
+    <div class="int-item"><h4>x402</h4><div class="role">Agent commerce</div><p>Other agents pay USDC to access treasury capabilities. The treasury becomes a discoverable service, not just a wallet.</p></div>
+    <div class="int-item"><h4>Celo + Aave</h4><div class="role">Portability proof</div><p>stataUSDC earning lending yield. Proves the primitive works for stablecoins, not just ETH. Different asset, same boundary.</p></div>
+    <div class="int-item"><h4>MoonPay CLI</h4><div class="role">Alt backend</div><p>Same policy gates, different execution rail. Multi-chain swaps, bridges, fiat ramps. Backend-agnostic control layer.</p></div>
+    <div class="int-item"><h4>ENS</h4><div class="role">Identity layer</div><p>5 subdomains under morke.eth. Owner, agent, contract, deployer &mdash; all human-readable. Every API response enriched.</p></div>
+    <div class="int-item"><h4>MCP Server</h4><div class="role">Agent interface</div><p>24 tools. Spend, trade, verify, monitor &mdash; all natively callable from Claude, Cursor, or any MCP-compatible agent.</p></div>
   </div>
 </section>
 
-<!-- ON-CHAIN PROOF -->
-<section id="proofs">
-  <div class="container">
-    <h2>On-Chain Proof</h2>
-    <p class="section-sub">18 mainnet transactions. Every claim is verifiable.</p>
-    <div style="overflow-x:auto">
-    <table>
-      <thead><tr><th>#</th><th>Action</th><th>Chain</th><th>TX</th><th>What it proves</th></tr></thead>
-      <tbody>
-        <tr class="auto"><td>1</td><td>AUTONOMOUS spendYield #1</td><td><span class="chain chain-base">Base</span></td><td><a href="https://basescan.org/tx/0x13bf6fdca6796982ab201eeac4c35594402819e2bd47aff25fb28cd992893515">0x13bf6f...</a></td><td>Agent spent yield autonomously. No human.</td></tr>
-        <tr class="auto"><td>2</td><td>AUTONOMOUS spendYield #2</td><td><span class="chain chain-base">Base</span></td><td><a href="https://basescan.org/tx/0x185feb8ebc692e98a4ed12d95bfc86ba5fdc66dab8e00ed424ea2a4ce55940f2">0x185feb...</a></td><td>Second cycle. Repeatable.</td></tr>
-        <tr class="auto"><td>3</td><td>AUTONOMOUS spendYield #3</td><td><span class="chain chain-base">Base</span></td><td><a href="https://basescan.org/tx/0x7ce7c5866dccbcb9e74a95af10ee85e86fbc503bfd610781fc19fc82cce2083c">0x7ce7c5...</a></td><td>Third cycle. Continuous.</td></tr>
-        <tr class="auto"><td>4</td><td>AUTONOMOUS spendYield #4</td><td><span class="chain chain-base">Base</span></td><td><a href="https://basescan.org/tx/0x06af2df18b86ba84e5b9124a603c7b2339fa2432c429f2272a5b406e23f73881">0x06af2d...</a></td><td>Fourth cycle. Still running.</td></tr>
-        <tr><td>5</td><td>Treasury deploy</td><td><span class="chain chain-base">Base</span></td><td><a href="https://basescan.org/tx/0x33e648434ce963eb47ddfb403df14f2faae20d72e78bf0e9ebafefa3e85ea0db">0x33e648...</a></td><td>Contract live on mainnet</td></tr>
-        <tr><td>6</td><td>Uniswap swap</td><td><span class="chain chain-base">Base</span></td><td><a href="https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9">0x9e3874...</a></td><td>WETH to USDC via Trading API</td></tr>
-        <tr><td>7</td><td>Permit2 approval</td><td><span class="chain chain-base">Base</span></td><td><a href="https://basescan.org/tx/0x536b75fd78f78106db68efcd3cdd7d162e8c6fe074e81dffa5841f8b888f462d">0x536b75...</a></td><td>Full EIP-712 Permit2 flow</td></tr>
-        <tr><td>8</td><td>ERC-8004 register</td><td><span class="chain chain-base">Base</span></td><td><a href="https://basescan.org/tx/0x4027641718bb5cfb9fdf7f4871f6506685b5367cab1a3a030b9bb0fe779ee934">0x402764...</a></td><td>On-chain agent identity</td></tr>
-        <tr><td>9</td><td>Owner delegation (EIP-7702)</td><td><span class="chain chain-base">Base</span></td><td><a href="https://basescan.org/tx/0x1a97c54d3633f725e36d83b7c2535b054d296f868b20c0f1e0fbb076601e0f9c">0x1a97c5...</a></td><td>Owner EOA to DeleGator</td></tr>
-        <tr><td>10</td><td>Agent delegation (EIP-7702)</td><td><span class="chain chain-base">Base</span></td><td><a href="https://basescan.org/tx/0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e">0x6f3a90...</a></td><td>Agent EOA to DeleGator</td></tr>
-        <tr><td>11</td><td>MoonPay USDC transfer</td><td><span class="chain chain-base">Base</span></td><td><a href="https://basescan.org/tx/0x82c733d5acbcbbe441e3118ecfc3a45e5ac78544ca42a522e27f9d00ce46a96c">0x82c733...</a></td><td>0.10 USDC via MoonPay CLI</td></tr>
-        <tr><td>12</td><td>addRecipient</td><td><span class="chain chain-base">Base</span></td><td><a href="https://basescan.org/tx/0xbc213e0f341b74b28e95d15c3c165bd8e6ae1719d101f2f5bcf6033eff5aceaa">0xbc213e...</a></td><td>Owner whitelisted morke.eth</td></tr>
-        <tr><td>13</td><td>Celo deploy</td><td><span class="chain chain-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0x4a6058ba5169e2db9dff908ed4bc5b2f8d96db70828244e84fde2e7de1095d12">0x4a6058...</a></td><td>Multi-chain treasury</td></tr>
-        <tr><td>14</td><td>CELO to USDC swap</td><td><span class="chain chain-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0x0e1e99c29c5145c97076e11759ce6cb842c704e3908a59b09ced889c093b9cee">0x0e1e99...</a></td><td>Uniswap V3 on Celo</td></tr>
-        <tr><td>15</td><td>USDC to stataUSDC</td><td><span class="chain chain-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0x575789f35d7e1ec6747ebd4cea357402f055aebd392894d471fb8d44d186f453">0x575789...</a></td><td>Aave V3 ERC-4626 deposit</td></tr>
-        <tr><td>16</td><td>Treasury deposit</td><td><span class="chain chain-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0x504326d7bb5b8d47d7e674e0d8a484c1a88f5a7c86836f395eb2138ad47b6a8f">0x504326...</a></td><td>stataUSDC into treasury</td></tr>
-        <tr><td>17</td><td>spendYield</td><td><span class="chain chain-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5">0xaac5f8...</a></td><td>Agent spent yield on Celo</td></tr>
-        <tr><td>18</td><td>Sepolia E2E</td><td><span class="chain chain-sep">Sepolia</span></td><td><a href="https://sepolia.basescan.org/tx/0x77dfdb5a22e9fa110aa7f5173e2d7bdf650d8b35374ef124ebe7dad6e47e0d4f">0x77dfdb...</a></td><td>Full spend proof on testnet</td></tr>
-      </tbody>
-    </table>
-    </div>
+<!-- PROOF -->
+<section id="proof">
+  <div class="section-label">On-chain proof</div>
+  <h2>18 mainnet transactions</h2>
+  <p class="section-desc">Every claim is verifiable. Click any TX to see it on-chain.</p>
+
+  <div style="overflow-x:auto;border:1px solid var(--border);border-radius:12px">
+  <table>
+    <thead><tr><th>#</th><th>Action</th><th>Chain</th><th>Transaction</th></tr></thead>
+    <tbody>
+      <tr class="auto"><td>1</td><td>Autonomous spendYield #1</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0x13bf6fdca6796982ab201eeac4c35594402819e2bd47aff25fb28cd992893515">0x13bf6f...3515</a></td></tr>
+      <tr class="auto"><td>2</td><td>Autonomous spendYield #2</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0x185feb8ebc692e98a4ed12d95bfc86ba5fdc66dab8e00ed424ea2a4ce55940f2">0x185feb...40f2</a></td></tr>
+      <tr class="auto"><td>3</td><td>Autonomous spendYield #3</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0x7ce7c5866dccbcb9e74a95af10ee85e86fbc503bfd610781fc19fc82cce2083c">0x7ce7c5...083c</a></td></tr>
+      <tr class="auto"><td>4</td><td>Autonomous spendYield #4</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0x06af2df18b86ba84e5b9124a603c7b2339fa2432c429f2272a5b406e23f73881">0x06af2d...3881</a></td></tr>
+      <tr><td>5</td><td>Treasury deploy</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0x33e648434ce963eb47ddfb403df14f2faae20d72e78bf0e9ebafefa3e85ea0db">0x33e648...a0db</a></td></tr>
+      <tr><td>6</td><td>Uniswap WETH &rarr; USDC</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9">0x9e3874...5ae9</a></td></tr>
+      <tr><td>7</td><td>Permit2 approval</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0x536b75fd78f78106db68efcd3cdd7d162e8c6fe074e81dffa5841f8b888f462d">0x536b75...462d</a></td></tr>
+      <tr><td>8</td><td>ERC-8004 identity</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0x4027641718bb5cfb9fdf7f4871f6506685b5367cab1a3a030b9bb0fe779ee934">0x402764...e934</a></td></tr>
+      <tr><td>9</td><td>Owner &rarr; DeleGator</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0x1a97c54d3633f725e36d83b7c2535b054d296f868b20c0f1e0fbb076601e0f9c">0x1a97c5...0f9c</a></td></tr>
+      <tr><td>10</td><td>Agent &rarr; DeleGator</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e">0x6f3a90...440e</a></td></tr>
+      <tr><td>11</td><td>MoonPay USDC transfer</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0x82c733d5acbcbbe441e3118ecfc3a45e5ac78544ca42a522e27f9d00ce46a96c">0x82c733...a96c</a></td></tr>
+      <tr><td>12</td><td>addRecipient</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0xbc213e0f341b74b28e95d15c3c165bd8e6ae1719d101f2f5bcf6033eff5aceaa">0xbc213e...ceaa</a></td></tr>
+      <tr><td>13</td><td>Treasury deploy</td><td><span class="chain c-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0x4a6058ba5169e2db9dff908ed4bc5b2f8d96db70828244e84fde2e7de1095d12">0x4a6058...5d12</a></td></tr>
+      <tr><td>14</td><td>CELO &rarr; USDC</td><td><span class="chain c-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0x0e1e99c29c5145c97076e11759ce6cb842c704e3908a59b09ced889c093b9cee">0x0e1e99...9cee</a></td></tr>
+      <tr><td>15</td><td>USDC &rarr; stataUSDC</td><td><span class="chain c-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0x575789f35d7e1ec6747ebd4cea357402f055aebd392894d471fb8d44d186f453">0x575789...f453</a></td></tr>
+      <tr><td>16</td><td>Treasury deposit</td><td><span class="chain c-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0x504326d7bb5b8d47d7e674e0d8a484c1a88f5a7c86836f395eb2138ad47b6a8f">0x504326...6a8f</a></td></tr>
+      <tr><td>17</td><td>spendYield</td><td><span class="chain c-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5">0xaac5f8...3df5</a></td></tr>
+      <tr><td>18</td><td>Sepolia E2E</td><td><span class="chain c-sep">Sepolia</span></td><td><a href="https://sepolia.basescan.org/tx/0x77dfdb5a22e9fa110aa7f5173e2d7bdf650d8b35374ef124ebe7dad6e47e0d4f">0x77dfdb...0d4f</a></td></tr>
+    </tbody>
+  </table>
   </div>
 </section>
 
-<!-- RUN IT YOURSELF -->
-<section>
-  <div class="container">
-    <h2>Run it yourself</h2>
-    <p class="section-sub">Clone, configure, and give your agent a yield-funded budget in 5 minutes.</p>
+<!-- RUN IT -->
+<section id="start">
+  <div class="section-label">Get started</div>
+  <h2>Run it yourself</h2>
+  <p class="section-desc">Clone, configure, and give your agent a yield-funded budget.</p>
 
-    <div class="split">
-      <div class="split-card">
-        <h3><span class="tag tag-human">For Humans</span> Deploy a treasury</h3>
-        <pre>git clone https://github.com/MorkeethHQ/delegated-agent-treasury
-cd delegated-agent-treasury
-npm install && npm run build
+  <div class="two-col">
+    <div class="card">
+      <span class="card-label human">Humans</span>
+      <h3>Deploy a treasury</h3>
+      <pre><strong>git clone</strong> github.com/MorkeethHQ/delegated-agent-treasury
+<strong>npm install</strong> && <strong>npm run build</strong>
 
-# Configure your keys
+<strong># Configure</strong>
 cp .env.example .env
-# Set AGENT_PRIVATE_KEY, OWNER_PRIVATE_KEY,
-# TREASURY_ADDRESS, WSTETH_ADDRESS
+# Set your AGENT_PRIVATE_KEY
+# Set your TREASURY_ADDRESS
 
-# Start the API
+<strong># Start</strong>
 node --env-file=.env dist/apps/api/src/server.js
 
-# Check your treasury
-curl http://localhost:3001/treasury</pre>
-      </div>
-      <div class="split-card">
-        <h3><span class="tag tag-agent">For Agents</span> Connect and spend</h3>
-        <pre># Discover capabilities
-curl http://localhost:3001/onboarding/status
-
-# Check available yield
-curl http://localhost:3001/treasury
-
-# Submit a spending plan
-curl -X POST http://localhost:3001/plans/evaluate \
-  -H 'content-type: application/json' \
-  -d '{
-    "planId": "plan-1",
-    "agentId": "my-agent",
-    "type": "transfer",
-    "amount": 0.005,
-    "destination": "0x...",
-    "reason": "Fund operations"
-  }'
-
-# Or use 24 MCP tools natively</pre>
-      </div>
+<strong># Check treasury</strong>
+curl localhost:3001/treasury</pre>
     </div>
+    <div class="card">
+      <span class="card-label agent">Agents</span>
+      <h3>Connect and spend</h3>
+      <pre><strong># Discover capabilities</strong>
+GET /onboarding/status
 
-    <div style="margin-top:32px;padding:24px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2)">
-      <h4 style="margin-bottom:8px">Why would you want this?</h4>
-      <div class="int-grid" style="margin-top:16px">
-        <div style="font-size:.9rem;color:var(--fg2)"><strong style="color:var(--fg)">Agent operators:</strong> Give your agent a self-replenishing budget without risking your capital. $10K in wstETH = ~$350/yr autonomous spending from yield alone.</div>
-        <div style="font-size:.9rem;color:var(--fg2)"><strong style="color:var(--fg)">Protocol teams:</strong> Fund agent bounties from treasury yield. Principal stays locked. Budget regenerates. No recurring top-ups.</div>
-        <div style="font-size:.9rem;color:var(--fg2)"><strong style="color:var(--fg)">AI service providers:</strong> Accept x402 micropayments for agent-to-agent services. Your treasury earns while you serve.</div>
-        <div style="font-size:.9rem;color:var(--fg2)"><strong style="color:var(--fg)">DAOs:</strong> Give sub-committees or agents bounded yield authority without full multisig access. Structurally safe delegation.</div>
-      </div>
+<strong># Check available yield</strong>
+GET /treasury
+
+<strong># Submit a plan</strong>
+POST /plans/evaluate
+{
+  "planId": "plan-1",
+  "agentId": "my-agent",
+  "type": "transfer",
+  "amount": 0.005,
+  "destination": "0x...",
+  "reason": "Fund operations"
+}
+
+<strong># Or use 24 MCP tools natively</strong></pre>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-top:24px">
+    <div class="card">
+      <h3>Why agent operators want this</h3>
+      <ul>
+        <li>Give your agent a self-replenishing budget without risking your capital</li>
+        <li>$10K in wstETH = ~$350/yr autonomous spending from yield alone</li>
+        <li>Three structural controls make overspend impossible, not just unlikely</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Why protocol teams want this</h3>
+      <ul>
+        <li>Fund agent bounties from treasury yield &mdash; principal stays locked</li>
+        <li>Budget regenerates &mdash; no recurring top-ups or multisig ceremonies</li>
+        <li>Same primitive works for ETH yield or stablecoin yield</li>
+      </ul>
     </div>
   </div>
 </section>
 
 <!-- CONTRACTS -->
 <section>
-  <div class="container">
-    <h2>Contracts</h2>
-    <div class="int-grid" style="margin-top:24px">
-      <div class="int-card">
-        <h4>Base Mainnet</h4>
-        <p style="margin-top:8px"><strong>AgentTreasury:</strong> <a href="https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426" class="mono">0x455d...2426</a></p>
-        <p><strong>wstETH:</strong> <a href="https://basescan.org/address/0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452" class="mono">0xc1CB...e452</a></p>
-        <p><strong>Agent ID (ERC-8004):</strong> <code class="mono">10ee7e7e703b4fc493e19f512b5ae09d</code></p>
-      </div>
-      <div class="int-card">
-        <h4>Celo Mainnet</h4>
-        <p style="margin-top:8px"><strong>AgentTreasuryCelo:</strong> <a href="https://celoscan.io/address/0xc976e463bd209e09cb15a168a275890b872aa1f0" class="mono">0xc976...a1f0</a></p>
-        <p><strong>stataUSDC:</strong> <a href="https://celoscan.io/address/0xba3ae0F0A78579a5e8C4188dcde60DcCc0Dd4Fab" class="mono">0xba3a...4Fab</a></p>
-      </div>
+  <div class="section-label">Contracts</div>
+  <div class="two-col">
+    <div class="card">
+      <h3>Base Mainnet</h3>
+      <ul>
+        <li>AgentTreasury &mdash; <a href="https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426"><code>0x455d...2426</code></a></li>
+        <li>wstETH &mdash; <a href="https://basescan.org/address/0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452"><code>0xc1CB...e452</code></a></li>
+        <li>Agent ID (ERC-8004) &mdash; <code>10ee7e7e...09d</code></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Celo Mainnet</h3>
+      <ul>
+        <li>AgentTreasuryCelo &mdash; <a href="https://celoscan.io/address/0xc976e463bd209e09cb15a168a275890b872aa1f0"><code>0xc976...a1f0</code></a></li>
+        <li>stataUSDC &mdash; <a href="https://celoscan.io/address/0xba3ae0F0A78579a5e8C4188dcde60DcCc0Dd4Fab"><code>0xba3a...4Fab</code></a></li>
+      </ul>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
+</div>
+
 <footer>
-  <div class="container">
-    <p style="margin-bottom:8px"><strong>Claw Bound Onchain Money Maker</strong></p>
-    <p>Built by 1 human + 2 AI agents (Claude Opus + Cursor). Zero lines of human-written code.</p>
-    <p style="margin-top:12px">
-      <a href="https://github.com/MorkeethHQ/delegated-agent-treasury">GitHub</a> &middot;
-      <a href="https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426">Base Contract</a> &middot;
+  <div class="wrap">
+    <div class="links">
+      <a href="https://github.com/MorkeethHQ/delegated-agent-treasury">GitHub</a>
+      <a href="https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426">Base Contract</a>
       <a href="https://celoscan.io/address/0xc976e463bd209e09cb15a168a275890b872aa1f0">Celo Contract</a>
-    </p>
+    </div>
+    <p>Open Bound Onchain Money Maker &mdash; Built by 1 human + 2 AI agents. Zero lines of human-written code.</p>
   </div>
 </footer>
 
