@@ -350,12 +350,12 @@ export async function executeMoonPaySwap(
 
   try {
     const { stdout } = await execFileAsync('mp', [
-      'swap',
-      '--from', params.fromToken,
-      '--to', params.toToken,
-      '--amount', params.amount,
+      'token', 'swap',
+      '--wallet', 'treasury-agent',
       '--chain', params.chain,
-      '--yes',
+      '--from-token', params.fromToken,
+      '--from-amount', params.amount,
+      '--to-token', params.toToken,
       '--json',
     ]);
 
@@ -404,10 +404,10 @@ export async function executeMoonPayDCA(
 
   try {
     const { stdout } = await execFileAsync('mp', [
-      'dca',
-      '--token', params.token,
+      'token', 'swap',
+      '--from', params.token,
+      '--to', 'USDC',
       '--amount', params.amount,
-      '--frequency', params.frequency,
       '--chain', params.chain,
       '--yes',
       '--json',
@@ -449,8 +449,8 @@ export async function getMoonPayBalance(
 
   try {
     const { stdout } = await execFileAsync('mp', [
-      'balance',
-      '--token', token,
+      'token', 'balance',
+      '--wallet', 'treasury-agent',
       '--chain', chain,
       '--json',
     ]);
@@ -493,12 +493,12 @@ export async function getMoonPayQuote(
 
   try {
     const { stdout } = await execFileAsync('mp', [
-      'swap',
-      '--from', params.fromToken,
-      '--to', params.toToken,
-      '--amount', params.amount,
+      'token', 'swap',
+      '--wallet', 'treasury-agent',
       '--chain', params.chain,
-      '--dry-run',
+      '--from-token', params.fromToken,
+      '--from-amount', params.amount,
+      '--to-token', params.toToken,
       '--json',
     ]);
 
@@ -550,12 +550,12 @@ export async function executeMoonPayBridge(
 
   try {
     const { stdout } = await execFileAsync('mp', [
-      'bridge',
+      'token', 'bridge',
+      '--wallet', 'treasury-agent',
       '--token', params.token,
       '--amount', params.amount,
       '--from-chain', params.fromChain,
       '--to-chain', params.toChain,
-      '--yes',
       '--json',
     ]);
 
@@ -595,7 +595,7 @@ export async function getMoonPayPortfolio(): Promise<MoonPayPortfolioResult> {
 
   try {
     const { stdout } = await execFileAsync('mp', [
-      'portfolio',
+      'wallet', 'list',
       '--json',
     ]);
 
