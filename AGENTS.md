@@ -68,8 +68,8 @@ The MCP server at `packages/mcp-server/` exposes 24 tools for agent integration:
 
 ## Key proofs
 
-- 3 autonomous spendYield TXs on Base mainnet (zero human intervention)
-- 17 total mainnet TXs across Base + Celo
+- 4 autonomous spendYield TXs on Base mainnet (zero human intervention)
+- 18 total mainnet TXs across Base + Celo
 - EIP-7702 MetaMask delegations live on Base
 - Full E2E on Celo: CELO → USDC → stataUSDC → deposit → spendYield
 
