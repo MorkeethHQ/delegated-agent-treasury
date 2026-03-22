@@ -182,9 +182,11 @@ async function handleEvaluate(req: IncomingMessage, res: ServerResponse): Promis
   // Auto-execute if approved and executor is available
   if (result.decision === 'approved' && executor) {
     try {
+      // Convert amount safely — handle scientific notation that parseEther can't
+      const amountStr = Number(plan.amount).toFixed(18);
       const tx = await executor.spendYield(
         plan.destination as Address,
-        parseEther(String(plan.amount)),
+        parseEther(amountStr),
       );
       await auditLog('execution_result', { plan, result, tx });
       return sendJson(res, 200, { result, execution: tx });
@@ -247,9 +249,10 @@ async function handleRespondApproval(
   // Execute on-chain if approved and executor available
   if (decision === 'approved' && executor) {
     try {
+      const approvalAmountStr = Number(approval.plan.amount).toFixed(18);
       const tx = await executor.spendYield(
         approval.plan.destination as Address,
-        parseEther(String(approval.plan.amount)),
+        parseEther(approvalAmountStr),
       );
       await auditLog('execution_result', { approval, tx });
       return sendJson(res, 200, { approval, execution: tx });
