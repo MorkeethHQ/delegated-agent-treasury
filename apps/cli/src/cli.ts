@@ -153,7 +153,7 @@ async function demo() {
     process.exit(1);
   }
 
-  console.log('=== Yieldbound Agent Treasury Demo ===\n');
+  console.log('=== Open Bound Onchain Money Maker Demo ===\n');
 
   // Step 1: Mint mock wstETH
   console.log('1. Minting 1 mock wstETH to owner...');
@@ -217,18 +217,18 @@ const commands: Record<string, () => Promise<void>> = {
 
 if (!command || command === 'help' || !commands[command]) {
   console.log(`
-yieldbound — CLI for the Yieldbound Agent Treasury
+openbound — CLI for Open Bound Onchain Money Maker
 
 Usage:
-  yieldbound health                         Check API status
-  yieldbound policy                         Show current policy
-  yieldbound evaluate '<plan-json>'         Submit plan for evaluation
-  yieldbound approvals [pending|approved|denied]  List approvals
-  yieldbound approve <id> [respondedBy]     Approve a pending request
-  yieldbound deny <id> [respondedBy]        Deny a pending request
-  yieldbound audit [limit]                  Show recent audit events
-  yieldbound treasury                       Show on-chain treasury state
-  yieldbound demo                           Run full end-to-end demo
+  openbound health                         Check API status
+  openbound policy                         Show current policy
+  openbound evaluate '<plan-json>'         Submit plan for evaluation
+  openbound approvals [pending|approved|denied]  List approvals
+  openbound approve <id> [respondedBy]     Approve a pending request
+  openbound deny <id> [respondedBy]        Deny a pending request
+  openbound audit [limit]                  Show recent audit events
+  openbound treasury                       Show on-chain treasury state
+  openbound demo                           Run full end-to-end demo
 
 Env vars:
   API_URL              API base URL (default: http://localhost:3001)

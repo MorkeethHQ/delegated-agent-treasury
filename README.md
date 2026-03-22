@@ -1,4 +1,4 @@
-# Yieldbound — Agent Treasury
+# Open Bound — Onchain Money Maker
 
 **This project gives agents bounded financial authority over productive on-chain capital.**
 

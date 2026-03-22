@@ -1,6 +1,6 @@
-# Yieldbound API
+# Open Bound API
 
-REST API server for the Yieldbound Agent Treasury. 35 endpoints covering treasury management, policy evaluation, approval workflows, yield trading, multi-agent orchestration, ENS identity resolution, and monitoring.
+REST API server for Open Bound Onchain Money Maker. 35 endpoints covering treasury management, policy evaluation, approval workflows, yield trading, multi-agent orchestration, ENS identity resolution, and monitoring.
 
 ```bash
 # Start (API-only mode, no contract env vars needed)

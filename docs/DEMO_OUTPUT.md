@@ -3,7 +3,7 @@
 ## Judge Demo (Policy Engine Flow)
 
 ```
-=== Synthesis Agent Treasury — Judge Demo ===
+=== Open Bound Onchain Money Maker — Judge Demo ===
 
 --- 1. System health ---
 API: healthy | executor: connected

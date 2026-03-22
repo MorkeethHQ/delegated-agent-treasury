@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ═══════════════════════════════════════════════════════════════════
-# Synthesis Agent Treasury — Screen Recording Demo
+# Open Bound — Screen Recording Demo
 # ═══════════════════════════════════════════════════════════════════
 # Start API first:  node --env-file=.env dist/apps/api/src/server.js
 # Then record:      bash scripts/record-demo.sh
@@ -77,7 +77,7 @@ sleep 3
 clear
 echo ""
 echo -e "${B}╔══════════════════════════════════════════════════════════════╗${X}"
-echo -e "${B}║              Synthesis Agent Treasury                       ║${X}"
+echo -e "${B}║              Open Bound — Onchain Money Maker               ║${X}"
 echo -e "${B}║                                                            ║${X}"
 echo -e "${B}║    Principal-protected. Yield-activated. Fully autonomous.  ║${X}"
 echo -e "${B}╚══════════════════════════════════════════════════════════════╝${X}"
@@ -440,7 +440,7 @@ clear
 echo ""
 echo ""
 echo ""
-echo -e "  ${B}Synthesis Agent Treasury${X}"
+echo -e "  ${B}Open Bound — Onchain Money Maker${X}"
 echo ""
 echo -e "  ${D}The thesis:${X}"
 type_slow "Agents should have bounded financial autonomy —" "$W"

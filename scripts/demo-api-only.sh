@@ -8,7 +8,7 @@ API=${API_URL:-http://localhost:3001}
 
 pj() { node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));$1"; }
 
-echo "=== Synthesis Agent Treasury — API-only Demo ==="
+echo "=== Open Bound — API-only Demo ==="
 echo ""
 
 echo "1. Checking API health..."

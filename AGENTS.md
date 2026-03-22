@@ -2,7 +2,7 @@
 
 ## What this project does
 
-Yieldbound gives autonomous agents bounded financial authority over productive on-chain capital. An agent can spend only the yield earned by locked principal — never the principal itself. This is enforced at the EVM level.
+Open Bound gives autonomous agents bounded financial authority over productive on-chain capital. An agent can spend only the yield earned by locked principal — never the principal itself. This is enforced at the EVM level.
 
 ## Quick interface
 

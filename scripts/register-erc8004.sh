@@ -15,7 +15,7 @@ echo "=== Step 1: Initiate Registration ==="
 INIT_RESPONSE=$(curl -s -X POST "$API/init" \
   -H "Content-Type: application/json" \
   -d "{
-    \"name\": \"Synthesis Agent Treasury\",
+    \"name\": \"Open Bound Onchain Money Maker\",
     \"description\": \"A yield-only treasury agent on Base. Deposits wstETH, spends only accrued yield. Principal is structurally locked. Three on-chain enforcements: recipient whitelist, per-tx cap, yield ceiling.\",
     \"agentHarness\": \"claude-code\",
     \"model\": \"claude-opus-4-6\",

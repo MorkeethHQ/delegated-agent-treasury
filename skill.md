@@ -1,4 +1,4 @@
-# Yieldbound Agent Treasury
+# Open Bound Onchain Money Maker
 
 A permission layer for AI agents managing yield-bearing treasuries. Agents spend only accrued wstETH yield — principal is structurally locked. Supports multi-bucket yield distribution, Uniswap trading, ERC-8004 trust gating, Lido governance awareness, and x402 paid API access.
 
@@ -22,7 +22,7 @@ Every action is logged to an append-only audit trail.
 
 ---
 
-## MCP Tools (24 tools)
+## MCP Tools (28 tools)
 
 Connect via MCP server at `packages/mcp-server`. These are the direct on-chain and protocol tools an agent can call.
 
@@ -152,7 +152,7 @@ Execute a yield swap through the policy engine. Swaps yield tokens on Uniswap vi
   - `dry_run` (boolean, default true) — If true, simulate only
 - **Returns:** `{ result, swap }` with policy evaluation and swap execution details
 
-### MoonPay (3 tools)
+### MoonPay (7 tools)
 
 MoonPay CLI provides 54 crypto tools across 10+ chains. These MCP tools wrap MoonPay operations through our policy engine.
 
@@ -183,9 +183,41 @@ Set up a Dollar Cost Averaging order via MoonPay CLI. Automatically buys a token
   - `dry_run` (boolean, default true) — If true, simulate only
 - **Returns:** `{ result, swap }` with policy evaluation and DCA setup details
 
+#### `moonpay_quote`
+Get a swap quote from MoonPay CLI without executing the trade. Returns estimated output and price impact.
+- **Parameters:**
+  - `fromToken` (string) — Symbol or address of input token (e.g. "ETH", "USDC")
+  - `toToken` (string) — Symbol or address of output token (e.g. "USDC", "wstETH")
+  - `amount` (string) — Amount of input token (e.g. "0.1")
+  - `chain` (string, default "base") — Chain to get quote on
+- **Returns:** `{ success, fromToken, toToken, amount, chain, estimatedOutput?, priceImpact? }`
+
+#### `moonpay_balance`
+Check the balance of a specific token on a specific chain via MoonPay CLI.
+- **Parameters:**
+  - `token` (string) — Token symbol to check (e.g. "ETH", "USDC", "wstETH")
+  - `chain` (string, default "base") — Chain to check balance on
+- **Returns:** `{ token, chain, balance }`
+
+#### `moonpay_bridge`
+Bridge tokens from one chain to another via MoonPay CLI. Goes through policy engine for approval.
+- **Parameters:**
+  - `token` (string) — Token to bridge (e.g. "ETH", "USDC")
+  - `amount` (string) — Amount to bridge (e.g. "0.1")
+  - `fromChain` (string) — Source chain (e.g. "ethereum", "base")
+  - `toChain` (string) — Destination chain (e.g. "base", "arbitrum")
+  - `reason` (string) — Reason for the bridge (audit trail)
+  - `dry_run` (boolean, default true) — If true, simulate only
+- **Returns:** `{ result, bridge }` with policy evaluation and bridge execution details
+
+#### `moonpay_portfolio`
+Get a portfolio overview across all supported chains via MoonPay CLI.
+- **Parameters:** none
+- **Returns:** `{ success, portfolio }` with token holdings and balances across chains
+
 ---
 
-## REST API (35 endpoints)
+## REST API (39 endpoints)
 
 Base URL: `{API_URL}` (default `http://localhost:3001`)
 
@@ -230,6 +262,10 @@ Base URL: `{API_URL}` (default `http://localhost:3001`)
 | `GET` | `/moonpay/status` | Check if MoonPay CLI is installed, authenticated, and available tools |
 | `POST` | `/moonpay/swap` | Execute a multi-chain swap via MoonPay CLI (policy-gated) |
 | `GET` | `/moonpay/tools` | List all available MoonPay tools (54 tools across 17 skills) |
+| `GET` | `/moonpay/quote` | Get a swap quote (`?fromToken=&toToken=&amount=&chain=`) |
+| `GET` | `/moonpay/balance` | Get token balance (`?token=&chain=`) |
+| `POST` | `/moonpay/bridge` | Bridge tokens cross-chain via MoonPay CLI (policy-gated) |
+| `GET` | `/moonpay/portfolio` | Portfolio overview across all chains |
 
 ### Identity & Payments
 

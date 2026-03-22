@@ -10,7 +10,7 @@ const conversationLog = readFileSync('docs/conversationLog.md', 'utf8');
 
 const payload = {
   teamUUID: TEAM_UUID,
-  name: 'Synthesis Agent Treasury',
+  name: 'Open Bound Onchain Money Maker',
   description:
     'Yield-only spending for AI agents. Human deposits wstETH into a smart contract on Base. ' +
     'Yield accrues via Lido staking rewards. The agent can spend only the yield — principal is ' +

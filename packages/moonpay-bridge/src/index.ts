@@ -67,6 +67,41 @@ export interface MoonPayBalanceResult {
   error?: string;
 }
 
+export interface MoonPayQuoteResult {
+  success: boolean;
+  fromToken: string;
+  toToken: string;
+  amount: string;
+  chain: string;
+  estimatedOutput?: string;
+  priceImpact?: string;
+  error?: string;
+}
+
+export interface MoonPayBridgeParams {
+  token: string;
+  amount: string;
+  fromChain: string;
+  toChain: string;
+}
+
+export interface MoonPayBridgeResult {
+  success: boolean;
+  token: string;
+  amount: string;
+  fromChain: string;
+  toChain: string;
+  txHash?: string;
+  error?: string;
+  dryRun: boolean;
+}
+
+export interface MoonPayPortfolioResult {
+  success: boolean;
+  portfolio?: Record<string, unknown>;
+  error?: string;
+}
+
 export interface MoonPaySwapResult {
   success: boolean;
   fromToken: string;
@@ -431,6 +466,147 @@ export async function getMoonPayBalance(
       token,
       chain,
       balance: null,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Quote — dry-run swap to get estimated output
+// ---------------------------------------------------------------------------
+
+/**
+ * Get a swap quote from MoonPay CLI without executing the trade.
+ */
+export async function getMoonPayQuote(
+  params: MoonPaySwapParams,
+): Promise<MoonPayQuoteResult> {
+  const installed = await isMoonPayCLIAvailable();
+
+  if (!installed) {
+    return {
+      success: false,
+      ...params,
+      error: SETUP_INSTRUCTIONS,
+    };
+  }
+
+  try {
+    const { stdout } = await execFileAsync('mp', [
+      'swap',
+      '--from', params.fromToken,
+      '--to', params.toToken,
+      '--amount', params.amount,
+      '--chain', params.chain,
+      '--dry-run',
+      '--json',
+    ]);
+
+    const result = JSON.parse(stdout);
+    return {
+      success: true,
+      ...params,
+      estimatedOutput: result.estimatedOutput ?? result.outputAmount,
+      priceImpact: result.priceImpact,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      ...params,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Bridge — cross-chain token transfer
+// ---------------------------------------------------------------------------
+
+/**
+ * Bridge tokens across chains via MoonPay CLI, gated by our policy engine.
+ */
+export async function executeMoonPayBridge(
+  params: MoonPayBridgeParams,
+  dryRun = true,
+): Promise<MoonPayBridgeResult> {
+  const installed = await isMoonPayCLIAvailable();
+
+  if (!installed) {
+    return {
+      success: false,
+      ...params,
+      dryRun,
+      error: SETUP_INSTRUCTIONS,
+    };
+  }
+
+  if (dryRun) {
+    return {
+      success: true,
+      ...params,
+      dryRun: true,
+    };
+  }
+
+  try {
+    const { stdout } = await execFileAsync('mp', [
+      'bridge',
+      '--token', params.token,
+      '--amount', params.amount,
+      '--from-chain', params.fromChain,
+      '--to-chain', params.toChain,
+      '--yes',
+      '--json',
+    ]);
+
+    const result = JSON.parse(stdout);
+    return {
+      success: true,
+      ...params,
+      txHash: result.txHash ?? result.hash,
+      dryRun: false,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      ...params,
+      dryRun: false,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Portfolio — overview across all chains
+// ---------------------------------------------------------------------------
+
+/**
+ * Get a portfolio overview across all supported chains via MoonPay CLI.
+ */
+export async function getMoonPayPortfolio(): Promise<MoonPayPortfolioResult> {
+  const installed = await isMoonPayCLIAvailable();
+
+  if (!installed) {
+    return {
+      success: false,
+      error: SETUP_INSTRUCTIONS,
+    };
+  }
+
+  try {
+    const { stdout } = await execFileAsync('mp', [
+      'portfolio',
+      '--json',
+    ]);
+
+    const result = JSON.parse(stdout);
+    return {
+      success: true,
+      portfolio: result,
+    };
+  } catch (error) {
+    return {
+      success: false,
       error: error instanceof Error ? error.message : String(error),
     };
   }

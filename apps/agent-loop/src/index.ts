@@ -20,6 +20,7 @@ const INTERVAL_MS = Number(process.env.LOOP_INTERVAL_MS ?? 5 * 60 * 1000); // 5 
 const YIELD_THRESHOLD = Number(process.env.YIELD_THRESHOLD ?? 0.001); // min wstETH to trigger spend
 const SPEND_RECIPIENT = process.env.SPEND_RECIPIENT ?? '';
 const AGENT_ID = process.env.AGENT_ID ?? 'bagel';
+const USE_DELEGATION = process.env.USE_DELEGATION === 'true';
 const SNAPSHOT_GRAPHQL = 'https://hub.snapshot.org/graphql';
 
 // --- Helpers ---
@@ -44,6 +45,8 @@ interface EvalResult {
   approval?: { approvalId: string };
   execution?: { hash: string };
   executionError?: string;
+  delegationMode?: boolean;
+  delegationChain?: string;
 }
 
 interface Proposal {
@@ -56,6 +59,27 @@ function log(level: string, msg: string, data?: Record<string, unknown>) {
   const ts = new Date().toISOString();
   const extra = data ? ' ' + JSON.stringify(data) : '';
   console.log(`[${ts}] [${level}] ${msg}${extra}`);
+}
+
+// --- Delegation execution helper ---
+
+/**
+ * Submit a spendYield through the delegation chain (POST /delegation/execute)
+ * instead of the direct policy evaluation path. Used when USE_DELEGATION=true.
+ */
+async function submitViaDelegation(to: string, amount: number, reason: string): Promise<EvalResult> {
+  log('INFO', `[DELEGATION] Submitting via delegation chain: ${amount} wstETH -> ${to}`);
+  const result = await api<EvalResult>('/delegation/execute', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ to, amount, delegationMode: true }),
+  });
+
+  if (result.delegationMode) {
+    log('INFO', `[DELEGATION] Execution routed through delegation chain: ${result.delegationChain ?? 'ERC-7710'}`);
+  }
+
+  return result;
 }
 
 // --- Strategy loader ---
@@ -188,25 +212,31 @@ async function tickWithStrategy(
     log('INFO', `Submitting bucket "${item.bucketLabel}": ${item.amount.toFixed(6)} wstETH -> ${item.destination}`);
 
     try {
-      const result = await api<EvalResult>('/plans/evaluate', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          planId: `auto-${item.bucketId}-${Date.now()}`,
-          agentId: strategy.agentId,
-          type: 'transfer',
-          amount: item.amount,
-          destination: item.destination,
-          reason: `Yield distribution [${strategy.strategyId}] bucket "${item.bucketLabel}" (${item.percentage}%) — ${yieldAvailable.toFixed(6)} available`,
-        }),
-      });
+      const reason = `Yield distribution [${strategy.strategyId}] bucket "${item.bucketLabel}" (${item.percentage}%) — ${yieldAvailable.toFixed(6)} available`;
+
+      // Use delegation execution path when USE_DELEGATION=true
+      const result = USE_DELEGATION
+        ? await submitViaDelegation(item.destination, item.amount, reason)
+        : await api<EvalResult>('/plans/evaluate', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+              planId: `auto-${item.bucketId}-${Date.now()}`,
+              agentId: strategy.agentId,
+              type: 'transfer',
+              amount: item.amount,
+              destination: item.destination,
+              reason,
+            }),
+          });
 
       log('INFO', `Bucket "${item.bucketLabel}" policy decision: ${result.result.decision}`, {
         reasons: result.result.reasons,
       });
 
       if (result.execution) {
-        log('INFO', `Bucket "${item.bucketLabel}" executed on-chain: ${result.execution.hash}`);
+        const via = result.delegationMode ? ' (via delegation chain)' : '';
+        log('INFO', `Bucket "${item.bucketLabel}" executed on-chain${via}: ${result.execution.hash}`);
       } else if (result.approval) {
         log('INFO', `Bucket "${item.bucketLabel}" approval required: ${result.approval.approvalId}`);
       } else if (result.executionError) {
@@ -235,29 +265,33 @@ async function tickSingleRecipient(yieldAvailable: number, perTxCap: number): Pr
     return;
   }
 
-  // Submit plan through policy engine
+  // Submit plan through policy engine (or delegation chain if USE_DELEGATION=true)
   const spendAmount = Math.min(yieldAvailable * 0.5, perTxCap);
-  log('INFO', `Submitting spend plan: ${spendAmount} wstETH -> ${SPEND_RECIPIENT}`);
+  const reason = `Autonomous yield spend — ${yieldAvailable.toFixed(6)} available, no risky governance`;
+  log('INFO', `Submitting spend plan${USE_DELEGATION ? ' (delegation mode)' : ''}: ${spendAmount} wstETH -> ${SPEND_RECIPIENT}`);
 
-  const result = await api<EvalResult>('/plans/evaluate', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({
-      planId: `auto-${Date.now()}`,
-      agentId: AGENT_ID,
-      type: 'transfer',
-      amount: spendAmount,
-      destination: SPEND_RECIPIENT,
-      reason: `Autonomous yield spend — ${yieldAvailable.toFixed(6)} available, no risky governance`,
-    }),
-  });
+  const result = USE_DELEGATION
+    ? await submitViaDelegation(SPEND_RECIPIENT, spendAmount, reason)
+    : await api<EvalResult>('/plans/evaluate', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          planId: `auto-${Date.now()}`,
+          agentId: AGENT_ID,
+          type: 'transfer',
+          amount: spendAmount,
+          destination: SPEND_RECIPIENT,
+          reason,
+        }),
+      });
 
   log('INFO', `Policy decision: ${result.result.decision}`, {
     reasons: result.result.reasons,
   });
 
   if (result.execution) {
-    log('INFO', `Executed on-chain: ${result.execution.hash}`);
+    const via = result.delegationMode ? ' (via delegation chain)' : '';
+    log('INFO', `Executed on-chain${via}: ${result.execution.hash}`);
   } else if (result.approval) {
     log('INFO', `Approval required: ${result.approval.approvalId}`);
   } else if (result.executionError) {
@@ -321,6 +355,9 @@ async function main(): Promise<void> {
   log('INFO', '=== Autonomous Agent Loop started ===');
   log('INFO', `API: ${API} | Interval: ${INTERVAL_MS / 1000}s | Threshold: ${YIELD_THRESHOLD} wstETH`);
   log('INFO', `Recipient: ${SPEND_RECIPIENT || '(none — dry run)'} | Agent: ${AGENT_ID}`);
+  if (USE_DELEGATION) {
+    log('INFO', 'Delegation execution mode ENABLED — spendYield routed through ERC-7710 delegation chain');
+  }
 
   // Run first tick immediately
   await tick();

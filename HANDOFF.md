@@ -87,21 +87,21 @@
 
 ---
 
-## Bounty Targets (11 tracks, ~$77.5K potential)
+## Bounty Targets (11 tracks)
 
-| Track | Prize | Status | Evidence |
-|-------|-------|--------|----------|
-| Synthesis Open Track | ~$28K | Ready | Cross-sponsor integration across all partners |
-| stETH Agent Treasury (Lido) | $3K | Ready | Live mainnet treasury + Sepolia E2E |
-| Lido MCP | $5K | Ready | 24 tools, dry_run on all writes |
-| Agents With Receipts — ERC-8004 | $4K | Ready | Registration TX + trust-gated payments |
-| Agentic Finance (Uniswap) | $5K | Ready | Live swap [`0x9e3874...`](https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9) |
-| Agent Services on Base | $5K | Ready | x402 gateway, multi-agent roles |
-| Let the Agent Cook (Protocol Labs) | $4K | **EXECUTED** | Autonomous spendYield on Base mainnet — no humans [`0x13bf6f...`](https://basescan.org/tx/0x13bf6fdca6796982ab201eeac4c35594402819e2bd47aff25fb28cd992893515) |
-| Autonomous Trading Agent (Base) | $5K | Ready | DCA strategies + live swap proof |
-| MoonPay CLI Agents | $3.5K | **EXECUTED** | 54-tool bridge + live TX: 0.10 USDC → morke.eth [`0x82c733...`](https://basescan.org/tx/0x82c733d5acbcbbe441e3118ecfc3a45e5ac78544ca42a522e27f9d00ce46a96c) |
-| Best Use of Delegations (MetaMask) | $10K | **STRONG** | ERC-7710 caveats + live EIP-7702 on Base mainnet (owner + agent both delegated) |
-| Best Agent on Celo | $5K | Ready | spendYield executed [`0xaac5f8...`](https://celoscan.io/tx/0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5) |
+| Track | Status | Evidence |
+|-------|--------|----------|
+| Synthesis Open Track | Ready | Cross-sponsor integration across all partners |
+| stETH Agent Treasury (Lido) | Ready | Live mainnet treasury + Sepolia E2E |
+| Lido MCP | Ready | 24 tools, dry_run on all writes |
+| Agents With Receipts — ERC-8004 | Ready | Registration TX + trust-gated payments |
+| Agentic Finance (Uniswap) | Ready | Live swap [`0x9e3874...`](https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9) |
+| Agent Services on Base | Ready | x402 gateway, multi-agent roles |
+| Let the Agent Cook (Protocol Labs) | **EXECUTED** | Autonomous spendYield on Base mainnet — no humans [`0x13bf6f...`](https://basescan.org/tx/0x13bf6fdca6796982ab201eeac4c35594402819e2bd47aff25fb28cd992893515) |
+| Autonomous Trading Agent (Base) | Ready | DCA strategies + live swap proof |
+| MoonPay CLI Agents | **EXECUTED** | 54-tool bridge + live TX: 0.10 USDC to morke.eth [`0x82c733...`](https://basescan.org/tx/0x82c733d5acbcbbe441e3118ecfc3a45e5ac78544ca42a522e27f9d00ce46a96c) |
+| Best Use of Delegations (MetaMask) | **STRONG** | ERC-7710 caveats + live EIP-7702 on Base mainnet (owner + agent both delegated) |
+| Best Agent on Celo | Ready | spendYield executed [`0xaac5f8...`](https://celoscan.io/tx/0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5) |
 
 ## Policy Config
 
