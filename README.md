@@ -141,7 +141,8 @@ Every major feature has been executed on-chain with real assets:
 | addRecipient | Base | [`0xbc213e...`](https://basescan.org/tx/0xbc213e0f341b74b28e95d15c3c165bd8e6ae1719d101f2f5bcf6033eff5aceaa) | Owner whitelisted morke.eth as recipient on Base mainnet |
 | **_AUTONOMOUS spendYield #1_** | **_Base_** | **_[`0x13bf6f...`](https://basescan.org/tx/0x13bf6fdca6796982ab201eeac4c35594402819e2bd47aff25fb28cd992893515)_** | **_Agent loop autonomously spent ~0.0000001237 wstETH yield. No human intervention._** |
 | **_AUTONOMOUS spendYield #2_** | **_Base_** | **_[`0x185feb...`](https://basescan.org/tx/0x185feb8ebc692e98a4ed12d95bfc86ba5fdc66dab8e00ed424ea2a4ce55940f2)_** | **_Second autonomous cycle — ~0.0000000618 wstETH._** |
-| **_AUTONOMOUS spendYield #3_** | **_Base_** | **_[`0x7ce7c5...`](https://basescan.org/tx/0x7ce7c5866dccbcb9e74a95af10ee85e86fbc503bfd610781fc19fc82cce2083c)_** | **_Third cycle — ~0.0000000114 wstETH. Continuous autonomy._** |
+| **_AUTONOMOUS spendYield #3_** | **_Base_** | **_[`0x7ce7c5...`](https://basescan.org/tx/0x7ce7c5866dccbcb9e74a95af10ee85e86fbc503bfd610781fc19fc82cce2083c)_** | **_Third cycle — ~0.0000000114 wstETH._** |
+| **_AUTONOMOUS spendYield #4_** | **_Base_** | **_[`0x06af2d...`](https://basescan.org/tx/0x06af2df18b86ba84e5b9124a603c7b2339fa2432c429f2272a5b406e23f73881)_** | **_Fourth cycle — continuous autonomous operation._** |
 
 ## Architecture
 
