@@ -91,4 +91,4 @@ Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Sol
 ## Team
 - Oscar (human) — architect, orchestrator, funder
 - Bagel (AI agent, Cursor) — contract developer, on-chain architecture
-- Claude Code (AI agent, CLI) — systems engineer (10 packages, 24 MCP tools, 34 endpoints)
+- Claude Code (AI agent, CLI) — systems engineer (10 packages, 24 MCP tools, 35 endpoints)

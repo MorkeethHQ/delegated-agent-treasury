@@ -24,7 +24,7 @@ info() { echo -e "  ${DIM}$1${RESET}"; }
 section() { echo -e "\n${BOLD}${CYAN}═══ $1 ═══${RESET}"; }
 
 echo -e "${BOLD}╔══════════════════════════════════════════════════════════════╗${RESET}"
-echo -e "${BOLD}║     Synthesis Agent Treasury — Full Demo (34 endpoints)     ║${RESET}"
+echo -e "${BOLD}║     Synthesis Agent Treasury — Full Demo (35 endpoints)     ║${RESET}"
 echo -e "${BOLD}╚══════════════════════════════════════════════════════════════╝${RESET}"
 
 # ── 0. Health ──
@@ -255,7 +255,7 @@ echo ""
 echo -e "${BOLD}╔══════════════════════════════════════════════════════════════╗${RESET}"
 echo -e "${BOLD}║                    Demo Summary                            ║${RESET}"
 echo -e "${BOLD}╠══════════════════════════════════════════════════════════════╣${RESET}"
-echo -e "${BOLD}║  Endpoints tested:  18 categories / 34 total              ║${RESET}"
+echo -e "${BOLD}║  Endpoints tested:  18 categories / 35 total              ║${RESET}"
 echo -e "${BOLD}║  Policy evaluation: auto-approve ✓ escalation ✓ deny ✓    ║${RESET}"
 echo -e "${BOLD}║  Approval workflow: pending → approved → logged ✓         ║${RESET}"
 echo -e "${BOLD}║  Trading:           Uniswap quotes + strategies ✓         ║${RESET}"

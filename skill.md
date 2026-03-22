@@ -185,7 +185,7 @@ Set up a Dollar Cost Averaging order via MoonPay CLI. Automatically buys a token
 
 ---
 
-## REST API (34 endpoints)
+## REST API (35 endpoints)
 
 Base URL: `{API_URL}` (default `http://localhost:3001`)
 

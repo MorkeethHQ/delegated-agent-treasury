@@ -12,7 +12,7 @@
 | Policy engine | `policy-engine/` | Working — transfer + swap caps |
 | Approval store | `approval-store/` | Working |
 | Audit logger | `audit-log/` | Working |
-| REST API | `apps/api/` | 34 endpoints |
+| REST API | `apps/api/` | 35 endpoints |
 | CLI | `apps/cli/` | 9 commands |
 | Agent loop | `apps/agent-loop/` | Governance-aware, strategy-aware |
 | MCP server | `mcp-server/` | 24 tools |
