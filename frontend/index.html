@@ -4,414 +4,286 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Yieldbound</title>
-<meta name="description" content="Yield-funded autonomous agent treasury. Deposit capital, lock the principal, let agents spend only what the yield earns. Built on Base mainnet.">
+<meta name="description" content="Guardrails for agent spending. Deposit capital, lock the principal, let agents spend only what the yield earns.">
 <meta property="og:title" content="Yieldbound">
-<meta property="og:description" content="Yield-funded autonomous agent treasury. Budget that regenerates forever. 22 mainnet transactions. Zero lines of human code.">
+<meta property="og:description" content="Guardrails for agent spending. 22 mainnet transactions. Budget that regenerates forever.">
 <meta property="og:image" content="https://frontend-gray-ten-83.vercel.app/cover.png">
 <meta property="og:url" content="https://frontend-gray-ten-83.vercel.app">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Yieldbound">
-<meta name="twitter:description" content="Yield-funded autonomous agent treasury. Budget that regenerates forever.">
 <meta name="twitter:image" content="https://frontend-gray-ten-83.vercel.app/cover.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  /* ========== RESET & TOKENS ========== */
-  *{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --bg:#09090b;--bg2:#111113;--bg3:#1a1a1e;--bg-card:#131316;
-    --fg:#fafafa;--fg2:#a1a1aa;--fg3:#71717a;
-    --border:#1e1e22;--border-hover:#2e2e34;
-    --accent:#a78bfa;--green:#4ade80;--blue:#60a5fa;
-    --glow-accent:rgba(167,139,250,.06);--glow-green:rgba(74,222,128,.06);
-    --ease-out:cubic-bezier(0.16,1,0.3,1);
-    --ease-spring:cubic-bezier(0.34,1.56,0.64,1);
-  }
-  html{scroll-behavior:smooth}
-  body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden;line-height:1.6}
-  ::selection{background:rgba(167,139,250,.25)}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fafafa;--bg2:#f4f4f5;--bg3:#e4e4e7;
+  --dark:#0c0c0e;--dark2:#151518;--dark3:#1c1c20;--dark-border:#2a2a30;
+  --fg:#09090b;--fg2:#3f3f46;--fg3:#71717a;--fg4:#a1a1aa;
+  --border:#e4e4e7;--border-hover:#d4d4d8;
+  --accent:#7c3aed;--green:#16a34a;--green-light:#22c55e;--blue:#2563eb;--red:#dc2626;--amber:#d97706;
+  --ease:cubic-bezier(0.16,1,0.3,1);--ease-spring:cubic-bezier(0.34,1.56,0.64,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.6}
+::selection{background:rgba(124,58,237,.15)}
+a{color:var(--fg2);text-decoration:none;transition:color .2s}
+a:hover{color:var(--fg)}
+code{font-family:'SF Mono',Monaco,monospace;font-size:.78em;background:var(--bg2);padding:2px 7px;border-radius:5px;color:var(--fg2)}
 
-  a{color:var(--fg2);text-decoration:none;transition:color .2s var(--ease-out)}
-  a:hover{color:var(--fg)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 40px}
+@media(max-width:600px){.wrap{padding:0 20px}}
 
-  code{font-family:'SF Mono',Monaco,'Cascadia Code',monospace;font-size:.78em;background:var(--bg3);padding:2px 7px;border-radius:5px;color:var(--fg2)}
-  pre{font-family:'SF Mono',Monaco,'Cascadia Code',monospace;font-size:.8rem;background:var(--bg2);border:1px solid var(--border);padding:28px;border-radius:14px;overflow-x:auto;line-height:1.7;color:var(--fg2);transition:border-color .3s var(--ease-out)}
-  pre:hover{border-color:var(--border-hover)}
-  pre strong{color:var(--fg)}
+/* ===== ANIMATIONS ===== */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(22,163,74,.4)}50%{box-shadow:0 0 0 6px rgba(22,163,74,0)}}
+@keyframes countUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 
-  /* ========== LAYOUT ========== */
-  .wrap{max-width:1080px;margin:0 auto;padding:0 40px}
-  @media(max-width:600px){.wrap{padding:0 20px}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
 
-  /* ========== ANIMATIONS ========== */
-  @keyframes fadeInUp{
-    from{opacity:0;transform:translateY(28px)}
-    to{opacity:1;transform:translateY(0)}
-  }
-  @keyframes pulse{
-    0%,100%{opacity:1}
-    50%{opacity:.3}
-  }
-  @keyframes livePulse{
-    0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.4)}
-    50%{box-shadow:0 0 0 6px rgba(74,222,128,0)}
-  }
-  @keyframes subtleGlow{
-    0%,100%{box-shadow:0 0 20px rgba(167,139,250,.04)}
-    50%{box-shadow:0 0 40px rgba(167,139,250,.08)}
-  }
-  @keyframes teamPulse{
-    0%,100%{box-shadow:0 0 0 0 rgba(167,139,250,.0),0 1px 2px rgba(0,0,0,.2)}
-    50%{box-shadow:0 0 24px 2px rgba(167,139,250,.06),0 1px 2px rgba(0,0,0,.2)}
-  }
-  @keyframes countUp{
-    from{opacity:0;transform:translateY(12px)}
-    to{opacity:1;transform:translateY(0)}
-  }
-  @keyframes shimmer{
-    0%{background-position:-200% center}
-    100%{background-position:200% center}
-  }
-  @keyframes gradientShift{
-    0%,100%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-  }
+/* ===== NAV ===== */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);background:rgba(250,250,250,.8);border-bottom:1px solid var(--border)}
+nav .inner{max-width:1100px;margin:0 auto;padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between}
+@media(max-width:600px){nav .inner{padding:0 20px}}
+nav .logo{font-weight:700;font-size:.92rem;display:flex;align-items:center;gap:10px;color:var(--fg)}
+nav .logo .mark{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--blue));
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:800;color:#fff;
+  transition:transform .3s var(--ease-spring);
+}
+nav .logo:hover .mark{transform:scale(1.1) rotate(20deg)}
+nav .nav-links{display:flex;align-items:center;gap:24px;font-size:.84rem;color:var(--fg3)}
+nav .nav-links a{padding:2px 0;position:relative}
+nav .nav-links a::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1.5px;background:var(--accent);transition:width .3s var(--ease)}
+nav .nav-links a:hover::after{width:100%}
+nav .nav-links a:hover{color:var(--fg)}
+@media(max-width:720px){nav .nav-links{gap:14px;font-size:.78rem}}
 
-  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease-out),transform .7s var(--ease-out)}
-  .reveal.visible{opacity:1;transform:translateY(0)}
-  .reveal-delay-1{transition-delay:.1s}
-  .reveal-delay-2{transition-delay:.2s}
-  .reveal-delay-3{transition-delay:.3s}
+.live-badge{
+  display:inline-flex;align-items:center;gap:6px;font-size:.72rem;
+  color:var(--green);font-weight:600;padding:5px 12px;
+  border:1px solid rgba(22,163,74,.2);border-radius:99px;
+  background:rgba(22,163,74,.05);
+}
+.live-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite,livePulse 2s infinite}
 
-  /* ========== NAV ========== */
-  nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(20px) saturate(1.6);-webkit-backdrop-filter:blur(20px) saturate(1.6);background:rgba(9,9,11,.75);border-bottom:1px solid var(--border);transition:background .3s}
-  nav .inner{max-width:1080px;margin:0 auto;padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between}
-  @media(max-width:600px){nav .inner{padding:0 20px}}
-  nav .logo{font-weight:700;font-size:.92rem;display:flex;align-items:center;gap:11px;letter-spacing:-.01em}
-  nav .logo .mark{
-    width:26px;height:26px;border-radius:7px;
-    background:linear-gradient(135deg,var(--accent),var(--blue));
-    display:flex;align-items:center;justify-content:center;
-    font-size:10.5px;font-weight:800;color:#fff;
-    transition:transform .3s var(--ease-spring),box-shadow .3s;
-  }
-  nav .logo:hover .mark{transform:scale(1.08);box-shadow:0 0 16px rgba(167,139,250,.3)}
-  nav .nav-links{display:flex;align-items:center;gap:28px;font-size:.84rem;color:var(--fg3)}
-  nav .nav-links a{position:relative;padding:2px 0}
-  nav .nav-links a::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1.5px;background:var(--accent);transition:width .3s var(--ease-out);border-radius:1px}
-  nav .nav-links a:hover::after{width:100%}
-  nav .nav-links a:hover{color:var(--fg)}
-  @media(max-width:720px){nav .nav-links{gap:16px;font-size:.78rem}}
+/* ===== HERO ===== */
+.hero{padding:160px 0 100px;position:relative}
+.hero h1{
+  font-size:clamp(2.6rem,6.5vw,4.8rem);font-weight:800;
+  letter-spacing:-.045em;line-height:.95;margin-bottom:24px;color:var(--fg);
+}
+.hero .sub{font-size:1.05rem;color:var(--fg2);line-height:1.7;max-width:520px}
+.hero .sub-sm{font-size:.86rem;color:var(--fg3);margin-top:14px;max-width:520px;line-height:1.6}
 
-  .live-badge{
-    display:inline-flex;align-items:center;gap:7px;font-size:.73rem;
-    color:var(--green);font-weight:500;padding:5px 12px;
-    border:1px solid rgba(74,222,128,.15);border-radius:99px;
-    background:rgba(74,222,128,.04);
-    transition:background .2s,border-color .2s;
-  }
-  .live-badge:hover{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.25)}
-  .live-badge .dot{
-    width:6px;height:6px;border-radius:50%;background:var(--green);
-    animation:pulse 2s infinite,livePulse 2s infinite;
-    flex-shrink:0;
-  }
+.metrics{display:flex;gap:48px;flex-wrap:wrap;margin-top:48px}
+.metric{opacity:0;animation:countUp .6s var(--ease) forwards}
+.metric:nth-child(1){animation-delay:.1s}
+.metric:nth-child(2){animation-delay:.2s}
+.metric:nth-child(3){animation-delay:.3s}
+.metric .val{font-size:2rem;font-weight:700;letter-spacing:-.03em;line-height:1}
+.metric .label{font-size:.76rem;color:var(--fg3);margin-top:5px}
 
-  /* ========== HERO ========== */
-  .hero{padding:180px 0 120px;position:relative}
-  .hero::before{
-    content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);
-    width:800px;height:800px;
-    background:radial-gradient(circle,rgba(167,139,250,.06) 0%,rgba(96,165,250,.03) 40%,transparent 70%);
-    pointer-events:none;
-  }
-  .hero h1{
-    font-size:clamp(2.8rem,7vw,5.2rem);font-weight:800;
-    letter-spacing:-.045em;line-height:.95;margin-bottom:28px;
-  }
-  .hero h1 .gradient{
-    background:linear-gradient(135deg,var(--accent) 0%,var(--blue) 50%,var(--green) 100%);
-    background-size:200% 200%;
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-    animation:gradientShift 8s ease infinite;
-  }
-  .hero .desc{font-size:1.1rem;color:var(--fg2);line-height:1.7;max-width:520px;margin-bottom:0}
-  .hero .desc + .desc{margin-top:16px}
-  .hero .desc-sub{font-size:.88rem;color:var(--fg3);line-height:1.6;max-width:520px;margin-top:16px}
+/* ===== SECTIONS ===== */
+section{padding:100px 0}
+.section-label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--fg4);margin-bottom:12px}
+h2{font-size:2.2rem;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-bottom:8px}
+.section-desc{color:var(--fg2);font-size:.95rem;margin-bottom:48px;max-width:500px;line-height:1.7}
+@media(max-width:600px){section{padding:64px 0}h2{font-size:1.7rem}}
 
-  .metrics{display:flex;gap:56px;flex-wrap:wrap;margin-top:56px}
-  .metric{opacity:0;animation:countUp .6s var(--ease-out) forwards}
-  .metric:nth-child(1){animation-delay:.1s}
-  .metric:nth-child(2){animation-delay:.2s}
-  .metric:nth-child(3){animation-delay:.3s}
-  .metric:nth-child(4){animation-delay:.4s}
-  .metric .val{font-size:2.2rem;font-weight:700;letter-spacing:-.03em;line-height:1}
-  .metric .label{font-size:.78rem;color:var(--fg3);margin-top:6px;letter-spacing:.01em}
+/* ===== COCKPIT (dark) ===== */
+.cockpit{border-radius:20px;overflow:hidden;background:var(--dark);color:#fafafa;border:1px solid var(--dark-border);box-shadow:0 24px 80px rgba(0,0,0,.15)}
+.cockpit-header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--dark-border);background:var(--dark2)}
+.cockpit-brand{display:flex;align-items:center;gap:10px}
+.cockpit-brand .mark{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--blue));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff}
+.cockpit-brand span{font-weight:700;font-size:.9rem;color:#fafafa}
+.status-pill{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:600;padding:4px 12px;border-radius:99px;text-transform:uppercase;letter-spacing:.06em;background:rgba(22,163,74,.12);color:var(--green-light);border:1px solid rgba(22,163,74,.2)}
+.status-pill .dot{width:5px;height:5px;border-radius:50%;background:var(--green-light);animation:pulse 2s infinite}
+.cockpit-time{font-size:.76rem;color:#71717a;font-family:'SF Mono',Monaco,monospace}
+.cockpit-actions{display:flex;gap:8px}
+.c-btn{font-size:.76rem;font-weight:600;padding:6px 14px;border-radius:8px;border:1px solid var(--dark-border);background:transparent;color:#a1a1aa;cursor:pointer;transition:all .2s}
+.c-btn:hover{border-color:#52525b;color:#fafafa;background:var(--dark3)}
+.c-btn.danger{border-color:rgba(220,38,38,.3);color:var(--red);background:rgba(220,38,38,.06)}
+.c-btn.danger:hover{background:rgba(220,38,38,.12);border-color:rgba(220,38,38,.5)}
+@media(max-width:720px){.cockpit-header{flex-wrap:wrap;gap:8px}.cockpit-time,.cockpit-actions{display:none}}
 
-  /* ========== SECTIONS ========== */
-  section{padding:112px 0;border-top:1px solid var(--border)}
-  .section-label{
-    font-size:.72rem;font-weight:600;text-transform:uppercase;
-    letter-spacing:.12em;color:var(--fg3);margin-bottom:14px;
-  }
-  h2{font-size:2.4rem;font-weight:700;letter-spacing:-.035em;line-height:1.1;margin-bottom:10px}
-  .section-desc{color:var(--fg2);font-size:1rem;margin-bottom:56px;max-width:520px;line-height:1.7}
-  @media(max-width:600px){
-    section{padding:72px 0}
-    h2{font-size:1.8rem}
-    .section-desc{margin-bottom:36px}
-  }
+.cockpit-tabs{display:flex;gap:0;border-bottom:1px solid var(--dark-border);background:var(--dark2)}
+.cockpit-tab{padding:11px 22px;font-size:.8rem;font-weight:500;color:#71717a;border-bottom:2px solid transparent;cursor:default;display:flex;align-items:center;gap:5px;transition:color .2s}
+.cockpit-tab.active{color:#fafafa;border-bottom-color:#fafafa}
+.cockpit-tab:hover{color:#a1a1aa}
+.cockpit-tab .t-icon{font-size:.68rem;opacity:.5}
 
-  /* ========== TWO-COL ========== */
-  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  @media(max-width:720px){.two-col{grid-template-columns:1fr}}
+.cockpit-notice{margin:16px 24px 0;padding:12px 18px;border-radius:10px;background:rgba(22,163,74,.06);border:1px solid rgba(22,163,74,.12);font-size:.8rem;color:#a1a1aa;display:flex;align-items:center;gap:8px}
 
-  .card{
-    border:1px solid var(--border);border-radius:14px;padding:32px;
-    background:var(--bg-card);position:relative;overflow:hidden;
-    transition:border-color .35s var(--ease-out),box-shadow .35s var(--ease-out),transform .35s var(--ease-out);
-  }
-  .card::before{
-    content:'';position:absolute;top:0;left:0;right:0;bottom:0;
-    background:radial-gradient(600px circle at var(--mouse-x,50%) var(--mouse-y,50%),var(--glow-accent),transparent 40%);
-    opacity:0;transition:opacity .35s var(--ease-out);pointer-events:none;border-radius:14px;
-  }
-  .card:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
-  .card:hover::before{opacity:1}
+.cockpit-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 24px}
+@media(max-width:720px){.cockpit-stats{grid-template-columns:repeat(2,1fr)}}
+.s-card{padding:18px;border-radius:12px;border:1px solid var(--dark-border);background:var(--dark2);transition:border-color .3s}
+.s-card:hover{border-color:#3f3f46}
+.s-card .s-label{font-size:.64rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#71717a;margin-bottom:6px}
+.s-card .s-val{font-size:1.3rem;font-weight:700;letter-spacing:-.02em;line-height:1.2;color:#fafafa}
+.s-card .s-val.green{color:var(--green-light)}
+.s-card .s-sub{font-size:.7rem;color:#52525b;margin-top:3px}
 
-  .card-label{
-    font-size:.68rem;font-weight:600;text-transform:uppercase;
-    letter-spacing:.1em;padding:4px 10px;border-radius:6px;
-    display:inline-block;margin-bottom:18px;
-  }
-  .card-label.human{background:rgba(96,165,250,.1);color:var(--blue)}
-  .card-label.agent{background:rgba(167,139,250,.1);color:var(--accent)}
+.cockpit-body{display:grid;grid-template-columns:1fr 1.6fr;gap:12px;padding:0 24px 24px}
+@media(max-width:720px){.cockpit-body{grid-template-columns:1fr}}
+.c-panel{border:1px solid var(--dark-border);border-radius:12px;padding:18px;background:var(--dark2);transition:border-color .3s}
+.c-panel:hover{border-color:#3f3f46}
+.panel-title{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#71717a;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.panel-title .icon{font-size:.82rem}
 
-  .card h3{font-size:1rem;font-weight:600;margin-bottom:14px;letter-spacing:-.01em}
-  .card li{
-    color:var(--fg2);font-size:.88rem;padding:8px 0;list-style:none;
-    border-bottom:1px solid rgba(30,30,34,.8);line-height:1.5;
-    transition:color .2s,padding-left .2s var(--ease-out);
-  }
-  .card li:last-child{border:none}
-  .card li:hover{color:var(--fg);padding-left:4px}
-  .card li code{font-size:.73rem}
+.alloc-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(42,42,48,.6)}
+.alloc-row:last-child{border:none}
+.alloc-token{font-weight:600;font-size:.85rem;color:#fafafa}
+.alloc-bar{flex:1;margin:0 14px;height:4px;border-radius:2px;background:#1c1c20;overflow:hidden}
+.alloc-fill{height:100%;border-radius:2px;transition:width 1.2s var(--ease)}
+.alloc-val{font-size:.82rem;color:#a1a1aa;font-family:'SF Mono',Monaco,monospace}
 
-  /* ========== INTEGRATION LIST ========== */
-  .int-list{display:grid;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-  .int-item{
-    display:grid;grid-template-columns:160px 140px 1fr;
-    padding:20px 24px;background:var(--bg);align-items:baseline;gap:20px;
-    transition:background .25s var(--ease-out);
-  }
-  .int-item:hover{background:var(--bg2)}
-  @media(max-width:720px){.int-item{grid-template-columns:1fr;gap:6px;padding:16px 20px}}
-  .int-item h4{font-size:.88rem;font-weight:600}
-  .int-item .role{font-size:.8rem;color:var(--accent);font-weight:500}
-  .int-item p{font-size:.84rem;color:var(--fg2);line-height:1.55}
+.exec-row{padding:12px 0;border-bottom:1px solid rgba(42,42,48,.6);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.exec-row:last-child{border:none}
+.exec-info{flex:1}
+.exec-action{font-size:.82rem;font-weight:500;color:#fafafa;margin-bottom:1px}
+.exec-time{font-size:.7rem;color:#52525b}
+.exec-meta{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.exec-bar{width:56px;height:4px;border-radius:2px;background:#1c1c20;overflow:hidden}
+.exec-bar-fill{height:100%;border-radius:2px}
+.exec-pct{font-size:.7rem;color:#52525b;font-family:'SF Mono',Monaco,monospace;width:26px;text-align:right}
+.exec-badge{font-size:.6rem;font-weight:700;padding:3px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em}
+.badge-executed{background:rgba(22,163,74,.12);color:var(--green-light)}
+.badge-proposed{background:rgba(217,119,6,.12);color:var(--amber)}
+.badge-denied{background:rgba(220,38,38,.12);color:#f87171}
+.badge-auto{background:rgba(124,58,237,.12);color:#a78bfa}
 
-  /* ========== PROOF TABLE ========== */
-  .table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:14px;background:var(--bg)}
-  table{width:100%;border-collapse:collapse;font-size:.82rem}
-  th{
-    text-align:left;padding:14px 18px;font-size:.68rem;font-weight:600;
-    text-transform:uppercase;letter-spacing:.08em;color:var(--fg3);
-    border-bottom:1px solid var(--border);background:var(--bg2);
-  }
-  td{padding:12px 18px;border-bottom:1px solid var(--border);transition:background .2s,padding-left .2s var(--ease-out)}
-  tr:last-child td{border-bottom:none}
-  tr:hover td{background:var(--bg2);padding-left:22px}
-  td a{
-    color:var(--accent);font-family:'SF Mono',Monaco,'Cascadia Code',monospace;font-size:.78rem;
-    position:relative;
-  }
-  td a::after{
-    content:'';position:absolute;bottom:-1px;left:0;width:0;height:1px;
-    background:var(--accent);transition:width .25s var(--ease-out);
-  }
-  td a:hover{color:var(--fg)}
-  td a:hover::after{width:100%}
-  tr.auto td{color:var(--green)}
-  tr.auto td a{color:var(--green)}
-  tr.auto td a::after{background:var(--green)}
-  .chain{
-    font-size:.64rem;font-weight:600;padding:3px 8px;border-radius:4px;
-    text-transform:uppercase;letter-spacing:.04em;display:inline-block;
-  }
-  .c-base{background:rgba(96,165,250,.1);color:var(--blue)}
-  .c-celo{background:rgba(74,222,128,.1);color:var(--green)}
-  .c-sep{background:rgba(113,113,122,.1);color:var(--fg3)}
+/* ===== YIELD LOOP (circular diagram) ===== */
+.loop-section{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.loop-wrap{display:flex;align-items:center;gap:64px}
+@media(max-width:720px){.loop-wrap{flex-direction:column;gap:32px}}
+.loop-diagram{position:relative;width:280px;height:280px;flex-shrink:0}
+.loop-ring{
+  width:280px;height:280px;border-radius:50%;
+  border:3px solid var(--border);position:relative;
+}
+.loop-ring::before{
+  content:'';position:absolute;top:-3px;left:-3px;right:-3px;bottom:-3px;
+  border-radius:50%;border:3px solid transparent;
+  border-top-color:var(--accent);border-right-color:var(--blue);
+  animation:spin 8s linear infinite;
+}
+.loop-center{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;
+}
+.loop-center .bagel{font-size:3rem;line-height:1}
+.loop-center .loop-label{font-size:.72rem;font-weight:600;color:var(--fg3);margin-top:4px;text-transform:uppercase;letter-spacing:.08em}
+.loop-node{
+  position:absolute;background:#fff;border:2px solid var(--border);
+  border-radius:10px;padding:6px 12px;font-size:.72rem;font-weight:600;
+  color:var(--fg2);white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.06);
+  transition:border-color .3s,transform .3s var(--ease-spring);
+}
+.loop-node:hover{border-color:var(--accent);transform:scale(1.08)}
+.loop-node.n-top{top:-14px;left:50%;transform:translateX(-50%)}
+.loop-node.n-right{right:-20px;top:50%;transform:translateY(-50%)}
+.loop-node.n-bottom{bottom:-14px;left:50%;transform:translateX(-50%)}
+.loop-node.n-left{left:-20px;top:50%;transform:translateY(-50%)}
+.loop-text h3{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin-bottom:12px}
+.loop-text p{color:var(--fg2);font-size:.92rem;line-height:1.7;margin-bottom:10px}
 
-  /* ========== COCKPIT ========== */
-  .cockpit{
-    border:1px solid var(--border);border-radius:18px;background:var(--bg-card);
-    overflow:hidden;position:relative;
-    animation:subtleGlow 6s ease-in-out infinite;
-  }
-  .cockpit-header{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:18px 28px;border-bottom:1px solid var(--border);background:var(--bg2);
-  }
-  .cockpit-brand{display:flex;align-items:center;gap:12px}
-  .cockpit-brand .mark{
-    width:28px;height:28px;border-radius:7px;
-    background:linear-gradient(135deg,var(--accent),var(--blue));
-    display:flex;align-items:center;justify-content:center;
-    font-size:10px;font-weight:800;color:#fff;
-  }
-  .cockpit-brand span{font-weight:700;font-size:.95rem}
-  .status-pill{
-    display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:600;
-    padding:5px 14px;border-radius:99px;text-transform:uppercase;letter-spacing:.06em;
-    background:rgba(74,222,128,.08);color:var(--green);border:1px solid rgba(74,222,128,.15);
-  }
-  .status-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
-  .cockpit-time{font-size:.78rem;color:var(--fg3);font-family:'SF Mono',Monaco,monospace}
-  .cockpit-actions{display:flex;gap:10px}
-  .cockpit-btn{
-    font-size:.78rem;font-weight:600;padding:7px 16px;border-radius:8px;
-    border:1px solid var(--border);background:transparent;color:var(--fg2);
-    cursor:pointer;transition:all .2s var(--ease-out);
-  }
-  .cockpit-btn:hover{border-color:var(--border-hover);color:var(--fg);background:var(--bg3)}
-  .cockpit-btn.danger{border-color:rgba(239,68,68,.3);color:#ef4444;background:rgba(239,68,68,.06)}
-  .cockpit-btn.danger:hover{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.5)}
-  @media(max-width:720px){
-    .cockpit-header{flex-wrap:wrap;gap:10px}
-    .cockpit-time,.cockpit-actions{display:none}
-  }
+/* ===== TWO COL ===== */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:720px){.two-col{grid-template-columns:1fr}}
 
-  .cockpit-tabs{
-    display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--bg2);
-  }
-  .cockpit-tab{
-    padding:12px 24px;font-size:.82rem;font-weight:500;color:var(--fg3);
-    border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;
-    display:flex;align-items:center;gap:6px;
-  }
-  .cockpit-tab.active{color:var(--fg);border-bottom-color:var(--fg)}
-  .cockpit-tab:hover{color:var(--fg2)}
-  .cockpit-tab .tab-icon{font-size:.7rem;opacity:.6}
+.card{border:1px solid var(--border);border-radius:14px;padding:28px;background:#fff;transition:border-color .3s,box-shadow .3s,transform .3s var(--ease)}
+.card:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.06)}
+.card-label{font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;padding:4px 10px;border-radius:6px;display:inline-block;margin-bottom:14px}
+.card-label.human{background:rgba(37,99,235,.08);color:var(--blue)}
+.card-label.agent{background:rgba(124,58,237,.08);color:var(--accent)}
+.card h3{font-size:.95rem;font-weight:600;margin-bottom:12px}
+.card li{color:var(--fg2);font-size:.85rem;padding:7px 0;list-style:none;border-bottom:1px solid var(--bg2);line-height:1.5;transition:color .2s,padding-left .2s var(--ease)}
+.card li:last-child{border:none}
+.card li:hover{color:var(--fg);padding-left:4px}
 
-  .cockpit-notice{
-    margin:20px 28px 0;padding:14px 20px;border-radius:10px;
-    background:rgba(74,222,128,.04);border:1px solid rgba(74,222,128,.1);
-    font-size:.82rem;color:var(--fg2);display:flex;align-items:center;gap:10px;
-  }
-  .cockpit-notice .lock-icon{font-size:1rem}
+/* ===== DARK CARD ===== */
+.card.dark{background:var(--dark);color:#fafafa;border-color:var(--dark-border)}
+.card.dark:hover{border-color:#3f3f46;box-shadow:0 8px 28px rgba(0,0,0,.2)}
+.card.dark li{color:#a1a1aa;border-color:rgba(42,42,48,.6)}
+.card.dark li:hover{color:#fafafa}
+.card.dark code{background:var(--dark3);color:#a1a1aa}
 
-  .cockpit-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:20px 28px}
-  @media(max-width:720px){.cockpit-stats{grid-template-columns:repeat(2,1fr)}}
-  .stat-card{
-    padding:20px;border-radius:12px;border:1px solid var(--border);
-    background:var(--bg);transition:border-color .3s,transform .3s var(--ease-out);
-  }
-  .stat-card:hover{border-color:var(--border-hover);transform:translateY(-1px)}
-  .stat-card .stat-label{
-    font-size:.66rem;font-weight:600;text-transform:uppercase;
-    letter-spacing:.1em;color:var(--fg3);margin-bottom:8px;
-  }
-  .stat-card .stat-val{font-size:1.4rem;font-weight:700;letter-spacing:-.02em;line-height:1.2}
-  .stat-card .stat-val.green{color:var(--green)}
-  .stat-card .stat-sub{font-size:.72rem;color:var(--fg3);margin-top:4px}
+pre{font-family:'SF Mono',Monaco,monospace;font-size:.78rem;background:var(--dark);color:#a1a1aa;border:1px solid var(--dark-border);padding:24px;border-radius:12px;overflow-x:auto;line-height:1.7}
+pre strong{color:#fafafa}
 
-  .cockpit-body{display:grid;grid-template-columns:1fr 1.6fr;gap:16px;padding:0 28px 28px}
-  @media(max-width:720px){.cockpit-body{grid-template-columns:1fr}}
+/* ===== INT LIST ===== */
+.int-list{display:grid;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.int-item{display:grid;grid-template-columns:150px 130px 1fr;padding:18px 22px;background:#fff;align-items:baseline;gap:16px;transition:background .2s}
+.int-item:hover{background:var(--bg2)}
+@media(max-width:720px){.int-item{grid-template-columns:1fr;gap:4px;padding:14px 18px}}
+.int-item h4{font-size:.86rem;font-weight:600}
+.int-item .role{font-size:.78rem;color:var(--accent);font-weight:500}
+.int-item p{font-size:.82rem;color:var(--fg2);line-height:1.55}
 
-  .cockpit-panel{
-    border:1px solid var(--border);border-radius:12px;padding:20px;background:var(--bg);
-    transition:border-color .3s;
-  }
-  .cockpit-panel:hover{border-color:var(--border-hover)}
-  .panel-title{
-    font-size:.7rem;font-weight:600;text-transform:uppercase;
-    letter-spacing:.1em;color:var(--fg3);margin-bottom:16px;
-    display:flex;align-items:center;gap:8px;
-  }
-  .panel-title .icon{font-size:.85rem}
+/* ===== PROOF TABLE ===== */
+.table-wrap{overflow-x:auto;border:1px solid var(--dark-border);border-radius:14px;background:var(--dark)}
+table{width:100%;border-collapse:collapse;font-size:.8rem;color:#a1a1aa}
+th{text-align:left;padding:12px 16px;font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#52525b;border-bottom:1px solid var(--dark-border);background:var(--dark2)}
+td{padding:10px 16px;border-bottom:1px solid rgba(42,42,48,.5);transition:background .2s,padding-left .2s var(--ease)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--dark2);padding-left:20px}
+td a{color:#a78bfa;font-family:'SF Mono',Monaco,monospace;font-size:.76rem}
+td a:hover{color:#fafafa}
+tr.auto td{color:var(--green-light)}
+tr.auto td a{color:var(--green-light)}
+.chain{font-size:.62rem;font-weight:600;padding:3px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em;display:inline-block}
+.c-base{background:rgba(37,99,235,.12);color:#60a5fa}
+.c-celo{background:rgba(22,163,74,.12);color:var(--green-light)}
+.c-sep{background:rgba(113,113,122,.1);color:#71717a}
 
-  .alloc-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(30,30,34,.8)}
-  .alloc-row:last-child{border:none}
-  .alloc-token{font-weight:600;font-size:.88rem}
-  .alloc-bar{flex:1;margin:0 16px;height:4px;border-radius:2px;background:var(--bg3);overflow:hidden}
-  .alloc-fill{height:100%;border-radius:2px;transition:width 1s var(--ease-out)}
-  .alloc-val{font-size:.85rem;color:var(--fg2);font-family:'SF Mono',Monaco,monospace}
+/* ===== TEAM ===== */
+.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:720px){.team-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:420px){.team-grid{grid-template-columns:1fr}}
+.team-member{text-align:center;padding:24px 14px;border-radius:14px;border:1px solid var(--border);background:#fff;transition:border-color .3s,transform .3s var(--ease),box-shadow .3s}
+.team-member:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.06)}
+.team-member .emoji{font-size:2rem;margin-bottom:8px;display:block}
+.team-member .name{font-weight:600;font-size:.88rem;margin-bottom:2px}
+.team-member .role-label{color:var(--fg3);font-size:.76rem}
+.team-member .desc-label{color:var(--fg4);font-size:.72rem;margin-top:4px;line-height:1.4}
 
-  .exec-row{padding:14px 0;border-bottom:1px solid rgba(30,30,34,.8);display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .exec-row:last-child{border:none}
-  .exec-info{flex:1}
-  .exec-action{font-size:.85rem;font-weight:500;margin-bottom:2px}
-  .exec-time{font-size:.72rem;color:var(--fg3)}
-  .exec-meta{display:flex;align-items:center;gap:10px;flex-shrink:0}
-  .exec-bar{width:60px;height:5px;border-radius:3px;background:var(--bg3);overflow:hidden}
-  .exec-bar-fill{height:100%;border-radius:3px}
-  .exec-pct{font-size:.72rem;color:var(--fg3);font-family:'SF Mono',Monaco,monospace;width:28px;text-align:right}
-  .exec-badge{
-    font-size:.62rem;font-weight:700;padding:3px 8px;border-radius:4px;
-    text-transform:uppercase;letter-spacing:.04em;
-  }
-  .badge-executed{background:rgba(74,222,128,.1);color:var(--green)}
-  .badge-proposed{background:rgba(250,204,21,.1);color:#facc15}
-  .badge-denied{background:rgba(239,68,68,.1);color:#ef4444}
-  .badge-auto{background:rgba(167,139,250,.1);color:var(--accent)}
+/* ===== FOOTER ===== */
+footer{border-top:1px solid var(--border);padding:48px 0 40px;text-align:center;color:var(--fg3);font-size:.8rem}
+footer a{color:var(--fg2)}footer a:hover{color:var(--fg)}
+footer .footer-links{display:flex;gap:20px;justify-content:center;margin-bottom:14px}
+footer .tagline{margin-top:6px;line-height:1.5}
 
-  /* ========== TEAM ========== */
-  .team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-  @media(max-width:720px){.team-grid{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:420px){.team-grid{grid-template-columns:1fr}}
-
-  .team-member{
-    text-align:center;padding:28px 16px;border-radius:14px;
-    border:1px solid var(--border);background:var(--bg-card);
-    transition:border-color .35s var(--ease-out),transform .35s var(--ease-out),box-shadow .35s var(--ease-out);
-    animation:teamPulse 4s ease-in-out infinite;
-  }
-  .team-member:nth-child(2){animation-delay:1s}
-  .team-member:nth-child(3){animation-delay:2s}
-  .team-member:nth-child(4){animation-delay:3s}
-  .team-member:hover{border-color:var(--border-hover);transform:translateY(-3px);box-shadow:0 12px 40px rgba(167,139,250,.08)}
-  .team-member .emoji{font-size:2.2rem;margin-bottom:10px;display:block}
-  .team-member .name{font-weight:600;font-size:.9rem;margin-bottom:2px}
-  .team-member .role-label{color:var(--fg3);font-size:.78rem}
-  .team-member .desc-label{color:var(--fg3);font-size:.73rem;margin-top:6px;line-height:1.4}
-
-  /* ========== FOOTER ========== */
-  footer{border-top:1px solid var(--border);padding:56px 0 48px;text-align:center;color:var(--fg3);font-size:.82rem}
-  footer a{color:var(--fg2);position:relative}
-  footer a::after{
-    content:'';position:absolute;bottom:-2px;left:0;width:0;height:1px;
-    background:var(--accent);transition:width .25s var(--ease-out);
-  }
-  footer a:hover{color:var(--fg)}
-  footer a:hover::after{width:100%}
-  footer .footer-links{display:flex;gap:24px;justify-content:center;margin-bottom:16px}
-  footer .tagline{margin-top:8px;line-height:1.5}
-  footer .team-note{color:var(--fg3);font-size:.84rem;margin-top:20px;margin-bottom:32px;line-height:1.5}
-
-  /* ========== MYBILE ========== */
-  @media(max-width:600px){
-    .hero{padding:140px 0 80px}
-    .hero h1{margin-bottom:20px}
-    .metrics{gap:32px;margin-top:40px}
-    .metric .val{font-size:1.7rem}
-    nav .nav-links{display:none}
-  }
+/* ===== MOBILE ===== */
+@media(max-width:600px){
+  .hero{padding:120px 0 60px}
+  .metrics{gap:28px;margin-top:32px}
+  .metric .val{font-size:1.6rem}
+  nav .nav-links{display:none}
+}
 </style>
 </head>
 <body>
 
 <nav>
   <div class="inner">
-    <a href="#" class="logo" style="text-decoration:none;color:var(--fg)">
+    <a href="#" class="logo" style="text-decoration:none">
       <div class="mark">YB</div>
       Yieldbound
     </a>
     <div class="nav-links">
       <a href="#cockpit">Cockpit</a>
       <a href="#how">How it works</a>
-      <a href="#integrations">Integrations</a>
       <a href="#proof">Proof</a>
       <a href="#start">Run it</a>
       <span class="live-badge"><span class="dot"></span> Base mainnet</span>
@@ -424,20 +296,48 @@
 <!-- HERO -->
 <section class="hero" style="border:none">
   <div class="reveal">
-    <h1>Yieldbound<br><span class="gradient">Guardrails for agent spending</span></h1>
+    <h1>Yieldbound</h1>
   </div>
-  <p class="desc reveal reveal-delay-1">Agents don't need full wallets &mdash; they need bounded authority. Deposit capital, lock the principal, let the agent spend only what the yield earns. Budget that regenerates forever.</p>
-  <p class="desc-sub reveal reveal-delay-2">Built by Oscar (human architect) + Bagel (Codex agent) + Open Claw (Claude Code agent) + ODawg (Anthropic agent). Zero lines of human-written code. Agents building what agents need.</p>
+  <p class="sub reveal reveal-delay-1">Agents don't need full wallets &mdash; they need bounded authority. Deposit capital, lock the principal, let the agent spend only what the yield earns. Budget that regenerates forever.</p>
+  <p class="sub-sm reveal reveal-delay-2">Built by Oscar + Bagel (Codex) + Open Claw (Claude Code) + ODawg (Anthropic). Agents building what agents need.</p>
   <div class="metrics reveal reveal-delay-3">
     <div class="metric"><div class="val">22</div><div class="label">On-chain transactions</div></div>
     <div class="metric"><div class="val">7</div><div class="label">Autonomous spends</div></div>
     <div class="metric"><div class="val">~3.5%</div><div class="label">APY budget rate</div></div>
-    <div class="metric"><div class="val">0</div><div class="label">Lines of human code</div></div>
   </div>
 </section>
 
-<!-- COCKPIT DASHBOARD -->
-<section id="cockpit" style="padding-top:80px">
+</div>
+
+<!-- YIELD LOOP -->
+<section class="loop-section" id="loop">
+  <div class="wrap">
+    <div class="loop-wrap reveal">
+      <div class="loop-diagram">
+        <div class="loop-ring">
+          <div class="loop-node n-top">Deposit</div>
+          <div class="loop-node n-right">Accrue</div>
+          <div class="loop-node n-bottom">Spend</div>
+          <div class="loop-node n-left">Yield</div>
+        </div>
+        <div class="loop-center">
+          <div class="bagel">&#x1F96F;</div>
+          <div class="loop-label">The loop</div>
+        </div>
+      </div>
+      <div class="loop-text">
+        <h3>The Yieldbound loop</h3>
+        <p>Capital deposits into a yield-bearing position. Staking rewards accrue passively. The agent spends only the earned yield. Principal stays locked. The budget regenerates from real economic activity &mdash; forever.</p>
+        <p style="color:var(--fg3);font-size:.84rem">Like a bagel: a perfect loop with no beginning and no end. Yield flows in a circle.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+
+<!-- COCKPIT -->
+<section id="cockpit">
   <div class="reveal">
     <div class="section-label">Live dashboard</div>
     <h2>Treasury cockpit</h2>
@@ -453,67 +353,67 @@
       </div>
       <span class="cockpit-time" id="cockpit-clock">--:--:-- UTC</span>
       <div class="cockpit-actions">
-        <a href="https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426" class="cockpit-btn" target="_blank">View on Base &rarr;</a>
-        <span class="cockpit-btn danger">&#x23F8; Freeze All</span>
+        <a href="https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426" class="c-btn" target="_blank">View on Base &rarr;</a>
+        <span class="c-btn danger">&#x23F8; Freeze All</span>
       </div>
     </div>
 
     <div class="cockpit-tabs">
-      <div class="cockpit-tab active"><span class="tab-icon">&#x25C6;</span> Treasury</div>
-      <div class="cockpit-tab"><span class="tab-icon">&#x25C7;</span> Authority</div>
-      <div class="cockpit-tab"><span class="tab-icon">&#x25CE;</span> Activity</div>
-      <div class="cockpit-tab"><span class="tab-icon">&#x25B3;</span> Strategy</div>
+      <div class="cockpit-tab active"><span class="t-icon">&#x25C6;</span> Treasury</div>
+      <div class="cockpit-tab"><span class="t-icon">&#x25C7;</span> Authority</div>
+      <div class="cockpit-tab"><span class="t-icon">&#x25CE;</span> Activity</div>
+      <div class="cockpit-tab"><span class="t-icon">&#x25B3;</span> Strategy</div>
     </div>
 
     <div class="cockpit-notice">
-      <span class="lock-icon">&#x1F512;</span>
+      <span>&#x1F512;</span>
       Principal is contract-isolated. Agent authority is bounded to yield only.
     </div>
 
     <div class="cockpit-stats">
-      <div class="stat-card">
-        <div class="stat-label">Principal</div>
-        <div class="stat-val">0.0038 wstETH</div>
-        <div class="stat-sub">Contract-locked</div>
+      <div class="s-card">
+        <div class="s-label">Principal</div>
+        <div class="s-val">0.0038 wstETH</div>
+        <div class="s-sub">Contract-locked</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Available Yield</div>
-        <div class="stat-val green">0.000012 wstETH</div>
-        <div class="stat-sub">Agent-accessible</div>
+      <div class="s-card">
+        <div class="s-label">Available Yield</div>
+        <div class="s-val green">0.000012 wstETH</div>
+        <div class="s-sub">Agent-accessible</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Yield Spent</div>
-        <div class="stat-val">0.000087 wstETH</div>
-        <div class="stat-sub">7 autonomous TXs</div>
+      <div class="s-card">
+        <div class="s-label">Yield Spent</div>
+        <div class="s-val">0.000087 wstETH</div>
+        <div class="s-sub">7 autonomous TXs</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Utilization</div>
-        <div class="stat-val">87.9%</div>
-        <div class="stat-sub">Yield deployed</div>
+      <div class="s-card">
+        <div class="s-label">Utilization</div>
+        <div class="s-val">87.9%</div>
+        <div class="s-sub">Yield deployed</div>
       </div>
     </div>
 
     <div class="cockpit-body">
-      <div class="cockpit-panel">
+      <div class="c-panel">
         <div class="panel-title"><span class="icon">&#x25C6;</span> Allocations</div>
         <div class="alloc-row">
           <span class="alloc-token">wstETH</span>
-          <div class="alloc-bar"><div class="alloc-fill" style="width:65%;background:var(--blue)"></div></div>
+          <div class="alloc-bar"><div class="alloc-fill" style="width:65%;background:#60a5fa"></div></div>
           <span class="alloc-val">0.0038</span>
         </div>
         <div class="alloc-row">
           <span class="alloc-token">USDC</span>
-          <div class="alloc-bar"><div class="alloc-fill" style="width:28%;background:var(--green)"></div></div>
+          <div class="alloc-bar"><div class="alloc-fill" style="width:28%;background:var(--green-light)"></div></div>
           <span class="alloc-val">7.05</span>
         </div>
         <div class="alloc-row">
           <span class="alloc-token">WETH</span>
-          <div class="alloc-bar"><div class="alloc-fill" style="width:5%;background:var(--accent)"></div></div>
+          <div class="alloc-bar"><div class="alloc-fill" style="width:5%;background:#a78bfa"></div></div>
           <span class="alloc-val">0.00024</span>
         </div>
       </div>
 
-      <div class="cockpit-panel">
+      <div class="c-panel">
         <div class="panel-title"><span class="icon">&#x25CE;</span> Latest Executions</div>
         <div class="exec-row">
           <div class="exec-info">
@@ -521,7 +421,7 @@
             <div class="exec-time">via MoonPay &middot; just now</div>
           </div>
           <div class="exec-meta">
-            <div class="exec-bar"><div class="exec-bar-fill" style="width:94%;background:var(--green)"></div></div>
+            <div class="exec-bar"><div class="exec-bar-fill" style="width:94%;background:var(--green-light)"></div></div>
             <span class="exec-pct">94%</span>
             <span class="exec-badge badge-executed">Executed</span>
           </div>
@@ -532,7 +432,7 @@
             <div class="exec-time">autonomous &middot; 2h ago</div>
           </div>
           <div class="exec-meta">
-            <div class="exec-bar"><div class="exec-bar-fill" style="width:100%;background:var(--green)"></div></div>
+            <div class="exec-bar"><div class="exec-bar-fill" style="width:100%;background:#a78bfa"></div></div>
             <span class="exec-pct">100%</span>
             <span class="exec-badge badge-auto">Auto</span>
           </div>
@@ -543,7 +443,7 @@
             <div class="exec-time">policy check &middot; 3h ago</div>
           </div>
           <div class="exec-meta">
-            <div class="exec-bar"><div class="exec-bar-fill" style="width:61%;background:#ef4444"></div></div>
+            <div class="exec-bar"><div class="exec-bar-fill" style="width:61%;background:#f87171"></div></div>
             <span class="exec-pct">61%</span>
             <span class="exec-badge badge-denied">Denied</span>
           </div>
@@ -554,7 +454,7 @@
             <div class="exec-time">policy-gated &middot; yesterday</div>
           </div>
           <div class="exec-meta">
-            <div class="exec-bar"><div class="exec-bar-fill" style="width:97%;background:var(--green)"></div></div>
+            <div class="exec-bar"><div class="exec-bar-fill" style="width:97%;background:var(--green-light)"></div></div>
             <span class="exec-pct">97%</span>
             <span class="exec-badge badge-executed">Executed</span>
           </div>
@@ -569,9 +469,8 @@
   <div class="reveal">
     <div class="section-label">Two interfaces</div>
     <h2>For humans. For agents.</h2>
-    <p class="section-desc">Humans set the rules. Agents execute within them. Same treasury, different entry points.</p>
+    <p class="section-desc">Humans set the rules. Agents execute within them.</p>
   </div>
-
   <div class="two-col">
     <div class="card reveal">
       <span class="card-label human">For Humans</span>
@@ -583,10 +482,10 @@
         <li>Review and approve large spending plans</li>
         <li>Freeze any agent instantly</li>
         <li>Full audit trail of every action</li>
-        <li>Principal always withdrawable. You stay in control.</li>
+        <li>Principal always withdrawable</li>
       </ul>
     </div>
-    <div class="card reveal reveal-delay-1">
+    <div class="card dark reveal reveal-delay-1">
       <span class="card-label agent">For Agents</span>
       <h3>Autonomous operator</h3>
       <ul>
@@ -596,26 +495,25 @@
         <li>Deploy yield via Uniswap swaps</li>
         <li>Self-discovery &mdash; <code>GET /onboarding/status</code></li>
         <li>24 MCP tools for native agent integration</li>
-        <li>Budget regenerates from staking yield. Never runs out.</li>
+        <li>Budget regenerates from staking yield</li>
       </ul>
     </div>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
+<!-- ARCHITECTURE -->
 <section>
   <div class="reveal">
     <div class="section-label">Architecture</div>
     <h2>Five layers. One product.</h2>
-    <p class="section-desc">From the yield source to cross-chain portability. Every layer serves bounded authority.</p>
+    <p class="section-desc">Every layer serves bounded authority.</p>
   </div>
-
   <div class="int-list reveal">
-    <div class="int-item"><h4>Treasury Primitive</h4><div class="role">Lido wstETH</div><p>Human deposits wstETH. Staking rewards generate yield at ~3.5% APY. Agent spends up to the yield delta. Principal locked at the EVM level. $10K deposit = ~$350/yr autonomous budget.</p></div>
-    <div class="int-item"><h4>Control Layer</h4><div class="role">Policy Engine</div><p>Every action evaluated: per-tx caps, daily limits, recipient whitelist, approval thresholds. Small spends auto-execute. Large spends require human sign-off. Denied actions are blocked and logged.</p></div>
-    <div class="int-item"><h4>Trust Layer</h4><div class="role">ERC-8004 + Delegations</div><p>On-chain agent identity gates trust decisions. MetaMask ERC-7710 caveats enforce constraints onchain. Even if the offchain layer is bypassed, onchain caveats protect the treasury. Defense-in-depth.</p></div>
-    <div class="int-item"><h4>Execution Layer</h4><div class="role">Uniswap + x402</div><p>Policy-gated Uniswap swaps deploy yield into target tokens. x402 micropayments let other agents pay for access. MoonPay CLI provides an alternative multi-chain execution backend.</p></div>
-    <div class="int-item"><h4>Portability</h4><div class="role">Base + Celo</div><p>Base is home (ETH staking yield). Celo proves portability (stataUSDC lending yield from Aave). Different yield source, different risk profile, identical spending constraint.</p></div>
+    <div class="int-item"><h4>Treasury Primitive</h4><div class="role">Lido wstETH</div><p>Human deposits wstETH. Staking rewards generate yield at ~3.5% APY. Agent spends up to the yield delta. Principal locked at the EVM level.</p></div>
+    <div class="int-item"><h4>Control Layer</h4><div class="role">Policy Engine</div><p>Every action evaluated: per-tx caps, daily limits, recipient whitelist, approval thresholds. Small spends auto-execute. Large spends require human sign-off.</p></div>
+    <div class="int-item"><h4>Trust Layer</h4><div class="role">ERC-8004 + Delegations</div><p>On-chain agent identity gates trust decisions. MetaMask ERC-7710 caveats enforce constraints onchain. Defense-in-depth.</p></div>
+    <div class="int-item"><h4>Execution Layer</h4><div class="role">Uniswap + MoonPay + x402</div><p>Policy-gated Uniswap swaps deploy yield. x402 micropayments let other agents pay for access. MoonPay provides multi-chain execution.</p></div>
+    <div class="int-item"><h4>Portability</h4><div class="role">Base + Celo</div><p>Base is home (ETH staking yield). Celo proves portability (stataUSDC lending yield from Aave). Same constraint, different chain.</p></div>
   </div>
 </section>
 
@@ -624,19 +522,18 @@
   <div class="reveal">
     <div class="section-label">Partner stack</div>
     <h2>Every integration serves one thesis</h2>
-    <p class="section-desc">Bounded financial authority for autonomous agents. Nothing else.</p>
+    <p class="section-desc">Bounded financial authority for autonomous agents.</p>
   </div>
-
   <div class="int-list reveal">
-    <div class="int-item"><h4>Lido wstETH</h4><div class="role">Treasury primitive</div><p>Staking yield is the source of all agent spending authority. Budget regenerates from real economic activity.</p></div>
+    <div class="int-item"><h4>Lido wstETH</h4><div class="role">Treasury primitive</div><p>Staking yield is the source of all agent spending authority.</p></div>
     <div class="int-item"><h4>MetaMask</h4><div class="role">On-chain authority</div><p>EIP-7702 smart accounts + ERC-7710 caveats. AllowedTargets, ERC20TransferAmount, Timestamp, LimitedCalls.</p></div>
     <div class="int-item"><h4>Uniswap</h4><div class="role">Yield deployment</div><p>Policy-gated swaps via Trading API. Live WETH-to-USDC swap with full Permit2 EIP-712 flow on Base mainnet.</p></div>
-    <div class="int-item"><h4>ERC-8004</h4><div class="role">Trust gate</div><p>On-chain agent identity gates every trust decision. Unverified counterparties escalate to human approval.</p></div>
-    <div class="int-item"><h4>x402</h4><div class="role">Agent commerce</div><p>Other agents pay USDC to access treasury capabilities. The treasury becomes a discoverable service, not just a wallet.</p></div>
-    <div class="int-item"><h4>Celo + Aave</h4><div class="role">Portability proof</div><p>stataUSDC earning lending yield. Proves the primitive works for stablecoins, not just ETH. Different asset, same boundary.</p></div>
-    <div class="int-item"><h4>MoonPay CLI</h4><div class="role">Alt backend</div><p>Same policy gates, different execution rail. Multi-chain swaps, bridges, fiat ramps. Backend-agnostic control layer.</p></div>
-    <div class="int-item"><h4>ENS</h4><div class="role">Identity layer</div><p>5 subdomains under morke.eth. Owner, agent, contract, deployer &mdash; all human-readable. Every API response enriched.</p></div>
-    <div class="int-item"><h4>MCP Server</h4><div class="role">Agent interface</div><p>24 tools. Spend, trade, verify, monitor &mdash; all natively callable from Claude, Cursor, or any MCP-compatible agent.</p></div>
+    <div class="int-item"><h4>ERC-8004</h4><div class="role">Trust gate</div><p>On-chain agent identity gates every trust decision.</p></div>
+    <div class="int-item"><h4>x402</h4><div class="role">Agent commerce</div><p>Other agents pay USDC to access treasury capabilities.</p></div>
+    <div class="int-item"><h4>Celo + Aave</h4><div class="role">Portability</div><p>stataUSDC earning lending yield. Different asset, same boundary.</p></div>
+    <div class="int-item"><h4>MoonPay CLI</h4><div class="role">Alt backend</div><p>Multi-chain swaps, bridges, fiat ramps. Backend-agnostic control layer.</p></div>
+    <div class="int-item"><h4>ENS</h4><div class="role">Identity</div><p>5 subdomains under morke.eth. Every API response enriched with human-readable names.</p></div>
+    <div class="int-item"><h4>MCP Server</h4><div class="role">Agent interface</div><p>24 tools. Spend, trade, verify, monitor &mdash; all natively callable from Claude, Cursor, or any agent.</p></div>
   </div>
 </section>
 
@@ -647,7 +544,6 @@
     <h2>22 mainnet transactions</h2>
     <p class="section-desc">Every claim is verifiable. Click any TX to see it on-chain.</p>
   </div>
-
   <div class="table-wrap reveal">
   <table>
     <thead><tr><th>#</th><th>Action</th><th>Chain</th><th>Transaction</th></tr></thead>
@@ -686,7 +582,6 @@
     <h2>Run it yourself</h2>
     <p class="section-desc">Clone, configure, and give your agent a yield-funded budget.</p>
   </div>
-
   <div class="two-col">
     <div class="card reveal">
       <span class="card-label human">Humans</span>
@@ -696,8 +591,7 @@
 
 <strong># Configure</strong>
 cp .env.example .env
-# Set your AGENT_PRIVATE_KEY
-# Set your TREASURY_ADDRESS
+# Set AGENT_PRIVATE_KEY + TREASURY_ADDRESS
 
 <strong># Start</strong>
 node --env-file=.env dist/apps/api/src/server.js
@@ -705,7 +599,7 @@ node --env-file=.env dist/apps/api/src/server.js
 <strong># Check treasury</strong>
 curl localhost:3001/treasury</pre>
     </div>
-    <div class="card reveal reveal-delay-1">
+    <div class="card dark reveal reveal-delay-1">
       <span class="card-label agent">Agents</span>
       <h3>Connect and spend</h3>
       <pre><strong># Discover capabilities</strong>
@@ -728,32 +622,11 @@ POST /plans/evaluate
 <strong># Or use 24 MCP tools natively</strong></pre>
     </div>
   </div>
-
-  <div class="two-col" style="margin-top:20px">
-    <div class="card reveal">
-      <h3>Why agent operators want this</h3>
-      <ul>
-        <li>Give your agent a self-replenishing budget without risking your capital</li>
-        <li>$10K in wstETH = ~$350/yr autonomous spending from yield alone</li>
-        <li>Three structural controls make overspend impossible, not just unlikely</li>
-      </ul>
-    </div>
-    <div class="card reveal reveal-delay-1">
-      <h3>Why protocol teams want this</h3>
-      <ul>
-        <li>Fund agent bounties from treasury yield &mdash; principal stays locked</li>
-        <li>Budget regenerates &mdash; no recurring top-ups or multisig ceremonies</li>
-        <li>Same primitive works for ETH yield or stablecoin yield</li>
-      </ul>
-    </div>
-  </div>
 </section>
 
 <!-- CONTRACTS -->
 <section>
-  <div class="reveal">
-    <div class="section-label">Contracts</div>
-  </div>
+  <div class="reveal"><div class="section-label">Contracts</div></div>
   <div class="two-col">
     <div class="card reveal">
       <h3>Base Mainnet</h3>
@@ -763,7 +636,7 @@ POST /plans/evaluate
         <li>Agent ID (ERC-8004) &mdash; <code>10ee7e7e...09d</code></li>
       </ul>
     </div>
-    <div class="card reveal reveal-delay-1">
+    <div class="card dark reveal reveal-delay-1">
       <h3>Celo Mainnet</h3>
       <ul>
         <li>AgentTreasuryCelo &mdash; <a href="https://celoscan.io/address/0xc976e463bd209e09cb15a168a275890b872aa1f0"><code>0xc976...a1f0</code></a></li>
@@ -777,9 +650,9 @@ POST /plans/evaluate
 
 <footer>
   <div class="wrap">
-    <div style="margin-bottom:40px" class="reveal">
+    <div style="margin-bottom:36px" class="reveal">
       <div class="section-label">The team</div>
-      <div class="team-grid" style="margin-top:20px">
+      <div class="team-grid" style="margin-top:16px">
         <div class="team-member">
           <span class="emoji">&#x1F9D1;&#x200D;&#x1F4BB;</span>
           <div class="name">Oscar</div>
@@ -805,56 +678,36 @@ POST /plans/evaluate
           <div class="desc-label">Research, strategy, optimization via dedicated VPS</div>
         </div>
       </div>
-      <p class="team-note">Agents building what agents need. Zero lines of human-written code.</p>
     </div>
     <div class="footer-links">
       <a href="https://github.com/MorkeethHQ/delegated-agent-treasury">GitHub</a>
       <a href="https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426">Base Contract</a>
       <a href="https://celoscan.io/address/0xc976e463bd209e09cb15a168a275890b872aa1f0">Celo Contract</a>
     </div>
-    <p class="tagline">Yieldbound &mdash; Built by 1 human + 3 AI agents. Zero lines of human-written code.</p>
+    <p class="tagline">Yieldbound &mdash; Built by 1 human + 3 AI agents</p>
   </div>
 </footer>
 
 <script>
-// Minimal IntersectionObserver for scroll-triggered fade-in
+// Scroll-triggered reveals
 (function(){
   var els=document.querySelectorAll('.reveal');
-  if(!('IntersectionObserver' in window)){
-    els.forEach(function(e){e.classList.add('visible')});
-    return;
-  }
+  if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('visible')});return}
   var obs=new IntersectionObserver(function(entries){
     entries.forEach(function(entry){
-      if(entry.isIntersecting){
-        entry.target.classList.add('visible');
-        obs.unobserve(entry.target);
-      }
+      if(entry.isIntersecting){entry.target.classList.add('visible');obs.unobserve(entry.target)}
     });
   },{threshold:0.08,rootMargin:'0px 0px -40px 0px'});
   els.forEach(function(e){obs.observe(e)});
 })();
 
-// Live cockpit clock
+// Live clock
 (function(){
   var el=document.getElementById('cockpit-clock');
   if(!el) return;
-  function tick(){
-    var d=new Date();
-    el.textContent=d.toUTCString().split(' ')[4]+' UTC';
-  }
-  tick();
-  setInterval(tick,1000);
+  function tick(){el.textContent=new Date().toUTCString().split(' ')[4]+' UTC'}
+  tick();setInterval(tick,1000);
 })();
-
-// Card mouse-follow glow effect
-document.querySelectorAll('.card').forEach(function(card){
-  card.addEventListener('mousemove',function(e){
-    var r=card.getBoundingClientRect();
-    card.style.setProperty('--mouse-x',(e.clientX-r.left)+'px');
-    card.style.setProperty('--mouse-y',(e.clientY-r.top)+'px');
-  });
-});
 </script>
 
 </body>
