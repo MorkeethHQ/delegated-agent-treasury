@@ -90,7 +90,7 @@
 - `moonpay_swap` — execute token swap via MoonPay CLI (policy-gated, supports dry_run)
 - `moonpay_dca` — set up Dollar Cost Averaging order via MoonPay CLI
 
-## API Endpoints (22)
+## API Endpoints (35)
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -128,7 +128,7 @@
 | GET | `/onboarding/status` | Agent onboarding status |
 | GET | `/trading/performance` | Trading performance metrics |
 | GET | `/trading/strategies` | Active trading strategies |
-| GET | `/swap/strategies` | Configured swap strategies |
+| GET | `/x402/receipts` | Verified x402 payment receipts |
 
 ## Scripts
 

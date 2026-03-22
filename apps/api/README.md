@@ -1,6 +1,6 @@
-# Synthesis API
+# Yieldbound API
 
-REST API server for the Synthesis Agent Treasury. 35 endpoints covering treasury management, policy evaluation, approval workflows, yield trading, multi-agent orchestration, ENS identity resolution, and monitoring.
+REST API server for the Yieldbound Agent Treasury. 35 endpoints covering treasury management, policy evaluation, approval workflows, yield trading, multi-agent orchestration, ENS identity resolution, and monitoring.
 
 ```bash
 # Start (API-only mode, no contract env vars needed)

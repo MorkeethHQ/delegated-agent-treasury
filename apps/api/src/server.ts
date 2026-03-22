@@ -1424,7 +1424,7 @@ const server = createServer(async (req, res) => {
     if (req.method === 'GET' && url === '/health') {
       return sendJson(res, 200, {
         ok: true,
-        service: 'synthesis-api',
+        service: 'yieldbound-api',
         executor: executor ? 'connected' : 'not configured',
         x402: x402.enabled ? 'enabled' : 'disabled',
       });

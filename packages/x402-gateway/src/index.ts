@@ -1,5 +1,5 @@
 /**
- * x402 Payment Gateway for Synthesis Agent Treasury
+ * x402 Payment Gateway for Yieldbound Agent Treasury
  *
  * Implements the x402 protocol (https://x402.org) for HTTP 402 Payment Required
  * payment gating on raw Node.js http server endpoints.

@@ -1,4 +1,4 @@
-# Agent Treasury
+# Yieldbound — Agent Treasury
 
 **This project gives agents bounded financial authority over productive on-chain capital.**
 
@@ -139,7 +139,8 @@ Every major feature has been executed on-chain with real assets:
 | **MetaMask delegation (agent)** | Base | [`0x6f3a90...`](https://basescan.org/tx/0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e) | Agent EOA delegated to DeleGator |
 | **MoonPay USDC transfer** | Base | [`0x82c733...`](https://basescan.org/tx/0x82c733d5acbcbbe441e3118ecfc3a45e5ac78544ca42a522e27f9d00ce46a96c) | 0.10 USDC → morke.eth via MoonPay CLI |
 | addRecipient | Base | [`0xbc213e...`](https://basescan.org/tx/0xbc213e0f341b74b28e95d15c3c165bd8e6ae1719d101f2f5bcf6033eff5aceaa) | Owner whitelisted morke.eth as recipient on Base mainnet |
-| **_AUTONOMOUS spendYield_** | **_Base_** | **_[`0x13bf6f...`](https://basescan.org/tx/0x13bf6fdca6796982ab201eeac4c35594402819e2bd47aff25fb28cd992893515)_** | **_Agent loop autonomously read treasury state, computed 50% yield spend, submitted plan, got auto-approved, executed on-chain — ~0.0000001237 wstETH. No human intervention._** |
+| **_AUTONOMOUS spendYield #1_** | **_Base_** | **_[`0x13bf6f...`](https://basescan.org/tx/0x13bf6fdca6796982ab201eeac4c35594402819e2bd47aff25fb28cd992893515)_** | **_Agent loop autonomously spent ~0.0000001237 wstETH yield. No human intervention._** |
+| **_AUTONOMOUS spendYield #2_** | **_Base_** | **_[`0x185feb...`](https://basescan.org/tx/0x185feb8ebc692e98a4ed12d95bfc86ba5fdc66dab8e00ed424ea2a4ce55940f2)_** | **_Second autonomous cycle — ~0.0000000618 wstETH. Proves repeatable autonomy._** |
 
 ## Architecture
 
