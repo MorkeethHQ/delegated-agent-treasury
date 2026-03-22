@@ -16,7 +16,7 @@ const payload = {
     'locked at the EVM level. Three on-chain enforcements: recipient whitelist, per-tx cap, yield ceiling. ' +
     'An autonomous agent loop monitors treasury state + Lido governance, deciding to spend or hold based on ' +
     'protocol risk. Every action is policy-evaluated and audit-logged. 27 mainnet transactions across Base and ' +
-    'Celo. 11 fully autonomous spends. 24-tool MCP server. 35 API endpoints. MetaMask ERC-7710 delegation ' +
+    'Celo. 11 fully autonomous spends. 25-tool MCP server. 39 API endpoints. MetaMask ERC-7710 delegation ' +
     'caveats as defense-in-depth. ERC-8004 on-chain agent identity. Uniswap + MoonPay + x402 execution layer. ' +
     'Built by Oscar + 3 AI agents (Bagel via Codex, Open Claw via Claude Code, ODawg via Anthropic).',
   problemStatement:
