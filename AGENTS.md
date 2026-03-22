@@ -20,6 +20,8 @@ Yieldbound gives autonomous agents bounded financial authority over productive o
 | `POST /approvals/:id/respond` | Approve or deny a pending plan |
 | `GET /audit` | Full append-only audit trail |
 | `GET /agents` | List all agent roles (proposer, executor, auditor) |
+| `POST /delegation/execute` | Execute spendYield through MetaMask delegation chain (ERC-7710) |
+| `GET /delegation` | Full delegation chain info with execution status |
 | `GET /onboarding/status` | Agent self-discovery: capabilities, readiness, boot sequence |
 
 **Try it:**
@@ -66,10 +68,25 @@ The MCP server at `packages/mcp-server/` exposes 24 tools for agent integration:
 | wstETH | Base | `0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452` |
 | ERC-8004 Agent ID | Base | `10ee7e7e703b4fc493e19f512b5ae09d` |
 
+## Delegation execution
+
+The agent loop supports `USE_DELEGATION=true` env var to route all spendYield calls through the MetaMask Delegation Framework (ERC-7710) instead of direct contract calls. When enabled:
+- Transactions flow through the delegation chain: Owner -> Proposer -> Executor
+- Each link enforces progressively narrower caveats (AllowedTargets, AllowedMethods, ERC20TransferAmount, Timestamp, LimitedCalls)
+- The auditor can freeze any agent, revoking its delegation on-chain via `disableDelegation()`
+- Policy engine evaluation still runs before delegation redemption (defense-in-depth)
+
+```bash
+# Execute via delegation chain
+curl -X POST http://localhost:3001/delegation/execute \
+  -H 'content-type: application/json' \
+  -d '{"to":"0xf3476b36fc9942083049C04e9404516703369ef3","amount":0.005,"delegationMode":true}'
+```
+
 ## Key proofs
 
-- 4 autonomous spendYield TXs on Base mainnet (zero human intervention)
-- 18 total mainnet TXs across Base + Celo
+- 7 autonomous spendYield TXs on Base mainnet (zero human intervention)
+- 21 total mainnet TXs across Base + Celo
 - EIP-7702 MetaMask delegations live on Base
 - Full E2E on Celo: CELO → USDC → stataUSDC → deposit → spendYield
 
