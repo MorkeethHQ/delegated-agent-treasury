@@ -24,10 +24,13 @@
     "multi-agent-orchestration",
     "uniswap-trading",
     "x402-payment-gating",
-    "ens-identity"
+    "ens-identity",
+    "moonpay-execution",
+    "metamask-delegation",
+    "celo-treasury"
   ],
   "interfaces": {
-    "api": "http://localhost:3001",
+    "api": "https://yieldbound.com",
     "cli": "node dist/apps/cli/src/cli.js",
     "mcp": "node dist/packages/mcp-server/src/server.js",
     "skill": "skill.md"
@@ -62,9 +65,15 @@
     {
       "role": "systems-engineer",
       "type": "agent",
-      "name": "Claude Code",
+      "name": "Open Claw (Claude Code)",
       "harness": "claude-code",
       "model": "claude-opus-4-6"
+    },
+    {
+      "role": "voice-and-narrative",
+      "type": "agent",
+      "name": "ODawg",
+      "harness": "anthropic"
     }
   ],
   "repository": "https://github.com/MorkeethHQ/delegated-agent-treasury"
