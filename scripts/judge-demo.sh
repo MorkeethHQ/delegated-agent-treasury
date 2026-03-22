@@ -7,7 +7,7 @@ API=${API_URL:-http://localhost:3001}
 
 pj() { node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));$1"; }
 
-echo "=== Open Bound — Judge Demo ==="
+echo "=== Yieldbound — Judge Demo ==="
 echo ""
 
 # 1. Health check

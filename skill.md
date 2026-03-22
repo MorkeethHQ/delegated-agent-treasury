@@ -1,4 +1,4 @@
-# Open Bound Onchain Money Maker
+# Yieldbound 
 
 A permission layer for AI agents managing yield-bearing treasuries. Agents spend only accrued wstETH yield — principal is structurally locked. Supports multi-bucket yield distribution, Uniswap trading, ERC-8004 trust gating, Lido governance awareness, and x402 paid API access.
 

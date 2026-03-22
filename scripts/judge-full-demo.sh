@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ══════════════════════════════════════════════════════════════
-# Open Bound Onchain Money Maker — Full Judge Demo
+# Yieldbound  — Full Judge Demo
 #
 # Runs every major feature end-to-end against the live API.
 # Start the API first:
@@ -24,7 +24,7 @@ info() { echo -e "  ${DIM}$1${RESET}"; }
 section() { echo -e "\n${BOLD}${CYAN}═══ $1 ═══${RESET}"; }
 
 echo -e "${BOLD}╔══════════════════════════════════════════════════════════════╗${RESET}"
-echo -e "${BOLD}║    Open Bound — Full Demo (35 endpoints)     ║${RESET}"
+echo -e "${BOLD}║    Yieldbound — Full Demo (35 endpoints)     ║${RESET}"
 echo -e "${BOLD}╚══════════════════════════════════════════════════════════════╝${RESET}"
 
 # ── 0. Health ──

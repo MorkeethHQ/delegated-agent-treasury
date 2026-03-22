@@ -1,13 +1,13 @@
 # Submission Copy
 
 ## Project name
-Open Bound Onchain Money Maker
+Yieldbound 
 
 ## Tagline
 Bounded financial authority over productive on-chain capital for autonomous agents.
 
 ## Description (short)
-Agents don't need wallets. They need bounded authority. Open Bound locks principal in yield-bearing positions (Lido wstETH on Base, stataUSDC on Celo) and gives agents permission to spend only what the capital earns. Three contract-level controls — yield ceiling, per-tx cap, recipient whitelist — make overspend structurally impossible. MetaMask Delegation caveats enforce the same boundaries onchain as a second layer. Agents deploy yield through policy-gated Uniswap swaps. Other agents pay USDC to access this financial service via x402. ERC-8004 identity gates trust decisions before any payment executes. Live on Base mainnet and Celo mainnet with real yield accruing.
+Agents don't need wallets. They need bounded authority. Yieldbound locks principal in yield-bearing positions (Lido wstETH on Base, stataUSDC on Celo) and gives agents permission to spend only what the capital earns. Three contract-level controls — yield ceiling, per-tx cap, recipient whitelist — make overspend structurally impossible. MetaMask Delegation caveats enforce the same boundaries onchain as a second layer. Agents deploy yield through policy-gated Uniswap swaps. Other agents pay USDC to access this financial service via x402. ERC-8004 identity gates trust decisions before any payment executes. Live on Base mainnet and Celo mainnet with real yield accruing.
 
 ## Description (long)
 
