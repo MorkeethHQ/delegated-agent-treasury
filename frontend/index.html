@@ -301,7 +301,7 @@ footer .tagline{margin-top:6px;line-height:1.5}
   <p class="sub reveal reveal-delay-1">Agents don't need full wallets &mdash; they need bounded authority. Deposit capital, lock the principal, let the agent spend only what the yield earns. Budget that regenerates forever.</p>
   <p class="sub-sm reveal reveal-delay-2">Built by Oscar + Bagel (Codex) + Open Claw (Claude Code) + ODawg (Anthropic). Agents building what agents need.</p>
   <div class="metrics reveal reveal-delay-3">
-    <div class="metric"><div class="val">22</div><div class="label">On-chain transactions</div></div>
+    <div class="metric"><div class="val">23</div><div class="label">On-chain transactions</div></div>
     <div class="metric"><div class="val">7</div><div class="label">Autonomous spends</div></div>
     <div class="metric"><div class="val">~3.5%</div><div class="label">APY budget rate</div></div>
   </div>
@@ -354,7 +354,7 @@ footer .tagline{margin-top:6px;line-height:1.5}
       <span class="cockpit-time" id="cockpit-clock">--:--:-- UTC</span>
       <div class="cockpit-actions">
         <a href="https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426" class="c-btn" target="_blank">View on Base &rarr;</a>
-        <span class="c-btn danger">&#x23F8; Freeze All</span>
+        <span class="c-btn danger">&#x1F6A8; Emergency Drain &rarr; morke.eth</span>
       </div>
     </div>
 
@@ -393,32 +393,65 @@ footer .tagline{margin-top:6px;line-height:1.5}
       </div>
     </div>
 
-    <div class="cockpit-body">
+    <div class="cockpit-body" style="grid-template-columns:1fr 1fr">
+      <!-- AUTHORITY PANEL -->
       <div class="c-panel">
-        <div class="panel-title"><span class="icon">&#x25C6;</span> Allocations</div>
+        <div class="panel-title"><span class="icon">&#x25C7;</span> Authority bounds</div>
         <div class="alloc-row">
-          <span class="alloc-token">wstETH</span>
-          <div class="alloc-bar"><div class="alloc-fill" style="width:65%;background:#60a5fa"></div></div>
-          <span class="alloc-val">0.0038</span>
+          <span class="alloc-token" style="font-size:.78rem">Per-TX cap</span>
+          <span class="alloc-val">0.0001 wstETH</span>
         </div>
         <div class="alloc-row">
-          <span class="alloc-token">USDC</span>
-          <div class="alloc-bar"><div class="alloc-fill" style="width:28%;background:var(--green-light)"></div></div>
-          <span class="alloc-val">7.05</span>
+          <span class="alloc-token" style="font-size:.78rem">Daily limit</span>
+          <span class="alloc-val">0.01 wstETH</span>
         </div>
         <div class="alloc-row">
-          <span class="alloc-token">WETH</span>
-          <div class="alloc-bar"><div class="alloc-fill" style="width:5%;background:#a78bfa"></div></div>
-          <span class="alloc-val">0.00024</span>
+          <span class="alloc-token" style="font-size:.78rem">Approval threshold</span>
+          <span class="alloc-val">0.005 wstETH</span>
+        </div>
+        <div class="alloc-row">
+          <span class="alloc-token" style="font-size:.78rem">Whitelisted</span>
+          <span class="alloc-val" style="color:var(--green-light)">morke.eth</span>
+        </div>
+        <div class="alloc-row" style="border:none">
+          <span class="alloc-token" style="font-size:.78rem">Emergency drain</span>
+          <span class="alloc-val" style="color:#f87171">&#x2192; morke.eth (Safe)</span>
         </div>
       </div>
 
+      <!-- YIELD ROUTING PANEL -->
       <div class="c-panel">
+        <div class="panel-title"><span class="icon">&#x25B3;</span> Yield routing</div>
+        <div class="alloc-row">
+          <span class="alloc-token">Operations</span>
+          <div class="alloc-bar"><div class="alloc-fill" style="width:40%;background:#60a5fa"></div></div>
+          <span class="alloc-val">40%</span>
+        </div>
+        <div class="alloc-row">
+          <span class="alloc-token">DCA/Trading</span>
+          <div class="alloc-bar"><div class="alloc-fill" style="width:30%;background:var(--green-light)"></div></div>
+          <span class="alloc-val">30%</span>
+        </div>
+        <div class="alloc-row">
+          <span class="alloc-token">Reserve</span>
+          <div class="alloc-bar"><div class="alloc-fill" style="width:20%;background:#a78bfa"></div></div>
+          <span class="alloc-val">20%</span>
+        </div>
+        <div class="alloc-row">
+          <span class="alloc-token">Meme/Alpha</span>
+          <div class="alloc-bar"><div class="alloc-fill" style="width:10%;background:#facc15"></div></div>
+          <span class="alloc-val">10%</span>
+        </div>
+      </div>
+
+      <div class="c-panel" style="grid-column:1/-1">
         <div class="panel-title"><span class="icon">&#x25CE;</span> Latest Executions</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px">
+        <div>
         <div class="exec-row">
           <div class="exec-info">
-            <div class="exec-action">Swap 0.5 USDC &rarr; WETH</div>
-            <div class="exec-time">via MoonPay &middot; just now</div>
+            <div class="exec-action"><a href="https://basescan.org/tx/0x7d3fce033d030a8988fa9c2734289377e0160e22b2a8abea3de5f5d5adba7fb2" style="color:#fafafa">Buy 348 DEGEN with yield</a></div>
+            <div class="exec-time">MoonPay &middot; within cap &middot; whitelisted</div>
           </div>
           <div class="exec-meta">
             <div class="exec-bar"><div class="exec-bar-fill" style="width:94%;background:var(--green-light)"></div></div>
@@ -428,8 +461,19 @@ footer .tagline{margin-top:6px;line-height:1.5}
         </div>
         <div class="exec-row">
           <div class="exec-info">
-            <div class="exec-action">spendYield #7 &rarr; morke.eth</div>
-            <div class="exec-time">autonomous &middot; 2h ago</div>
+            <div class="exec-action"><a href="https://basescan.org/tx/0x905c9c0a5015ccf61485bec7ef5e3d15caff27595b11ddc3d56cdea43ba479e4" style="color:#fafafa">DCA: 0.5 USDC &rarr; WETH</a></div>
+            <div class="exec-time">MoonPay &middot; within cap &middot; auto-approved</div>
+          </div>
+          <div class="exec-meta">
+            <div class="exec-bar"><div class="exec-bar-fill" style="width:97%;background:var(--green-light)"></div></div>
+            <span class="exec-pct">97%</span>
+            <span class="exec-badge badge-executed">Executed</span>
+          </div>
+        </div>
+        <div class="exec-row">
+          <div class="exec-info">
+            <div class="exec-action"><a href="https://basescan.org/tx/0x4a49256b1f3960aec35d256bbd55e6b6042793a5dbcb330adc8bec2921cfe902" style="color:#fafafa">spendYield #7 &rarr; morke.eth</a></div>
+            <div class="exec-time">Autonomous &middot; within cap &middot; recipient whitelisted</div>
           </div>
           <div class="exec-meta">
             <div class="exec-bar"><div class="exec-bar-fill" style="width:100%;background:#a78bfa"></div></div>
@@ -439,25 +483,84 @@ footer .tagline{margin-top:6px;line-height:1.5}
         </div>
         <div class="exec-row">
           <div class="exec-info">
-            <div class="exec-action">Transfer 0.02 wstETH</div>
-            <div class="exec-time">policy check &middot; 3h ago</div>
-          </div>
-          <div class="exec-meta">
-            <div class="exec-bar"><div class="exec-bar-fill" style="width:61%;background:#f87171"></div></div>
-            <span class="exec-pct">61%</span>
-            <span class="exec-badge badge-denied">Denied</span>
-          </div>
-        </div>
-        <div class="exec-row">
-          <div class="exec-info">
-            <div class="exec-action">Swap WETH &rarr; USDC via Uniswap</div>
-            <div class="exec-time">policy-gated &middot; yesterday</div>
+            <div class="exec-action"><a href="https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9" style="color:#fafafa">Rebalance WETH &rarr; USDC</a></div>
+            <div class="exec-time">Uniswap V3 &middot; within swap cap &middot; slippage OK</div>
           </div>
           <div class="exec-meta">
             <div class="exec-bar"><div class="exec-bar-fill" style="width:97%;background:var(--green-light)"></div></div>
             <span class="exec-pct">97%</span>
             <span class="exec-badge badge-executed">Executed</span>
           </div>
+        </div>
+        <div class="exec-row">
+          <div class="exec-info">
+            <div class="exec-action">Drain 0.02 wstETH &rarr; external</div>
+            <div class="exec-time">Policy: exceeds per-tx cap + recipient not whitelisted</div>
+          </div>
+          <div class="exec-meta">
+            <div class="exec-bar"><div class="exec-bar-fill" style="width:12%;background:#f87171"></div></div>
+            <span class="exec-pct">12%</span>
+            <span class="exec-badge badge-denied">Blocked</span>
+          </div>
+        </div>
+        </div>
+        <div>
+        <div class="exec-row">
+          <div class="exec-info">
+            <div class="exec-action"><a href="https://basescan.org/tx/0x1a97c54d3633f725e36d83b7c2535b054d296f868b20c0f1e0fbb076601e0f9c" style="color:#fafafa">Upgrade to EIP-7702 DeleGator</a></div>
+            <div class="exec-time">MetaMask &middot; on-chain delegation authority</div>
+          </div>
+          <div class="exec-meta">
+            <div class="exec-bar"><div class="exec-bar-fill" style="width:100%;background:var(--green-light)"></div></div>
+            <span class="exec-pct">100%</span>
+            <span class="exec-badge badge-executed">Executed</span>
+          </div>
+        </div>
+        <div class="exec-row">
+          <div class="exec-info">
+            <div class="exec-action"><a href="https://basescan.org/tx/0x4027641718bb5cfb9fdf7f4871f6506685b5367cab1a3a030b9bb0fe779ee934" style="color:#fafafa">Register agent identity</a></div>
+            <div class="exec-time">ERC-8004 &middot; on-chain trust credential</div>
+          </div>
+          <div class="exec-meta">
+            <div class="exec-bar"><div class="exec-bar-fill" style="width:100%;background:var(--green-light)"></div></div>
+            <span class="exec-pct">100%</span>
+            <span class="exec-badge badge-executed">Executed</span>
+          </div>
+        </div>
+        <div class="exec-row">
+          <div class="exec-info">
+            <div class="exec-action"><a href="https://celoscan.io/tx/0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5" style="color:#fafafa">spendYield on Celo (stataUSDC)</a></div>
+            <div class="exec-time">Cross-chain &middot; Aave lending yield</div>
+          </div>
+          <div class="exec-meta">
+            <div class="exec-bar"><div class="exec-bar-fill" style="width:100%;background:#a78bfa"></div></div>
+            <span class="exec-pct">100%</span>
+            <span class="exec-badge badge-auto">Auto</span>
+          </div>
+        </div>
+        <div class="exec-row">
+          <div class="exec-info">
+            <div class="exec-action"><a href="https://basescan.org/tx/0x82c733d5acbcbbe441e3118ecfc3a45e5ac78544ca42a522e27f9d00ce46a96c" style="color:#fafafa">Pay 0.10 USDC &rarr; morke.eth</a></div>
+            <div class="exec-time">MoonPay &middot; within cap &middot; morke.eth whitelisted</div>
+          </div>
+          <div class="exec-meta">
+            <div class="exec-bar"><div class="exec-bar-fill" style="width:88%;background:var(--green-light)"></div></div>
+            <span class="exec-pct">88%</span>
+            <span class="exec-badge badge-executed">Executed</span>
+          </div>
+        </div>
+        <div class="exec-row">
+          <div class="exec-info">
+            <div class="exec-action">DCA 2 USDC &rarr; wstETH weekly</div>
+            <div class="exec-time">Policy: exceeds approval threshold &middot; needs human sign-off</div>
+          </div>
+          <div class="exec-meta">
+            <div class="exec-bar"><div class="exec-bar-fill" style="width:78%;background:var(--amber)"></div></div>
+            <span class="exec-pct">78%</span>
+            <span class="exec-badge badge-proposed">Pending</span>
+          </div>
+        </div>
+        </div>
         </div>
       </div>
     </div>
@@ -541,7 +644,7 @@ footer .tagline{margin-top:6px;line-height:1.5}
 <section id="proof">
   <div class="reveal">
     <div class="section-label">On-chain proof</div>
-    <h2>22 mainnet transactions</h2>
+    <h2>23 mainnet transactions</h2>
     <p class="section-desc">Every claim is verifiable. Click any TX to see it on-chain.</p>
   </div>
   <div class="table-wrap reveal">
@@ -563,13 +666,14 @@ footer .tagline{margin-top:6px;line-height:1.5}
       <tr><td>13</td><td>Agent &rarr; DeleGator</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e">0x6f3a90...440e</a></td></tr>
       <tr><td>14</td><td>MoonPay USDC transfer</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0x82c733d5acbcbbe441e3118ecfc3a45e5ac78544ca42a522e27f9d00ce46a96c">0x82c733...a96c</a></td></tr>
       <tr><td>15</td><td>MoonPay USDC &rarr; WETH swap</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0x905c9c0a5015ccf61485bec7ef5e3d15caff27595b11ddc3d56cdea43ba479e4">0x905c9c...79e4</a></td></tr>
-      <tr><td>16</td><td>addRecipient</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0xbc213e0f341b74b28e95d15c3c165bd8e6ae1719d101f2f5bcf6033eff5aceaa">0xbc213e...ceaa</a></td></tr>
-      <tr><td>17</td><td>Treasury deploy</td><td><span class="chain c-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0x4a6058ba5169e2db9dff908ed4bc5b2f8d96db70828244e84fde2e7de1095d12">0x4a6058...5d12</a></td></tr>
-      <tr><td>18</td><td>CELO &rarr; USDC</td><td><span class="chain c-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0x0e1e99c29c5145c97076e11759ce6cb842c704e3908a59b09ced889c093b9cee">0x0e1e99...9cee</a></td></tr>
-      <tr><td>19</td><td>USDC &rarr; stataUSDC</td><td><span class="chain c-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0x575789f35d7e1ec6747ebd4cea357402f055aebd392894d471fb8d44d186f453">0x575789...f453</a></td></tr>
-      <tr><td>20</td><td>Treasury deposit</td><td><span class="chain c-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0x504326d7bb5b8d47d7e674e0d8a484c1a88f5a7c86836f395eb2138ad47b6a8f">0x504326...6a8f</a></td></tr>
-      <tr><td>21</td><td>spendYield</td><td><span class="chain c-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5">0xaac5f8...3df5</a></td></tr>
-      <tr><td>22</td><td>Sepolia E2E</td><td><span class="chain c-sep">Sepolia</span></td><td><a href="https://sepolia.basescan.org/tx/0x77dfdb5a22e9fa110aa7f5173e2d7bdf650d8b35374ef124ebe7dad6e47e0d4f">0x77dfdb...0d4f</a></td></tr>
+      <tr><td>16</td><td>MoonPay USDC &rarr; DEGEN</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0x7d3fce033d030a8988fa9c2734289377e0160e22b2a8abea3de5f5d5adba7fb2">0x7d3fce...7fb2</a></td></tr>
+      <tr><td>17</td><td>addRecipient</td><td><span class="chain c-base">Base</span></td><td><a href="https://basescan.org/tx/0xbc213e0f341b74b28e95d15c3c165bd8e6ae1719d101f2f5bcf6033eff5aceaa">0xbc213e...ceaa</a></td></tr>
+      <tr><td>18</td><td>Treasury deploy</td><td><span class="chain c-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0x4a6058ba5169e2db9dff908ed4bc5b2f8d96db70828244e84fde2e7de1095d12">0x4a6058...5d12</a></td></tr>
+      <tr><td>19</td><td>CELO &rarr; USDC</td><td><span class="chain c-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0x0e1e99c29c5145c97076e11759ce6cb842c704e3908a59b09ced889c093b9cee">0x0e1e99...9cee</a></td></tr>
+      <tr><td>20</td><td>USDC &rarr; stataUSDC</td><td><span class="chain c-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0x575789f35d7e1ec6747ebd4cea357402f055aebd392894d471fb8d44d186f453">0x575789...f453</a></td></tr>
+      <tr><td>21</td><td>Treasury deposit</td><td><span class="chain c-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0x504326d7bb5b8d47d7e674e0d8a484c1a88f5a7c86836f395eb2138ad47b6a8f">0x504326...6a8f</a></td></tr>
+      <tr><td>22</td><td>spendYield</td><td><span class="chain c-celo">Celo</span></td><td><a href="https://celoscan.io/tx/0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5">0xaac5f8...3df5</a></td></tr>
+      <tr><td>23</td><td>Sepolia E2E</td><td><span class="chain c-sep">Sepolia</span></td><td><a href="https://sepolia.basescan.org/tx/0x77dfdb5a22e9fa110aa7f5173e2d7bdf650d8b35374ef124ebe7dad6e47e0d4f">0x77dfdb...0d4f</a></td></tr>
     </tbody>
   </table>
   </div>
