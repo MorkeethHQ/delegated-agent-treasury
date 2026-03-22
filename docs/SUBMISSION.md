@@ -106,6 +106,8 @@ The same treasury primitive deploys to multiple chains. On Celo, the contract us
 - MetaMask EIP-7702 Delegation (agent EOA): [`0x6f3a90...`](https://basescan.org/tx/0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e) — `0x4fD6...ce6` → same DeleGator contract on Base mainnet
 - DelegationManager: [`0xdb9B1e...`](https://basescan.org/address/0xdb9B1e94B5b69Df7e401DDbedE43491141047dB3)
 - MoonPay USDC Transfer TX: [`0x82c733...`](https://basescan.org/tx/0x82c733d5acbcbbe441e3118ecfc3a45e5ac78544ca42a522e27f9d00ce46a96c) — 0.10 USDC → morke.eth (`0xf3476b36fc9942083049C04e9404516703369ef3`) via MoonPay CLI v1.12.4 on Base mainnet
+- addRecipient TX: [`0xbc213e...`](https://basescan.org/tx/0xbc213e0f341b74b28e95d15c3c165bd8e6ae1719d101f2f5bcf6033eff5aceaa) — owner whitelisted morke.eth as recipient on Base mainnet contract
+- **Autonomous spendYield TX: [`0x13bf6f...`](https://basescan.org/tx/0x13bf6fdca6796982ab201eeac4c35594402819e2bd47aff25fb28cd992893515) — agent loop autonomously read treasury state, computed spend (50% of available yield = ~0.0000001237 wstETH), submitted plan, received auto-approval, and executed on-chain on Base mainnet. Agent: `0x3d7d7712ad32efD8Cb05249d0C7a3De1B1A3bb43`. No human intervention.**
 
 ## Team
 - Oscar (human) — architect, orchestrator, funder

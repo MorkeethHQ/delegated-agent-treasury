@@ -11,6 +11,8 @@
 
 **Beyond requirements:** Policy engine with approval workflows, autonomous agent loop with governance awareness, append-only audit trail, ERC-8004 identity.
 
+**Autonomous spendYield on Base mainnet (March 22):** Agent loop autonomously executed `spendYield()` on the live Base mainnet wstETH treasury — no human triggered it. Agent read treasury state, computed 50% of available yield (~0.0000001237 wstETH), submitted plan, got auto-approved by policy engine, and executed. TX: [`0x13bf6f...`](https://basescan.org/tx/0x13bf6fdca6796982ab201eeac4c35594402819e2bd47aff25fb28cd992893515)
+
 ## 2. Lido MCP Server (Lido, $5,000)
 
 | Requirement | How We Meet It |
@@ -85,6 +87,12 @@
 | Execution logs | `agent_log.json` — structured execution logs with phases and timestamps |
 | Safety guardrails | Policy engine (caps, thresholds, whitelists), frozen agent denial, governance-aware pause, approval escalation |
 | Autonomous operation | Agent loop monitors yield + governance, auto-executes below threshold, escalates above. Multi-agent roles: proposer/executor/auditor with freeze/unfreeze. |
+
+**Live Autonomous Execution Proof (March 22):**
+- Agent `0x3d7d7712ad32efD8Cb05249d0C7a3De1B1A3bb43` ran the full autonomous loop on Base mainnet
+- Loop read live treasury state, computed available yield, determined 50% spend allocation (~0.0000001237 wstETH), submitted an action plan, received auto-approval from the policy engine, and called `spendYield()` on-chain
+- Zero human intervention at any step
+- TX: [`0x13bf6f...`](https://basescan.org/tx/0x13bf6fdca6796982ab201eeac4c35594402819e2bd47aff25fb28cd992893515) — Base mainnet
 
 ## 8. Autonomous Trading Agent (Base, $5,000)
 

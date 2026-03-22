@@ -138,6 +138,8 @@ Every major feature has been executed on-chain with real assets:
 | **MetaMask delegation (owner)** | Base | [`0x1a97c5...`](https://basescan.org/tx/0x1a97c54d3633f725e36d83b7c2535b054d296f868b20c0f1e0fbb076601e0f9c) | Owner EOA delegated to DeleGator v1.3.0 |
 | **MetaMask delegation (agent)** | Base | [`0x6f3a90...`](https://basescan.org/tx/0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e) | Agent EOA delegated to DeleGator |
 | **MoonPay USDC transfer** | Base | [`0x82c733...`](https://basescan.org/tx/0x82c733d5acbcbbe441e3118ecfc3a45e5ac78544ca42a522e27f9d00ce46a96c) | 0.10 USDC → morke.eth via MoonPay CLI |
+| addRecipient | Base | [`0xbc213e...`](https://basescan.org/tx/0xbc213e0f341b74b28e95d15c3c165bd8e6ae1719d101f2f5bcf6033eff5aceaa) | Owner whitelisted morke.eth as recipient on Base mainnet |
+| **_AUTONOMOUS spendYield_** | **_Base_** | **_[`0x13bf6f...`](https://basescan.org/tx/0x13bf6fdca6796982ab201eeac4c35594402819e2bd47aff25fb28cd992893515)_** | **_Agent loop autonomously read treasury state, computed 50% yield spend, submitted plan, got auto-approved, executed on-chain — ~0.0000001237 wstETH. No human intervention._** |
 
 ## Architecture
 
