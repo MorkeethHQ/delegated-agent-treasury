@@ -1,0 +1,45 @@
+{
+  "name": "Bagel Yieldbound",
+  "version": "0.1.0",
+  "description": "Bounded financial authority for autonomous agents. Deposit yield-bearing assets, lock principal, agents spend only accrued yield.",
+  "homepage": "https://yieldbound.com",
+  "repository": "https://github.com/MorkeethHQ/delegated-agent-treasury",
+  "identity": {
+    "erc8004": {
+      "agentId": "10ee7e7e703b4fc493e19f512b5ae09d",
+      "chain": "base",
+      "chainId": 8453,
+      "registrationTx": "0x4027641718bb5cfb9fdf7f4871f6506685b5367cab1a3a030b9bb0fe779ee934"
+    }
+  },
+  "capabilities": [
+    "treasury-management",
+    "yield-spending",
+    "policy-evaluation",
+    "uniswap-trading",
+    "moonpay-execution",
+    "x402-micropayments",
+    "erc8004-identity",
+    "metamask-delegation",
+    "multi-agent-coordination"
+  ],
+  "api": {
+    "base": "https://yieldbound.com",
+    "docs": "https://github.com/MorkeethHQ/delegated-agent-treasury/blob/main/AGENTS.md",
+    "endpoints": {
+      "health": "GET /health",
+      "treasury": "GET /treasury",
+      "onboarding": "GET /onboarding/status",
+      "evaluate": "POST /plans/evaluate",
+      "swap": "POST /swap/execute"
+    }
+  },
+  "mcp": {
+    "tools": 25,
+    "skillFile": "https://yieldbound.com/skill.md"
+  },
+  "contracts": {
+    "base": "0x455d76a24e862a8d552a0722823ac4d13e482426",
+    "celo": "0xc976e463bd209e09cb15a168a275890b872aa1f0"
+  }
+}

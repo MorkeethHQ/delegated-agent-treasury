@@ -1,4 +1,4 @@
-# Yieldbound 
+# Bagel Yieldbound
 
 A permission layer for AI agents managing yield-bearing treasuries. Agents spend only accrued wstETH yield — principal is structurally locked. Supports multi-bucket yield distribution, Uniswap trading, ERC-8004 trust gating, Lido governance awareness, and x402 paid API access.
 
@@ -22,7 +22,7 @@ Every action is logged to an append-only audit trail.
 
 ---
 
-## MCP Tools (28 tools)
+## MCP Tools (25 tools)
 
 Connect via MCP server at `packages/mcp-server`. These are the direct on-chain and protocol tools an agent can call.
 

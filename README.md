@@ -1,8 +1,8 @@
-# Yieldbound — 
+# Bagel Yieldbound
 
 **This project gives agents bounded financial authority over productive on-chain capital.**
 
-Live on Base mainnet. An agent deposits into a yield-bearing position, accrues yield over time, and spends only the yield. Principal is structurally locked at the contract level. Every action passes through a policy engine and is logged to an append-only audit trail.
+Live on Base + Celo mainnet. 27 on-chain transactions. 11 fully autonomous spends. An agent deposits into a yield-bearing position, accrues yield over time, and spends only the yield. Principal is structurally locked at the contract level. Every action passes through a policy engine and is logged to an append-only audit trail.
 
 ```
 ┌──────────────────────────────────────────────────┐
@@ -143,6 +143,15 @@ Every major feature has been executed on-chain with real assets:
 | **_AUTONOMOUS spendYield #2_** | **_Base_** | **_[`0x185feb...`](https://basescan.org/tx/0x185feb8ebc692e98a4ed12d95bfc86ba5fdc66dab8e00ed424ea2a4ce55940f2)_** | **_Second autonomous cycle — ~0.0000000618 wstETH._** |
 | **_AUTONOMOUS spendYield #3_** | **_Base_** | **_[`0x7ce7c5...`](https://basescan.org/tx/0x7ce7c5866dccbcb9e74a95af10ee85e86fbc503bfd610781fc19fc82cce2083c)_** | **_Third cycle — ~0.0000000114 wstETH._** |
 | **_AUTONOMOUS spendYield #4_** | **_Base_** | **_[`0x06af2d...`](https://basescan.org/tx/0x06af2df18b86ba84e5b9124a603c7b2339fa2432c429f2272a5b406e23f73881)_** | **_Fourth cycle — continuous autonomous operation._** |
+| **_AUTONOMOUS spendYield #5_** | **_Base_** | **_[`0x472ff6...`](https://basescan.org/tx/0x472ff64959ec52550ea52c4cfaffffc7477a44250f55deb341b378ed24934c4a)_** | **_Fifth autonomous cycle._** |
+| **_AUTONOMOUS spendYield #6_** | **_Base_** | **_[`0x7daa90...`](https://basescan.org/tx/0x7daa903ffcae90c602609a9263550e2353fe40031dc4109af07d85038a18eb2b)_** | **_Sixth autonomous cycle._** |
+| **_AUTONOMOUS spendYield #7_** | **_Base_** | **_[`0x4a4925...`](https://basescan.org/tx/0x4a49256b1f3960aec35d256bbd55e6b6042793a5dbcb330adc8bec2921cfe902)_** | **_Seventh autonomous cycle._** |
+| **_AUTONOMOUS spendYield #8_** | **_Base_** | **_[`0x2affdd...`](https://basescan.org/tx/0x2affdd667244588d177d3398a2273ec6febeae639399e9f9673bab72601d7e97)_** | **_Burst mode — lowered threshold demo._** |
+| **_AUTONOMOUS spendYield #9_** | **_Base_** | **_[`0x12d672...`](https://basescan.org/tx/0x12d6720b398edfe937e80fda2ebf93d0b49e5dc899c30daf4a37b29c0502a00f)_** | **_Ninth autonomous cycle._** |
+| **_AUTONOMOUS spendYield #10_** | **_Base_** | **_[`0xf30fc2...`](https://basescan.org/tx/0xf30fc286f24118df29261d6f4161f3f3e2f5d6fd6fb9fe2e7a8dceeff91e1133)_** | **_Tenth autonomous cycle._** |
+| **_AUTONOMOUS spendYield #11_** | **_Base_** | **_[`0xc863a8...`](https://basescan.org/tx/0xc863a8f7348a5637858099ecdedab5828a060f3dd8ac71e651cf030b486b0c5d)_** | **_Eleventh — 11 autonomous spends total._** |
+| MoonPay USDC→WETH | Base | [`0x905c9c...`](https://basescan.org/tx/0x905c9c0a5015ccf61485bec7ef5e3d15caff27595b11ddc3d56cdea43ba479e4) | DCA swap via MoonPay CLI |
+| MoonPay USDC→DEGEN | Base | [`0x7d3fce...`](https://basescan.org/tx/0x7d3fce033d030a8988fa9c2734289377e0160e22b2a8abea3de5f5d5adba7fb2) | Meme token swap via MoonPay CLI |
 
 ## Architecture
 
