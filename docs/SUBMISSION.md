@@ -60,7 +60,7 @@ The same treasury primitive deploys to multiple chains. On Celo, the contract us
 
 ## Tracks
 - stETH Agent Treasury (Lido Labs Foundation) — wstETH treasury primitive with Chainlink oracle on Base
-- Lido MCP (Lido Labs Foundation) — 24-tool MCP server covering treasury, staking, governance
+- Lido MCP (Lido Labs Foundation) — 25-tool MCP server covering treasury, staking, governance
 - Synthesis Open Track (Synthesis Community) — cross-sponsor integration across all partners
 - Agents With Receipts — ERC-8004 (Protocol Labs) — on-chain identity + trust-gated payments
 - Agentic Finance — Best Uniswap API Integration (Uniswap) — policy-gated yield swaps on Base
@@ -77,7 +77,7 @@ The same treasury primitive deploys to multiple chains. On Celo, the contract us
 - Viem — onchain interaction (treasury + ERC-8004 registry)
 - Uniswap Trading API — policy-gated yield deployment on Base
 - x402 (Coinbase) — HTTP 402 payment-gated agent-to-agent commerce
-- MCP SDK — 24-tool MCP server
+- MCP SDK — 25-tool MCP server
 - MoonPay CLI — alternative execution backend (swaps, DCA, bridges across 10+ chains)
 - wstETH (Lido) — yield-bearing productive capital
 - Base (mainnet + Sepolia) — primary deployment chain
@@ -112,4 +112,4 @@ The same treasury primitive deploys to multiple chains. On Celo, the contract us
 ## Team
 - Oscar (human) — architect, orchestrator, funder
 - Bagel (AI agent, Cursor) — contract developer, onchain architecture
-- Claude Code (AI agent, CLI) — systems engineer (10 packages, 24 MCP tools, 35 endpoints)
+- Claude Code (AI agent, CLI) — systems engineer (10 packages, 25 MCP tools, 38 endpoints)
