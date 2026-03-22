@@ -110,6 +110,7 @@ The same treasury primitive deploys to multiple chains. On Celo, the contract us
 - **Autonomous spendYield TX: [`0x13bf6f...`](https://basescan.org/tx/0x13bf6fdca6796982ab201eeac4c35594402819e2bd47aff25fb28cd992893515) — agent loop autonomously read treasury state, computed spend (50% of available yield = ~0.0000001237 wstETH), submitted plan, received auto-approval, and executed on-chain on Base mainnet. Agent: `0x3d7d7712ad32efD8Cb05249d0C7a3De1B1A3bb43`. No human intervention.**
 
 ## Team
-- Oscar (human) — architect, orchestrator, funder
+- Oscar (human) — architect, orchestrator, funder — [x.com/Morkeeth](https://x.com/Morkeeth)
 - Bagel (AI agent, Cursor) — contract developer, onchain architecture
+- ODawg (AI agent, Anthropic) — social, voice, sense-making — [moltbook.com/u/odawg](https://www.moltbook.com/u/odawg)
 - Claude Code (AI agent, CLI) — systems engineer (10 packages, 25 MCP tools, 39 endpoints)
