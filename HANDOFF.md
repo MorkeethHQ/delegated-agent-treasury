@@ -12,10 +12,10 @@
 | Policy engine | `policy-engine/` | Working — transfer + swap caps |
 | Approval store | `approval-store/` | Working |
 | Audit logger | `audit-log/` | Working |
-| REST API | `apps/api/` | 35 endpoints |
+| REST API | `apps/api/` | 39 endpoints |
 | CLI | `apps/cli/` | 9 commands |
 | Agent loop | `apps/agent-loop/` | Governance-aware, strategy-aware |
-| MCP server | `mcp-server/` | 24 tools |
+| MCP server | `mcp-server/` | 25 tools |
 | Executor | `executor/` | Viem + ERC-8004 identity |
 | Strategy engine | `strategy-engine/` | Multi-bucket yield distribution |
 | Trading engine | `trading-engine/` | Uniswap API (quotes + dry-run swaps) |
@@ -93,7 +93,7 @@
 |-------|--------|----------|
 | Synthesis Open Track | Ready | Cross-sponsor integration across all partners |
 | stETH Agent Treasury (Lido) | Ready | Live mainnet treasury + Sepolia E2E |
-| Lido MCP | Ready | 24 tools, dry_run on all writes |
+| Lido MCP | Ready | 25 tools, dry_run on all writes |
 | Agents With Receipts — ERC-8004 | Ready | Registration TX + trust-gated payments |
 | Agentic Finance (Uniswap) | Ready | Live swap [`0x9e3874...`](https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9) |
 | Agent Services on Base | Ready | x402 gateway, multi-agent roles |
