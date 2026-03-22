@@ -22,7 +22,7 @@
 | Dry-run support on all write operations | All 5 write tools (`spend_yield`, `stake_eth`, `wrap_steth`, `unwrap_wsteth`, `request_withdrawal`) accept `dry_run: true` |
 | Real onchain integration | Treasury tools use viem to call verified contract on Base. Staking tools use Lido mainnet contracts. Governance queries Snapshot API live. |
 
-**Bonus — rebasing documentation:** `lido.skill.md` explains stETH rebasing, wstETH non-rebasing mechanics, yield calculation formula, and safe usage patterns for agents.
+**Bonus — rebasing documentation:** `skill.md` explains stETH rebasing, wstETH non-rebasing mechanics, yield calculation formula, and safe usage patterns for agents.
 
 **Tool count: 11** — 3 treasury, 7 staking, 1 governance.
 
@@ -115,8 +115,15 @@
 | Novel permission model | Defense-in-depth: offchain policy engine (TypeScript) + onchain delegation caveats (EVM). Two independent enforcement layers — if either is bypassed, the other still protects. |
 | Sub-delegation potential | Multi-agent architecture (proposer/executor/auditor) maps to delegation chains: owner → proposer (suggest), proposer → executor (sign), auditor can revoke. |
 | API endpoints | `GET /delegation` (framework info + caveat mapping), `POST /delegation/create` (create delegation with policy-matched caveats) |
+| **Live EIP-7702 on-chain delegation** | Both owner and agent EOAs upgraded to EIP-7702 smart accounts on Base mainnet via MetaMask's EIP7702StatelessDeleGator v1.3.0. Real on-chain delegation, not just SDK integration. |
 
 **Key insight:** Our policy engine constraints map 1:1 to MetaMask delegation caveats. The delegation framework provides the onchain enforcement layer that makes our offchain policy engine trustless.
+
+**Live EIP-7702 delegation proof (March 22):**
+- Owner EOA (`0x1101158041Fd96f21CBcbb0E752a9A2303E6D70e`) → EIP7702StatelessDeleGator v1.3.0: [`0x1a97c5...`](https://basescan.org/tx/0x1a97c54d3633f725e36d83b7c2535b054d296f868b20c0f1e0fbb076601e0f9c)
+- Agent EOA (`0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6`) → same DeleGator contract: [`0x6f3a90...`](https://basescan.org/tx/0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e)
+- DelegationManager: `0xdb9B1e94B5b69Df7e401DDbedE43491141047dB3`
+- DeleGator: `0x63c0c19a282a1B52b07dD5a65b58948A07DAE32B` (MetaMask EIP7702StatelessDeleGator v1.3.0)
 
 ## 11. Best Agent on Celo (Celo, $5,000)
 
@@ -129,6 +136,13 @@
 | Real-world applicability | Multi-chain agent treasury: Base (ETH staking yield via Lido) + Celo (USDC lending yield via Aave). Same agent, same policy engine, different yield sources. Demonstrates chain-agnostic design. |
 
 **Deploy TX:** [`0x4a6058...`](https://celoscan.io/tx/0x4a6058ba5169e2db9dff908ed4bc5b2f8d96db70828244e84fde2e7de1095d12)
+
+**Live Execution Proof (March 21):** Full 7-step E2E on Celo mainnet:
+- Swap: 100 CELO → 6.67 USDC via Uniswap V3 [`0x0e1e99...`](https://celoscan.io/tx/0x0e1e99c29c5145c97076e11759ce6cb842c704e3908a59b09ced889c093b9cee)
+- ERC-4626 deposit: USDC → 6.53 stataUSDC [`0x575789...`](https://celoscan.io/tx/0x575789f35d7e1ec6747ebd4cea357402f055aebd392894d471fb8d44d186f453)
+- Treasury deposit: 6.53 stataUSDC [`0x504326...`](https://celoscan.io/tx/0x504326d7bb5b8d47d7e674e0d8a484c1a88f5a7c86836f395eb2138ad47b6a8f)
+- setAgent + addRecipient + setPerTxCap configured
+- **spendYield executed:** [`0xaac5f8...`](https://celoscan.io/tx/0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5) — agent spent accrued Aave yield
 
 ## 12. ENS Identity ($400)
 

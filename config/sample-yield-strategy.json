@@ -14,13 +14,13 @@
       "id": "grants",
       "label": "Grants Program",
       "percentage": 30,
-      "destination": "0xApprovedDestination1"
+      "destination": "0xf3476b36fc9942083049C04e9404516703369ef3"
     },
     {
       "id": "reserve",
       "label": "Reserve Fund",
       "percentage": 30,
-      "destination": "0xApprovedDestination2"
+      "destination": "0x1101158041Fd96f21CBcbb0E752a9A2303E6D70e"
     }
   ]
 }

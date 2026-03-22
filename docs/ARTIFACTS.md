@@ -44,7 +44,7 @@
 
 | App | Purpose |
 |-----|---------|
-| `api` | REST API: 22 endpoints — evaluate, approvals, respond, audit, policy, treasury, strategy, verify, swap, x402, agents, moonpay |
+| `api` | REST API: 34 endpoints — evaluate, approvals, respond, audit, policy, treasury, strategy, verify, swap, x402, agents, moonpay |
 | `cli` | CLI: 9 commands — health, policy, evaluate, approvals, approve, deny, audit, treasury, demo |
 | `agent-loop` | Autonomous governance-aware yield spending agent — monitors treasury + Lido governance, decides spend/hold |
 
@@ -118,6 +118,17 @@
 | GET | `/moonpay/status` | MoonPay CLI status + config |
 | POST | `/moonpay/swap` | Policy-gated MoonPay swap |
 | GET | `/moonpay/tools` | Available MoonPay tools |
+| GET | `/delegation` | List active delegations |
+| POST | `/delegation/create` | Create a new delegation |
+| GET | `/ens/identities` | List ENS identities |
+| GET | `/ens/resolve/:name` | Resolve ENS name to address |
+| GET | `/monitoring/status` | System monitoring status |
+| GET | `/monitoring/alerts` | Active monitoring alerts |
+| POST | `/monitoring/webhook` | Register monitoring webhook |
+| GET | `/onboarding/status` | Agent onboarding status |
+| GET | `/trading/performance` | Trading performance metrics |
+| GET | `/trading/strategies` | Active trading strategies |
+| GET | `/swap/strategies` | Configured swap strategies |
 
 ## Scripts
 

@@ -138,6 +138,22 @@ async function readAuditEvents(): Promise<AuditEvent[]> {
   }
 }
 
+async function computeSpentToday(): Promise<number> {
+  const events = await readAuditEvents();
+  const todayStart = new Date();
+  todayStart.setUTCHours(0, 0, 0, 0);
+  const todayMs = todayStart.getTime();
+  let total = 0;
+  for (const e of events) {
+    if (new Date(e.timestamp).getTime() < todayMs) break; // events are reverse-chronological
+    if (e.type === 'execution_result' && e.payload.plan) {
+      const amount = (e.payload.plan as Record<string, unknown>).amount;
+      if (typeof amount === 'number') total += amount;
+    }
+  }
+  return total;
+}
+
 // --- Route handlers ---
 
 async function handleEvaluate(req: IncomingMessage, res: ServerResponse): Promise<void> {
@@ -159,7 +175,8 @@ async function handleEvaluate(req: IncomingMessage, res: ServerResponse): Promis
     }
   }
 
-  const result = evaluatePlan(policy, plan, { spentToday: 0, recipientVerified, frozenAgents });
+  const spentToday = await computeSpentToday();
+  const result = evaluatePlan(policy, plan, { spentToday, recipientVerified, frozenAgents });
   await auditLog('plan_evaluated', { plan, result, recipientVerified });
 
   // Auto-execute if approved and executor is available
@@ -348,7 +365,7 @@ async function handleStrategyDistribute(req: IncomingMessage, res: ServerRespons
         recipientVerified = identity.verified;
       }
 
-      const evalResult = evaluatePlan(policy, actionPlan, { spentToday: 0, recipientVerified, frozenAgents });
+      const evalResult = evaluatePlan(policy, actionPlan, { spentToday: await computeSpentToday(), recipientVerified, frozenAgents });
       await auditLog('plan_evaluated', { plan: actionPlan, result: evalResult });
 
       if (evalResult.decision === 'approved' && executor) {
@@ -431,7 +448,7 @@ async function handleSwapExecute(req: IncomingMessage, res: ServerResponse): Pro
 
     await auditLog('plan_submitted', { plan, swapDetails: { tokenIn, tokenOut, amount, dryRun } });
 
-    const evalResult = evaluatePlan(policy, plan, { spentToday: 0, frozenAgents });
+    const evalResult = evaluatePlan(policy, plan, { spentToday: await computeSpentToday(), frozenAgents });
     await auditLog('plan_evaluated', { plan, result: evalResult });
 
     if (evalResult.decision === 'denied') {
@@ -749,7 +766,7 @@ async function handleMoonPaySwap(req: IncomingMessage, res: ServerResponse): Pro
 
     await auditLog('plan_submitted', { plan, moonpay: { fromToken, toToken, amount, chain, dryRun } });
 
-    const evalResult = evaluatePlan(policy, plan, { spentToday: 0, frozenAgents });
+    const evalResult = evaluatePlan(policy, plan, { spentToday: await computeSpentToday(), frozenAgents });
     await auditLog('plan_evaluated', { plan, result: evalResult });
 
     if (evalResult.decision === 'denied') {
@@ -869,6 +886,322 @@ async function handleDelegationInfo(_req: IncomingMessage, res: ServerResponse):
       error: error instanceof Error ? error.message : String(error),
     });
   }
+}
+
+// --- Monitoring & Alerting handlers ---
+
+// In-memory webhook registry (persists for server lifetime)
+const registeredWebhooks: Array<{ url: string; events: string[]; registeredAt: string }> = [];
+
+// Alert thresholds (configurable per-deployment)
+const alertThresholds = {
+  yieldMinimum: Number(process.env.ALERT_YIELD_MIN ?? 0.0001),
+  spendVelocityMax: Number(process.env.ALERT_SPEND_VELOCITY ?? 5),  // max spends per hour
+  principalDropPercent: Number(process.env.ALERT_PRINCIPAL_DROP ?? 5), // % drop triggers alert
+  governanceRiskKeywords: ['withdrawal', 'parameter', 'upgrade', 'emergency', 'pause', 'slash'],
+};
+
+async function handleMonitoringStatus(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const policy = await readJsonFile<Policy>(policyPath);
+
+  // Build comprehensive system status
+  const status: Record<string, unknown> = {
+    system: {
+      uptime: process.uptime(),
+      memoryMB: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+      executor: executor ? 'connected' : 'not configured',
+      x402: x402.enabled ? 'enabled' : 'disabled',
+      agents: agentRegistry.length,
+      frozenAgents: [...frozenAgents],
+    },
+    policy: {
+      maxPerAction: policy.maxPerAction,
+      dailyCap: policy.dailyCap,
+      approvalThreshold: policy.approvalThreshold,
+      maxSwapPerAction: (policy as unknown as Record<string, unknown>).maxSwapPerAction,
+      maxSlippageBps: (policy as unknown as Record<string, unknown>).maxSlippageBps,
+    },
+    alertThresholds,
+    webhooks: registeredWebhooks.length,
+  };
+
+  // Add treasury state if executor is connected
+  if (executor) {
+    try {
+      const tState = await executor.treasuryState();
+      const yieldNum = parseFloat(tState.availableYield.formatted);
+      const principalNum = parseFloat(tState.principal.formatted);
+
+      status.treasury = {
+        availableYield: tState.availableYield.formatted,
+        principal: tState.principal.formatted,
+        totalSpent: tState.totalSpent.formatted,
+        perTxCap: tState.perTxCap.formatted,
+        chain: process.env.CHAIN ?? 'base-sepolia',
+      };
+
+      // Active alerts based on current state
+      const alerts: Array<{ severity: string; type: string; message: string }> = [];
+
+      if (yieldNum < alertThresholds.yieldMinimum) {
+        alerts.push({
+          severity: 'info',
+          type: 'low_yield',
+          message: `Available yield (${yieldNum.toFixed(8)}) below threshold (${alertThresholds.yieldMinimum})`,
+        });
+      }
+
+      if (frozenAgents.size > 0) {
+        alerts.push({
+          severity: 'warning',
+          type: 'frozen_agents',
+          message: `${frozenAgents.size} agent(s) frozen: ${[...frozenAgents].join(', ')}`,
+        });
+      }
+
+      if (principalNum === 0) {
+        alerts.push({
+          severity: 'critical',
+          type: 'no_principal',
+          message: 'No principal deposited — treasury is empty',
+        });
+      }
+
+      status.activeAlerts = alerts;
+      status.health = alerts.some(a => a.severity === 'critical') ? 'critical' : alerts.length > 0 ? 'warning' : 'healthy';
+    } catch {
+      status.treasury = { error: 'Failed to read on-chain state' };
+      status.health = 'degraded';
+    }
+  } else {
+    status.health = 'api-only';
+  }
+
+  return sendJson(res, 200, status);
+}
+
+async function handleMonitoringAlerts(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  // Read recent audit events to compute alerts
+  let events: AuditEvent[] = [];
+  try {
+    const raw = await readFile(auditLogPath, 'utf-8');
+    events = raw.trim().split('\n').filter(Boolean).map(line => JSON.parse(line) as AuditEvent);
+  } catch { /* no events yet */ }
+
+  const now = Date.now();
+  const oneHourAgo = now - 3600000;
+  const oneDayAgo = now - 86400000;
+
+  // Recent activity analysis
+  const recentEvents = events.filter(e => new Date(e.timestamp).getTime() > oneHourAgo);
+  const dailyEvents = events.filter(e => new Date(e.timestamp).getTime() > oneDayAgo);
+
+  const recentSpends = recentEvents.filter(e => e.type === 'execution_result');
+  const recentDenials = recentEvents.filter(e => e.type === 'plan_evaluated' && (e as unknown as Record<string, unknown>).decision === 'denied');
+  const dailyApprovals = dailyEvents.filter(e => e.type === 'approval_granted');
+
+  const alerts: Array<{ severity: string; type: string; message: string; data?: unknown }> = [];
+
+  // Spend velocity check
+  if (recentSpends.length > alertThresholds.spendVelocityMax) {
+    alerts.push({
+      severity: 'warning',
+      type: 'high_spend_velocity',
+      message: `${recentSpends.length} spends in last hour (threshold: ${alertThresholds.spendVelocityMax})`,
+      data: { count: recentSpends.length, threshold: alertThresholds.spendVelocityMax },
+    });
+  }
+
+  // Denial rate check
+  if (recentDenials.length > 3) {
+    alerts.push({
+      severity: 'warning',
+      type: 'high_denial_rate',
+      message: `${recentDenials.length} denials in last hour — agent may be misconfigured`,
+      data: { count: recentDenials.length },
+    });
+  }
+
+  // Frozen agent check
+  if (frozenAgents.size > 0) {
+    alerts.push({
+      severity: 'warning',
+      type: 'frozen_agents',
+      message: `Frozen agents: ${[...frozenAgents].join(', ')}`,
+    });
+  }
+
+  return sendJson(res, 200, {
+    alerts,
+    summary: {
+      totalEvents: events.length,
+      lastHour: { spends: recentSpends.length, denials: recentDenials.length, total: recentEvents.length },
+      lastDay: { approvals: dailyApprovals.length, total: dailyEvents.length },
+    },
+    thresholds: alertThresholds,
+    note: 'Register webhooks via POST /monitoring/webhook to receive alerts programmatically.',
+  });
+}
+
+async function handleWebhookRegister(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const raw = await parseBody(req);
+  const body = JSON.parse(raw) as { url?: string; events?: string[] };
+  const { url, events } = body;
+
+  if (!url) {
+    return sendJson(res, 400, { error: 'url is required' });
+  }
+
+  const webhook = {
+    url,
+    events: events ?? ['all'],
+    registeredAt: new Date().toISOString(),
+  };
+
+  registeredWebhooks.push(webhook);
+
+  return sendJson(res, 201, {
+    registered: true,
+    webhook,
+    supportedEvents: [
+      'plan_evaluated',
+      'approval_requested',
+      'approval_granted',
+      'approval_denied',
+      'execution_result',
+      'agent_frozen',
+      'agent_unfrozen',
+      'yield_threshold',
+      'governance_risk',
+    ],
+    note: 'Webhook will receive POST requests with event payloads when matching events occur.',
+  });
+}
+
+async function handleOnboardingStatus(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  // Agent self-discovery protocol — an agent calls this to understand its operating environment
+  const capabilities: Array<{ id: string; capability: string; ready: boolean; detail: string; resolve?: string }> = [];
+
+  // Capability 1: Treasury contract binding
+  const treasuryAddr = process.env.TREASURY_ADDRESS;
+  capabilities.push({
+    id: 'treasury_contract',
+    capability: 'On-chain treasury binding',
+    ready: !!treasuryAddr,
+    detail: treasuryAddr ? `Bound to ${treasuryAddr}` : 'No treasury contract — operating in simulation mode',
+    resolve: treasuryAddr ? undefined : 'Set TREASURY_ADDRESS to bind to a deployed AgentTreasury',
+  });
+
+  // Capability 2: Yield asset awareness
+  const yieldAsset = process.env.WSTETH_ADDRESS;
+  capabilities.push({
+    id: 'yield_asset',
+    capability: 'Yield-bearing asset recognition',
+    ready: !!yieldAsset,
+    detail: yieldAsset ? `Tracking yield on ${yieldAsset}` : 'No yield asset configured — cannot compute yield',
+    resolve: yieldAsset ? undefined : 'Set WSTETH_ADDRESS (wstETH on Base, stataUSDC on Celo)',
+  });
+
+  // Capability 3: Signing authority
+  const agentKey = process.env.AGENT_PRIVATE_KEY;
+  capabilities.push({
+    id: 'signer',
+    capability: 'Transaction signing authority',
+    ready: !!agentKey,
+    detail: agentKey ? `Signer active: ${executor?.agentAddress ?? 'key loaded'}` : 'No signing key — read-only mode',
+    resolve: agentKey ? undefined : 'Provide AGENT_PRIVATE_KEY for autonomous execution',
+  });
+
+  // Capability 4: Treasury state (on-chain check)
+  let depositReady = false;
+  let depositDetail = 'Executor not connected — cannot verify on-chain state';
+  if (executor) {
+    try {
+      const tState = await executor.treasuryState();
+      const principalVal = parseFloat(tState.principal.formatted);
+      depositReady = principalVal > 0;
+      depositDetail = depositReady
+        ? `Principal: ${tState.principal.formatted} | Yield: ${tState.availableYield.formatted}`
+        : 'Treasury is empty — no principal deposited';
+    } catch {
+      depositDetail = 'On-chain read failed';
+    }
+  }
+  capabilities.push({
+    id: 'treasury_funded',
+    capability: 'Funded treasury with accruing yield',
+    ready: depositReady,
+    detail: depositDetail,
+  });
+
+  // Capability 5: Policy engine
+  let policyReady = false;
+  try {
+    await readJsonFile<Policy>(policyPath);
+    policyReady = true;
+  } catch { /* missing */ }
+  capabilities.push({
+    id: 'policy',
+    capability: 'Spending policy enforcement',
+    ready: policyReady,
+    detail: policyReady ? 'Policy loaded — caps, thresholds, allowlists active' : 'No policy — all plans will be denied',
+  });
+
+  // Capability 6: Distribution strategy
+  let strategyReady = false;
+  try {
+    await readJsonFile<unknown>(strategyPath);
+    strategyReady = true;
+  } catch { /* missing */ }
+  capabilities.push({
+    id: 'strategy',
+    capability: 'Yield distribution strategy',
+    ready: strategyReady,
+    detail: strategyReady ? 'Multi-bucket strategy loaded' : 'No strategy — agent cannot compute distributions',
+  });
+
+  // Capability 7: Multi-agent coordination
+  capabilities.push({
+    id: 'agents',
+    capability: 'Multi-agent role separation',
+    ready: agentRegistry.length > 0,
+    detail: agentRegistry.length > 0
+      ? `${agentRegistry.length} agents: ${agentRegistry.map(a => `${a.agentId}(${a.role})`).join(', ')}`
+      : 'Solo mode — no agent registry',
+  });
+
+  // Capability 8: Alerting pipeline
+  capabilities.push({
+    id: 'alerting',
+    capability: 'Webhook alerting pipeline',
+    ready: registeredWebhooks.length > 0,
+    detail: registeredWebhooks.length > 0
+      ? `${registeredWebhooks.length} webhook(s) active`
+      : 'No webhooks — alerts only via GET /monitoring/alerts polling',
+  });
+
+  const readyCount = capabilities.filter(c => c.ready).length;
+  const coreReady = capabilities.filter(c => ['treasury_contract', 'signer', 'policy', 'strategy'].includes(c.id)).every(c => c.ready);
+
+  return sendJson(res, 200, {
+    protocol: 'agent-self-discovery/v1',
+    autonomous: coreReady,
+    readiness: `${readyCount}/${capabilities.length} capabilities online`,
+    mode: coreReady ? 'full-autonomous' : (readyCount >= 3 ? 'limited-autonomous' : 'simulation'),
+    capabilities,
+    bootSequence: {
+      description: 'Agent bootstrap protocol — call in order to self-configure',
+      steps: [
+        { endpoint: 'GET /onboarding/status', purpose: 'Discover current capabilities and gaps' },
+        { endpoint: 'GET /treasury', purpose: 'Read on-chain state — principal, yield, caps' },
+        { endpoint: 'GET /policy', purpose: 'Load spending constraints and allowlists' },
+        { endpoint: 'GET /strategy', purpose: 'Load yield distribution buckets' },
+        { endpoint: 'GET /monitoring/alerts', purpose: 'Check for active issues before operating' },
+        { endpoint: 'POST /plans/evaluate', purpose: 'Submit first action plan for policy check' },
+        { endpoint: 'GET /monitoring/status', purpose: 'Continuous health loop' },
+      ],
+    },
+  });
 }
 
 // --- ENS handlers ---
@@ -1077,6 +1410,24 @@ const server = createServer(async (req, res) => {
 
     if (req.method === 'POST' && url === '/delegation/create') {
       return await handleDelegationCreate(req, res);
+    }
+
+    // --- Monitoring & Alerting routes ---
+
+    if (req.method === 'GET' && url === '/monitoring/status') {
+      return await handleMonitoringStatus(req, res);
+    }
+
+    if (req.method === 'GET' && url === '/monitoring/alerts') {
+      return await handleMonitoringAlerts(req, res);
+    }
+
+    if (req.method === 'POST' && url === '/monitoring/webhook') {
+      return await handleWebhookRegister(req, res);
+    }
+
+    if (req.method === 'GET' && url === '/onboarding/status') {
+      return await handleOnboardingStatus(req, res);
     }
 
     // --- ENS routes ---

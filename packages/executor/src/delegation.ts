@@ -44,6 +44,49 @@ import { base, baseSepolia } from 'viem/chains';
 import { AGENT_TREASURY_ABI } from './abi.js';
 
 // ---------------------------------------------------------------------------
+// Real on-chain deployment — Base mainnet (chain 8453)
+// ---------------------------------------------------------------------------
+
+/**
+ * MetaMask Delegation Framework contracts deployed on Base mainnet.
+ * These are the production addresses used by the live delegation chain.
+ */
+export const BASE_MAINNET_CHAIN_ID = 8453;
+
+/** EIP7702StatelessDeleGator v1.3.0 — the DeleGator implementation contract */
+export const DELEGATOR_IMPLEMENTATION_ADDRESS =
+  '0x63c0c19a282a1B52b07dD5a65b58948A07DAE32B' as const;
+
+/** DelegationManager — validates and enforces the full delegation chain on-chain */
+export const DELEGATION_MANAGER_ADDRESS =
+  '0xdb9B1e94B5b69Df7e401DDbedE43491141047dB3' as const;
+
+/** ERC-4337 EntryPoint v0.7 — canonical singleton used by the DeleGator */
+export const ENTRY_POINT_ADDRESS =
+  '0x0000000071727De22E5E9d8BAf0edAc6f37da032' as const;
+
+/**
+ * Live EOA addresses participating in the delegation chain.
+ * Both have been delegated via EIP-7702 and confirmed on Base mainnet.
+ */
+export const OWNER_EOA_ADDRESS =
+  '0x1101158041Fd96f21CBcbb0E752a9A2303E6D70e' as const;
+
+export const AGENT_EOA_ADDRESS =
+  '0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6' as const;
+
+/**
+ * On-chain proof: transaction hashes confirming the delegations are LIVE on Base mainnet.
+ * Owner delegation TX:  https://basescan.org/tx/0x1a97c54d3633f725e36d83b7c2535b054d296f868b20c0f1e0fbb076601e0f9c
+ * Agent delegation TX:  https://basescan.org/tx/0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e
+ */
+export const OWNER_DELEGATION_TX =
+  '0x1a97c54d3633f725e36d83b7c2535b054d296f868b20c0f1e0fbb076601e0f9c' as const;
+
+export const AGENT_DELEGATION_TX =
+  '0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e' as const;
+
+// ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
@@ -274,7 +317,7 @@ export function buildDelegationChain(
   const executorAgent = agents.find((a) => a.role === 'executor');
   const auditor = agents.find((a) => a.role === 'auditor');
 
-  const ownerAddr = treasuryAddress ?? '0xOwnerMultisig';
+  const ownerAddr = treasuryAddress ?? OWNER_EOA_ADDRESS;
   const proposerAddr = proposer?.walletAddress ?? `0x${proposer?.agentId ?? 'proposer'}`;
   const executorAddr = executorAgent?.walletAddress ?? `0x${executorAgent?.agentId ?? 'executor'}`;
 
@@ -380,22 +423,28 @@ export function buildDelegationChain(
     standards: ['ERC-7710 (Delegation)', 'ERC-7715 (Intent-Based Permissions)'],
     sdk: '@metamask/smart-accounts-kit',
     description:
-      'Multi-agent delegation chain implementing least-privilege access control. ' +
-      'The treasury owner creates a root delegation to the proposer agent, which ' +
-      're-delegates a narrower subset of authority to the executor agent. Each link ' +
+      'Multi-agent delegation chain implementing least-privilege access control — ' +
+      'LIVE on Base mainnet (chain 8453). ' +
+      'The treasury owner (' + OWNER_EOA_ADDRESS + ') creates a root delegation to the proposer agent, which ' +
+      're-delegates a narrower subset of authority to the executor agent (' + AGENT_EOA_ADDRESS + '). Each link ' +
       'in the chain has progressively tighter caveats. The auditor agent sits outside ' +
       'the chain — it holds no spending authority but can revoke any delegation by ' +
-      'triggering a freeze, which invalidates the delegation on-chain.',
+      'triggering a freeze, which invalidates the delegation on-chain. ' +
+      'DelegationManager: ' + DELEGATION_MANAGER_ADDRESS + '. ' +
+      'DeleGator implementation (EIP7702StatelessDeleGator v1.3.0): ' + DELEGATOR_IMPLEMENTATION_ADDRESS + '. ' +
+      'EntryPoint (ERC-4337 v0.7): ' + ENTRY_POINT_ADDRESS + '.',
 
     intentFlow: {
       standard: 'ERC-7715 (wallet_requestPermissions)',
       steps: [
         '1. Proposer agent calls wallet_requestPermissions with desired scope (daily cap, treasury target)',
         '2. Owner wallet displays the permission request with human-readable caveat descriptions',
-        '3. Owner reviews and signs the delegation (ERC-7710 struct)',
+        '3. Owner (' + OWNER_EOA_ADDRESS + ') reviews and signs the delegation (ERC-7710 struct)',
+        '   ↳ LIVE proof: owner delegation TX ' + OWNER_DELEGATION_TX,
         '4. Proposer receives signed delegation and can re-delegate a subset to executor',
-        '5. Executor redeems the delegation chain on-chain to call spendYield()',
-        '6. DelegationManager validates the full chain: owner → proposer → executor',
+        '5. Executor (' + AGENT_EOA_ADDRESS + ') redeems the delegation chain on-chain to call spendYield()',
+        '   ↳ LIVE proof: agent delegation TX ' + AGENT_DELEGATION_TX,
+        '6. DelegationManager (' + DELEGATION_MANAGER_ADDRESS + ') validates the full chain: owner → proposer → executor',
         '7. Each caveat enforcer runs in sequence — if any fails, the entire redemption reverts',
       ],
     },
@@ -418,7 +467,8 @@ export function buildDelegationChain(
         'The auditor does NOT hold a delegation — it has zero spending authority. ' +
         'Instead, it monitors the audit log and treasury state. When it detects an anomaly, ' +
         'it calls POST /agents/{id}/freeze, which invalidates the target agent\'s delegation. ' +
-        'This maps to calling disableDelegation() on the DelegationManager contract, which ' +
+        'This maps to calling disableDelegation() on the DelegationManager contract ' +
+        '(' + DELEGATION_MANAGER_ADDRESS + ' on Base mainnet), which ' +
         'permanently revokes the delegation hash on-chain.',
       description:
         'Separation of concerns: the auditor can stop spending but cannot initiate it. ' +
@@ -441,7 +491,8 @@ export function buildDelegationChain(
         '8. A NEW delegation is created with a fresh hash (old one stays revoked forever)',
       ],
       onchainEffect:
-        'The DelegationManager maintains a mapping of disabled delegation hashes. ' +
+        'The DelegationManager (' + DELEGATION_MANAGER_ADDRESS + ' on Base mainnet, chain 8453) ' +
+        'maintains a mapping of disabled delegation hashes. ' +
         'Once disabled, the hash can never be re-enabled — this is an append-only revocation log. ' +
         'Re-delegation after unfreeze produces a new hash with new timestamp caveats.',
     },

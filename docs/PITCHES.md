@@ -2,7 +2,7 @@
 
 ## 30 seconds
 
-AI agents need to spend money, but giving them a wallet is reckless. We built a treasury where a human deposits wstETH, yield accrues through Lido staking, and the agent can only spend the yield — never the principal. The agent doesn't just transfer yield — it deploys it into trading strategies via Uniswap on Base, all policy-gated with separate swap caps, slippage limits, and trust verification via ERC-8004. Other agents can pay USDC to use the treasury service via x402. Live on Base mainnet with real Lido staking yield. Built entirely by two AI agents orchestrated by one human.
+AI agents need to spend money, but giving them a wallet is reckless. We built a multi-chain treasury where a human deposits yield-bearing assets and the agent can only spend the accrued yield — never the principal. On Base, wstETH earns Lido staking yield. On Celo, stataUSDC earns Aave lending yield. The agent deploys yield into Uniswap trading strategies, all policy-gated with swap caps, slippage limits, and ERC-8004 trust verification. Other agents pay USDC to use the service via x402. Both the owner and agent EOAs are live EIP-7702 smart accounts on Base mainnet via MetaMask's DeleGator framework — real on-chain delegation with caveats enforcing permissions as a second layer. Live on Base mainnet and Celo mainnet with real yield accruing. Built entirely by two AI agents orchestrated by one human.
 
 ## 2 minutes
 
@@ -27,7 +27,9 @@ On top of the contract sits a policy engine that evaluates every action — tran
 
 **How we built it:** One human (Oscar) orchestrating two AI agents — Bagel wrote the Solidity contracts and deployed to Base, Claude Code built the approval backend, policy engine, MCP server, CLI, and docs. Zero lines of human-written code.
 
-**What makes it real:** Live on Base mainnet — treasury funded with wstETH, agent configured, yield accruing from Lido staking rewards. The contract uses a Chainlink oracle for the L2 exchange rate. The agent has a verifiable on-chain identity via ERC-8004. The MCP server makes the treasury natively callable from any AI agent that supports Model Context Protocol.
+**MetaMask: real on-chain delegation:** Both the owner EOA and agent EOA are live EIP-7702 smart accounts on Base mainnet via MetaMask's EIP7702StatelessDeleGator v1.3.0. This isn't just SDK integration — these are confirmed delegation transactions on Base mainnet. MetaMask delegation caveats (AllowedTargets, AllowedMethods, ERC20TransferAmount, Timestamp, LimitedCalls) provide a second, independent enforcement layer: even if the offchain policy engine is bypassed, the onchain caveats protect the treasury.
+
+**What makes it real:** Live on Base mainnet — treasury funded with wstETH, agent configured, yield accruing from Lido staking rewards. The contract uses a Chainlink oracle for the L2 exchange rate. The agent has a verifiable on-chain identity via ERC-8004. Both the owner and agent are EIP-7702 smart accounts via MetaMask DeleGator. The MCP server makes the treasury natively callable from any AI agent that supports Model Context Protocol.
 
 Yield-only spending is the primitive. What you build on top is up to you.
 

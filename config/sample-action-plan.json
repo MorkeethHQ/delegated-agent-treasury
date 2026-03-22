@@ -2,7 +2,7 @@
   "planId": "plan-1",
   "agentId": "bagel",
   "type": "transfer",
-  "amount": 50,
-  "destination": "0xApprovedDestination1",
-  "reason": "Fund approved test workflow"
+  "amount": 0.005,
+  "destination": "0xf3476b36fc9942083049C04e9404516703369ef3",
+  "reason": "Fund morke.eth from yield"
 }

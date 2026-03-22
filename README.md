@@ -57,9 +57,9 @@ curl -X POST http://localhost:3001/plans/evaluate \
     "planId": "plan-1",
     "agentId": "bagel",
     "type": "transfer",
-    "amount": 80,
-    "destination": "0xApprovedDestination1",
-    "reason": "Fund approved workflow"
+    "amount": 0.005,
+    "destination": "0xf3476b36fc9942083049C04e9404516703369ef3",
+    "reason": "Fund morke.eth from yield"
   }'
 ```
 
@@ -127,6 +127,10 @@ export OWNER_PRIVATE_KEY=0x...   # for setup/demo only
 
 Same yield-only spending pattern as Base, different yield source: USDC lending yield from Aave instead of ETH staking yield from Lido. Uses ERC-4626 `convertToAssets()` for the exchange rate instead of Chainlink oracle.
 
+**Live E2E proof (March 21):** 100 CELO → USDC (Uniswap V3) → stataUSDC (Aave ERC-4626) → Treasury deposit → `spendYield()` executed by agent.
+- Swap TX: [`0x0e1e99...`](https://celoscan.io/tx/0x0e1e99c29c5145c97076e11759ce6cb842c704e3908a59b09ced889c093b9cee)
+- spendYield TX: [`0xaac5f8...`](https://celoscan.io/tx/0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5)
+
 ```bash
 export CHAIN=celo
 export RPC_URL=https://forno.celo.org
@@ -159,6 +163,25 @@ bash scripts/test-swap-e2e.sh
 # Unit tests
 npm run build && npm test
 ```
+
+## Live mainnet proof
+
+Every major feature has been executed on-chain with real assets:
+
+| Feature | Chain | Transaction | What it proves |
+|---------|-------|-------------|---------------|
+| Treasury deploy | Base | [`0x33e648...`](https://basescan.org/tx/0x33e648434ce963eb47ddfb403df14f2faae20d72e78bf0e9ebafefa3e85ea0db) | Contract live on mainnet |
+| Uniswap swap | Base | [`0x9e3874...`](https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9) | WETH→USDC via Trading API |
+| Permit2 approve | Base | [`0x536b75...`](https://basescan.org/tx/0x536b75fd78f78106db68efcd3cdd7d162e8c6fe074e81dffa5841f8b888f462d) | Full EIP-712 Permit2 flow |
+| ERC-8004 register | Base | [`0x402764...`](https://basescan.org/tx/0x4027641718bb5cfb9fdf7f4871f6506685b5367cab1a3a030b9bb0fe779ee934) | On-chain agent identity |
+| Celo deploy | Celo | [`0x4a6058...`](https://celoscan.io/tx/0x4a6058ba5169e2db9dff908ed4bc5b2f8d96db70828244e84fde2e7de1095d12) | Multi-chain treasury |
+| CELO→USDC swap | Celo | [`0x0e1e99...`](https://celoscan.io/tx/0x0e1e99c29c5145c97076e11759ce6cb842c704e3908a59b09ced889c093b9cee) | Uniswap V3 on Celo |
+| USDC→stataUSDC | Celo | [`0x575789...`](https://celoscan.io/tx/0x575789f35d7e1ec6747ebd4cea357402f055aebd392894d471fb8d44d186f453) | Aave V3 ERC-4626 deposit |
+| Treasury deposit | Celo | [`0x504326...`](https://celoscan.io/tx/0x504326d7bb5b8d47d7e674e0d8a484c1a88f5a7c86836f395eb2138ad47b6a8f) | stataUSDC into treasury |
+| **spendYield** | Celo | [`0xaac5f8...`](https://celoscan.io/tx/0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5) | **Agent spent yield on mainnet** |
+| Sepolia E2E | Sepolia | [`0x77dfdb...`](https://sepolia.basescan.org/tx/0x77dfdb5a22e9fa110aa7f5173e2d7bdf650d8b35374ef124ebe7dad6e47e0d4f) | Full spend proof on testnet |
+| **MetaMask EIP-7702 delegation (owner)** | Base | [`0x1a97c5...`](https://basescan.org/tx/0x1a97c54d3633f725e36d83b7c2535b054d296f868b20c0f1e0fbb076601e0f9c) | Owner EOA (`0x1101...70e`) delegated to EIP7702StatelessDeleGator v1.3.0 |
+| **MetaMask EIP-7702 delegation (agent)** | Base | [`0x6f3a90...`](https://basescan.org/tx/0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e) | Agent EOA (`0x4fD6...ce6`) delegated to same DeleGator contract |
 
 ## Architecture
 
@@ -198,7 +221,7 @@ The treasury supports three agent roles:
 
 Agents are registered in `config/agents.json`. The auditor can freeze any agent's spending — frozen agents have all plans denied until unfrozen by an admin.
 
-## API endpoints (27)
+## API endpoints (34)
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -229,6 +252,18 @@ Agents are registered in `config/agents.json`. The auditor can freeze any agent'
 | POST | `/delegation/create` | Create delegation with policy-matched caveats |
 | GET | `/ens/identities` | All ENS identities for treasury participants |
 | GET | `/ens/resolve/:name` | Resolve ENS name ↔ address |
+| GET | `/swap/strategies` | Configured trading strategies |
+| GET | `/trading/performance` | PnL tracking — aggregated swap performance |
+| GET | `/trading/strategies` | Trading strategies enriched with execution counts |
+
+### Monitoring & Onboarding
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/monitoring/status` | System health dashboard (uptime, treasury, active alerts) |
+| GET | `/monitoring/alerts` | Spend velocity, denial rate, frozen agent alerts |
+| POST | `/monitoring/webhook` | Register webhook for event-driven alerts |
+| GET | `/onboarding/status` | Agent self-discovery protocol (capabilities, boot sequence) |
 
 ## Smart contract
 
@@ -265,7 +300,7 @@ This ties the agent's on-chain spending authority to a discoverable, verifiable 
 | **Uniswap** | Full Trading API: quote → Permit2 → EIP-712 → swap | Live TX [`0x9e3874...`](https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9) |
 | **Protocol Labs** | ERC-8004 identity + trust-gated payments + autonomous loop | Agent `10ee7e7e703b4fc493e19f512b5ae09d` on Base |
 | **Base** | Treasury + trading + x402 agent-as-a-service, all on Base mainnet | `packages/x402-gateway/` + live swaps |
-| **MetaMask** | Delegation caveats as onchain policy enforcement (ERC-7710) | `packages/executor/src/delegation.ts` |
+| **MetaMask** | EIP-7702 smart accounts on Base mainnet via DeleGator + delegation caveats as onchain policy enforcement (ERC-7710) | Owner TX [`0x1a97c5...`](https://basescan.org/tx/0x1a97c54d3633f725e36d83b7c2535b054d296f868b20c0f1e0fbb076601e0f9c) · Agent TX [`0x6f3a90...`](https://basescan.org/tx/0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e) |
 | **Celo** | Stablecoin yield treasury via Aave stataUSDC | [`0xc976e4...`](https://celoscan.io/address/0xc976e463bd209e09cb15a168a275890b872aa1f0) |
 | **MoonPay** | 54-tool CLI bridge, 10+ chains, policy-gated | `packages/moonpay-bridge/` |
 | **ENS** | Agent identity via subdomains — morke.eth → treasury, agents, deployers | `packages/executor/src/ens.ts` + `GET /ens/identities` |

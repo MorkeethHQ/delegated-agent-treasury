@@ -195,6 +195,51 @@
       "action": "Updated pitches, submission, demo script, docs for 6-track bounty submission",
       "artifacts": ["docs/PITCHES.md", "docs/SUBMISSION.md", "docs/STORY.md", "scripts/judge-demo.sh", "skill.md"],
       "tag": "overnight-polish"
+    },
+    {
+      "timestamp": "2026-03-21T20:00:00Z",
+      "phase": "execution",
+      "actor": "claude-code",
+      "action": "ENS identity integration — 5 subdomains under morke.eth, bidirectional resolution, API enrichment",
+      "artifacts": ["packages/executor/src/ens.ts", "apps/api/src/server.ts"],
+      "tag": "ens-identity"
+    },
+    {
+      "timestamp": "2026-03-21T21:00:00Z",
+      "phase": "execution",
+      "actor": "claude-code",
+      "action": "Trading performance tracker, MetaMask delegation chain, x402 payment demo scripts",
+      "artifacts": ["apps/api/src/server.ts", "packages/executor/src/delegation.ts", "scripts/test-x402-payment.sh"],
+      "tag": "trading-delegation-x402"
+    },
+    {
+      "timestamp": "2026-03-21T21:30:00Z",
+      "phase": "execution",
+      "actor": "claude-code",
+      "action": "Full Celo E2E on mainnet — 100 CELO → USDC (Uniswap V3) → stataUSDC (Aave) → Treasury deposit → setAgent → spendYield. 11 on-chain txs.",
+      "artifacts": ["celoscan.io/tx/0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5"],
+      "tag": "celo-live-demo",
+      "evidence": {
+        "swap": "0x0e1e99c29c5145c97076e11759ce6cb842c704e3908a59b09ced889c093b9cee",
+        "deposit": "0x504326d7bb5b8d47d7e674e0d8a484c1a88f5a7c86836f395eb2138ad47b6a8f",
+        "spendYield": "0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5"
+      }
+    },
+    {
+      "timestamp": "2026-03-21T22:00:00Z",
+      "phase": "execution",
+      "actor": "claude-code",
+      "action": "x402 payment demo executed — full 402 challenge-response. Autonomous agent loop ran against live Base mainnet treasury (yield: 2.47e-7 wstETH, governance checked, strategies evaluated).",
+      "artifacts": ["scripts/test-x402-payment.sh", "apps/agent-loop/src/index.ts"],
+      "tag": "live-demos"
+    },
+    {
+      "timestamp": "2026-03-21T22:30:00Z",
+      "phase": "polish",
+      "actor": "claude-code",
+      "action": "Final audit — HANDOFF.md updated (stale 'not tested' → tested), endpoint count 27→30, Celo proof TXs added to all docs, pitches updated with multi-chain narrative",
+      "artifacts": ["HANDOFF.md", "README.md", "docs/SUBMISSION.md", "docs/TRACK_REQUIREMENTS.md", "docs/PITCHES.md"],
+      "tag": "final-polish"
     }
   ]
 }
