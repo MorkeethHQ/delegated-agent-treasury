@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Bound — Cover</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px;
+    height: 630px;
+    background: #09090b;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #fafafa;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.15;
+  }
+  .glow-1 { background: #7c3aed; top: -200px; left: -100px; }
+  .glow-2 { background: #3b82f6; bottom: -200px; right: -100px; }
+  .glow-3 { background: #10b981; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.08; }
+  .content { position: relative; z-index: 1; text-align: center; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 999px;
+    font-size: 13px;
+    color: #10b981;
+    margin-bottom: 32px;
+    letter-spacing: 0.05em;
+  }
+  .badge .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+  }
+  h1 {
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #fafafa 0%, #a1a1aa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 20px;
+  }
+  .sub {
+    font-size: 20px;
+    color: #71717a;
+    max-width: 600px;
+    line-height: 1.5;
+    margin-bottom: 40px;
+  }
+  .stats {
+    display: flex;
+    gap: 48px;
+    justify-content: center;
+  }
+  .stat { text-align: center; }
+  .stat-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: #fafafa;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: #52525b;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+  }
+  .footer {
+    position: absolute;
+    bottom: 32px;
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    color: #3f3f46;
+    font-size: 13px;
+  }
+  .footer span { color: #52525b; }
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #7c3aed, #3b82f6);
+    font-weight: 800;
+    font-size: 16px;
+    color: white;
+    margin-right: 12px;
+  }
+</style>
+</head>
+<body>
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+  <div class="glow glow-3"></div>
+  <div class="content">
+    <div class="badge"><span class="dot"></span> Live on Base mainnet</div>
+    <h1>Open Bound<br>Onchain Money Maker</h1>
+    <p class="sub">Bounded financial authority for autonomous agents.<br>Principal locked. Yield is the budget.</p>
+    <div class="stats">
+      <div class="stat"><div class="stat-value">18</div><div class="stat-label">On-chain TXs</div></div>
+      <div class="stat"><div class="stat-value">4</div><div class="stat-label">Autonomous Spends</div></div>
+      <div class="stat"><div class="stat-value">~3.5%</div><div class="stat-label">APY Budget</div></div>
+      <div class="stat"><div class="stat-value">0</div><div class="stat-label">Lines of Human Code</div></div>
+    </div>
+  </div>
+  <div class="footer">
+    <span class="logo">OB</span>
+    <span>Base + Celo</span> · <span>35 API Endpoints</span> · <span>24 MCP Tools</span> · <span>11 Bounty Tracks</span>
+  </div>
+</body>
+</html>
