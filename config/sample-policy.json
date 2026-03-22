@@ -5,8 +5,13 @@
   "maxPerAction": 0.01,
   "dailyCap": 0.05,
   "approvalThreshold": 0.008,
-  "allowedDestinations": ["0xApprovedDestination1", "0xApprovedDestination2", "0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6"],
-  "deniedDestinations": ["0xDeniedDestination1"],
+  "allowedDestinations": [
+    "0xf3476b36fc9942083049C04e9404516703369ef3",
+    "0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6",
+    "0x3d7d7712ad32efD8Cb05249d0C7a3De1B1A3bb43",
+    "0x1101158041Fd96f21CBcbb0E752a9A2303E6D70e"
+  ],
+  "deniedDestinations": ["0x000000000000000000000000000000000000dEaD"],
   "loggingRequired": true,
   "requireVerifiedIdentity": false,
   "maxSwapPerAction": 0.01,

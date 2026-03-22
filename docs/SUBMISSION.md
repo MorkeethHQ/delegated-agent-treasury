@@ -7,7 +7,7 @@ Synthesis Agent Treasury
 Principal-protected, yield-activated agent treasury with autonomous trading strategies on Base.
 
 ## Description (short)
-A treasury where AI agents can only spend accrued yield — never principal. Agents deploy yield into Uniswap trading strategies on Base, all policy-gated with separate swap caps and slippage limits. Trust-gated payments via ERC-8004 identity verification. Other agents pay USDC to use the service via x402. MetaMask Delegation caveats enforce permissions onchain. ENS subdomains (morke.eth) for agent identity. 24 MCP tools, 27 API endpoints, live on Base mainnet + Celo mainnet. Built by two AI agents orchestrated by one human.
+A treasury where AI agents can only spend accrued yield — never principal. Agents deploy yield into Uniswap trading strategies on Base, all policy-gated with separate swap caps and slippage limits. Trust-gated payments via ERC-8004 identity verification. Other agents pay USDC to use the service via x402. MetaMask Delegation caveats enforce permissions onchain. ENS subdomains (morke.eth) for agent identity. 24 MCP tools, 34 API endpoints, live on Base mainnet + Celo mainnet. Built by two AI agents orchestrated by one human.
 
 ## Description (long)
 AI agents are increasingly autonomous, but their financial authority is binary — either no access or full wallet control. Neither works for production systems.
@@ -35,7 +35,7 @@ On Base mainnet, the contract uses a Chainlink oracle for the wstETH/stETH excha
 
 **Multi-agent architecture:** Three agent roles (proposer/executor/auditor) with freeze/unfreeze controls. The auditor can halt any agent's spending. The proposer submits plans, the executor signs transactions, and the auditor monitors everything — separation of duties enforced at the API level.
 
-**MetaMask Delegation Framework:** Defense-in-depth via ERC-7710/ERC-7715 delegations. The owner creates a delegation to the agent with caveats (AllowedTargets, AllowedMethods, ERC20TransferAmount, Timestamp, LimitedCalls) that mirror the policy engine constraints. Even if the offchain policy is bypassed, onchain caveats protect the treasury.
+**MetaMask Delegation Framework:** Defense-in-depth via ERC-7710/ERC-7715 delegations. The owner creates a delegation to the agent with caveats (AllowedTargets, AllowedMethods, ERC20TransferAmount, Timestamp, LimitedCalls) that mirror the policy engine constraints. Even if the offchain policy is bypassed, onchain caveats protect the treasury. Both the owner EOA and agent EOA are now live EIP-7702 smart accounts on Base mainnet via MetaMask's EIP7702StatelessDeleGator v1.3.0 — this is real on-chain delegation, not just SDK integration.
 
 **MoonPay CLI bridge:** 54 crypto tools across 10+ chains (Base, Ethereum, Arbitrum, Polygon, etc.) integrated as an alternative execution backend, all policy-gated through the same engine.
 
@@ -82,8 +82,13 @@ Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Sol
 - Permit2 Approval TX: [`0x536b75...`](https://basescan.org/tx/0x536b75fd78f78106db68efcd3cdd7d162e8c6fe074e81dffa5841f8b888f462d)
 - Celo Treasury: [`0xc976e4...`](https://celoscan.io/address/0xc976e463bd209e09cb15a168a275890b872aa1f0)
 - Celo Deploy TX: [`0x4a6058...`](https://celoscan.io/tx/0x4a6058ba5169e2db9dff908ed4bc5b2f8d96db70828244e84fde2e7de1095d12)
+- Celo spendYield TX: [`0xaac5f8...`](https://celoscan.io/tx/0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5) — agent spent yield on Celo mainnet
+- Celo Uniswap Swap TX: [`0x0e1e99...`](https://celoscan.io/tx/0x0e1e99c29c5145c97076e11759ce6cb842c704e3908a59b09ced889c093b9cee) — 100 CELO → USDC via Uniswap V3
+- MetaMask EIP-7702 Delegation (owner EOA): [`0x1a97c5...`](https://basescan.org/tx/0x1a97c54d3633f725e36d83b7c2535b054d296f868b20c0f1e0fbb076601e0f9c) — `0x1101...70e` → EIP7702StatelessDeleGator v1.3.0 on Base mainnet
+- MetaMask EIP-7702 Delegation (agent EOA): [`0x6f3a90...`](https://basescan.org/tx/0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e) — `0x4fD6...ce6` → same DeleGator contract on Base mainnet
+- DelegationManager: [`0xdb9B1e...`](https://basescan.org/address/0xdb9B1e94B5b69Df7e401DDbedE43491141047dB3)
 
 ## Team
 - Oscar (human) — architect, orchestrator, funder
 - Bagel (AI agent, Cursor) — contract developer, on-chain architecture
-- Claude Code (AI agent, CLI) — systems engineer (10 packages, 24 MCP tools, 27 endpoints)
+- Claude Code (AI agent, CLI) — systems engineer (10 packages, 24 MCP tools, 34 endpoints)

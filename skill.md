@@ -185,7 +185,7 @@ Set up a Dollar Cost Averaging order via MoonPay CLI. Automatically buys a token
 
 ---
 
-## REST API (27 endpoints)
+## REST API (34 endpoints)
 
 Base URL: `{API_URL}` (default `http://localhost:3001`)
 
@@ -260,6 +260,23 @@ Base URL: `{API_URL}` (default `http://localhost:3001`)
 |--------|------|-------------|
 | `GET` | `/ens/identities` | All ENS identities for treasury participants (morke.eth subdomains) |
 | `GET` | `/ens/resolve/{name}` | Resolve ENS name to address or address to ENS name |
+
+### Trading Performance
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/swap/strategies` | Configured trading strategies with allocation percentages |
+| `GET` | `/trading/performance` | PnL tracking — aggregated swap results from audit log |
+| `GET` | `/trading/strategies` | Trading strategies enriched with execution counts and stats |
+
+### Monitoring & Onboarding
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/monitoring/status` | System health dashboard (uptime, treasury, active alerts) |
+| `GET` | `/monitoring/alerts` | Spend velocity, denial rate, frozen agent alerts |
+| `POST` | `/monitoring/webhook` | Register webhook for event-driven alerts |
+| `GET` | `/onboarding/status` | Agent self-discovery protocol (capabilities, boot sequence) |
 
 ---
 

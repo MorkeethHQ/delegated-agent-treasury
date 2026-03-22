@@ -12,7 +12,7 @@
 | Policy engine | `policy-engine/` | Working — transfer + swap caps |
 | Approval store | `approval-store/` | Working |
 | Audit logger | `audit-log/` | Working |
-| REST API | `apps/api/` | 22 endpoints |
+| REST API | `apps/api/` | 34 endpoints |
 | CLI | `apps/cli/` | 9 commands |
 | Agent loop | `apps/agent-loop/` | Governance-aware, strategy-aware |
 | MCP server | `mcp-server/` | 24 tools |
@@ -32,12 +32,15 @@
 - API endpoints: `/strategy`, `/strategy/preview`, `/verify/:address`, `/x402/pricing` all respond
 - Demo script: 12-step flow runs end-to-end in API-only mode
 
-### What's NOT Tested (needs morning attention)
+### What's Been Tested Live (March 21)
 
-- [ ] Live swap execution (dry_run=false) — needs wallet signer wired up
-- [ ] x402 with real USDC payment — disabled by default, needs ENABLE_X402=true
-- [ ] Agent loop with trading strategies — loop uses bucket distribution, not yet wired to trading engine
-- [ ] Full on-chain flow with mainnet treasury + Uniswap swap
+- [x] Live Uniswap swap on Base mainnet — WETH→USDC [`0x9e3874...`](https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9)
+- [x] x402 payment gating — full 402 challenge-response cycle with pricing, paid/free endpoint separation
+- [x] Agent loop against live Base treasury — reads yield, checks governance, evaluates 3-bucket + 3 trading strategies
+- [x] Full Celo on-chain flow — 100 CELO → USDC → stataUSDC → Treasury deposit → setAgent → addRecipient → spendYield
+- [x] Celo spendYield executed — agent spent accrued yield on Celo mainnet [`0xaac5f8...`](https://celoscan.io/tx/0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5)
+- [x] MetaMask EIP-7702 delegation — owner EOA delegated to EIP7702StatelessDeleGator v1.3.0 on Base mainnet [`0x1a97c5...`](https://basescan.org/tx/0x1a97c54d3633f725e36d83b7c2535b054d296f868b20c0f1e0fbb076601e0f9c)
+- [x] MetaMask EIP-7702 delegation — agent EOA delegated to same DeleGator contract on Base mainnet [`0x6f3a90...`](https://basescan.org/tx/0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e)
 
 ---
 
@@ -70,7 +73,7 @@
 - [ ] **Review trading-engine flow** in `packages/trading-engine/src/index.ts` — especially the checkApproval → quote → sign → /swap → broadcast path
 - [ ] **Optional: Wire live execution** — Steps 3-5 in executeSwap() need a wallet signer to sign permitData and broadcast. Currently dry-run only.
 - [ ] **Optional: Verify contract on Basescan** via `forge verify-contract`
-- [ ] **Optional: Celo deployment** — same Solidity, different chain. $5K bounty if worth the time.
+- [x] **Celo deployment** — deployed + full E2E spendYield executed on mainnet
 
 ## Morning Checklist — Claude
 
@@ -81,19 +84,21 @@
 
 ---
 
-## Bounty Targets (9 tracks, ~$62.5K potential)
+## Bounty Targets (11 tracks, ~$77.5K potential)
 
-| Track | Prize | Status |
-|-------|-------|--------|
-| Synthesis Open Track | ~$28K | Ready |
-| stETH Agent Treasury (Lido) | $3K | Ready |
-| Lido MCP | $5K | Ready (24 tools) |
-| Agents With Receipts — ERC-8004 | $4K | Ready (trust-gating) |
-| Agentic Finance (Uniswap) | $5K | Ready (live swap on Base mainnet) |
-| Agent Services on Base | $5K | Ready (x402 gateway) |
-| Let the Agent Cook (Protocol Labs) | $4K | Ready (multi-agent, ERC-8004, agent.json) |
-| Autonomous Trading Agent (Base) | $5K | Ready (DCA strategies, policy-gated) |
-| MoonPay CLI Agents | $3.5K | Ready (bridge + 3 MCP tools) |
+| Track | Prize | Status | Evidence |
+|-------|-------|--------|----------|
+| Synthesis Open Track | ~$28K | Ready | Cross-sponsor integration across all partners |
+| stETH Agent Treasury (Lido) | $3K | Ready | Live mainnet treasury + Sepolia E2E |
+| Lido MCP | $5K | Ready | 24 tools, dry_run on all writes |
+| Agents With Receipts — ERC-8004 | $4K | Ready | Registration TX + trust-gated payments |
+| Agentic Finance (Uniswap) | $5K | Ready | Live swap [`0x9e3874...`](https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9) |
+| Agent Services on Base | $5K | Ready | x402 gateway, multi-agent roles |
+| Let the Agent Cook (Protocol Labs) | $4K | Ready | agent.json, agent_log.json, autonomous loop |
+| Autonomous Trading Agent (Base) | $5K | Ready | DCA strategies + live swap proof |
+| MoonPay CLI Agents | $3.5K | Ready | 54-tool bridge, 10+ chains |
+| Best Use of Delegations (MetaMask) | $10K | **STRONG** | ERC-7710 caveats + live EIP-7702 on Base mainnet (owner + agent both delegated) |
+| Best Agent on Celo | $5K | Ready | spendYield executed [`0xaac5f8...`](https://celoscan.io/tx/0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5) |
 
 ## Policy Config
 
