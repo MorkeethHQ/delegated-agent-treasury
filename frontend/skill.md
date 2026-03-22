@@ -22,7 +22,7 @@ Every action is logged to an append-only audit trail.
 
 ---
 
-## MCP Tools (25 tools)
+## MCP Tools (28 tools)
 
 Connect via MCP server at `packages/mcp-server`. These are the direct on-chain and protocol tools an agent can call.
 

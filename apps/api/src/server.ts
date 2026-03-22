@@ -1528,6 +1528,18 @@ async function handleOnboardingStatus(_req: IncomingMessage, res: ServerResponse
       : 'No webhooks — alerts only via GET /monitoring/alerts polling',
   });
 
+  // Capability 9: Emergency drain / freeze
+  const safeHavenWallet = process.env.SAFE_HAVEN_WALLET ?? '';
+  capabilities.push({
+    id: 'emergency_drain',
+    capability: 'Emergency drain / freeze to safe-haven wallet',
+    ready: !!safeHavenWallet,
+    detail: safeHavenWallet
+      ? `Safe-haven wallet configured: ${safeHavenWallet}`
+      : 'SAFE_HAVEN_WALLET not set — emergency drain/freeze disabled. Operators MUST configure their own SAFE_HAVEN_WALLET address before using freeze/drain. This must NOT default to any specific address.',
+    resolve: safeHavenWallet ? undefined : 'Set SAFE_HAVEN_WALLET env var to your own secure wallet address. This is the destination for emergency drain/freeze operations. It must be an address you control — there is no default.',
+  });
+
   const readyCount = capabilities.filter(c => c.ready).length;
   const coreReady = capabilities.filter(c => ['treasury_contract', 'signer', 'policy', 'strategy'].includes(c.id)).every(c => c.ready);
 
@@ -1537,6 +1549,11 @@ async function handleOnboardingStatus(_req: IncomingMessage, res: ServerResponse
     readiness: `${readyCount}/${capabilities.length} capabilities online`,
     mode: coreReady ? 'full-autonomous' : (readyCount >= 3 ? 'limited-autonomous' : 'simulation'),
     capabilities,
+    emergencyDrain: {
+      configured: !!safeHavenWallet,
+      safeHavenWallet: safeHavenWallet || null,
+      note: 'Operators MUST configure their own SAFE_HAVEN_WALLET env var before using freeze/drain. This address receives all funds during an emergency drain. It must NOT default to any specific address — each operator must set their own secure destination.',
+    },
     bootSequence: {
       description: 'Agent bootstrap protocol — call in order to self-configure',
       steps: [

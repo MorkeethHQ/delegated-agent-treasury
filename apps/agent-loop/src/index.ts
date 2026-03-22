@@ -19,6 +19,8 @@ const API = process.env.API_URL ?? 'http://localhost:3001';
 const INTERVAL_MS = Number(process.env.LOOP_INTERVAL_MS ?? 5 * 60 * 1000); // 5 min default
 const YIELD_THRESHOLD = Number(process.env.YIELD_THRESHOLD ?? 0.001); // min wstETH to trigger spend
 const SPEND_RECIPIENT = process.env.SPEND_RECIPIENT ?? '';
+const SPEND_FRACTION = Number(process.env.SPEND_FRACTION ?? 0.5); // fraction of yield to spend per tick
+const SPEND_FIXED = process.env.SPEND_FIXED ? Number(process.env.SPEND_FIXED) : undefined; // fixed amount per tick (overrides fraction)
 const AGENT_ID = process.env.AGENT_ID ?? 'bagel';
 const USE_DELEGATION = process.env.USE_DELEGATION === 'true';
 const SNAPSHOT_GRAPHQL = 'https://hub.snapshot.org/graphql';
@@ -266,7 +268,7 @@ async function tickSingleRecipient(yieldAvailable: number, perTxCap: number): Pr
   }
 
   // Submit plan through policy engine (or delegation chain if USE_DELEGATION=true)
-  const spendAmount = Math.min(yieldAvailable * 0.5, perTxCap);
+  const spendAmount = Math.min(SPEND_FIXED ?? yieldAvailable * SPEND_FRACTION, perTxCap);
   const reason = `Autonomous yield spend — ${yieldAvailable.toFixed(6)} available, no risky governance`;
   log('INFO', `Submitting spend plan${USE_DELEGATION ? ' (delegation mode)' : ''}: ${spendAmount} wstETH -> ${SPEND_RECIPIENT}`);
 
@@ -336,7 +338,7 @@ async function tickWithTradingStrategies(
           amount: amountWei,
           strategy: strategy.strategyId,
           reason: `Trading strategy [${strategy.strategyId}] "${strategy.label}" — ${yieldAvailable.toFixed(6)} yield available`,
-          dryRun: true,  // Always dry run in autonomous mode for safety
+          dryRun: false,  // Live execution — policy engine enforces safety bounds
         }),
       });
 
