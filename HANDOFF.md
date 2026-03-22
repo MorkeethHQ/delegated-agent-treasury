@@ -42,6 +42,8 @@
 - [x] MetaMask EIP-7702 delegation — owner EOA delegated to EIP7702StatelessDeleGator v1.3.0 on Base mainnet [`0x1a97c5...`](https://basescan.org/tx/0x1a97c54d3633f725e36d83b7c2535b054d296f868b20c0f1e0fbb076601e0f9c)
 - [x] MetaMask EIP-7702 delegation — agent EOA delegated to same DeleGator contract on Base mainnet [`0x6f3a90...`](https://basescan.org/tx/0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e)
 - [x] MoonPay CLI execution — v1.12.4 installed, wallet imported (treasury-agent `0x1101...70e`), 0.10 USDC transferred to morke.eth on Base mainnet [`0x82c733...`](https://basescan.org/tx/0x82c733d5acbcbbe441e3118ecfc3a45e5ac78544ca42a522e27f9d00ce46a96c)
+- [x] addRecipient on Base mainnet — owner whitelisted morke.eth as recipient on Base mainnet contract [`0xbc213e...`](https://basescan.org/tx/0xbc213e0f341b74b28e95d15c3c165bd8e6ae1719d101f2f5bcf6033eff5aceaa)
+- [x] **AUTONOMOUS spendYield on Base mainnet** — agent loop (`0x3d7d7712ad32efD8Cb05249d0C7a3De1B1A3bb43`) autonomously read treasury state, computed 50% yield spend (~0.0000001237 wstETH), submitted plan, received auto-approval, and executed `spendYield()` on-chain with zero human intervention [`0x13bf6f...`](https://basescan.org/tx/0x13bf6fdca6796982ab201eeac4c35594402819e2bd47aff25fb28cd992893515)
 
 ---
 
@@ -95,7 +97,7 @@
 | Agents With Receipts — ERC-8004 | $4K | Ready | Registration TX + trust-gated payments |
 | Agentic Finance (Uniswap) | $5K | Ready | Live swap [`0x9e3874...`](https://basescan.org/tx/0x9e387425cfddde0d2809d36a154b667ea37e8ea93a5943dda2c97416bc375ae9) |
 | Agent Services on Base | $5K | Ready | x402 gateway, multi-agent roles |
-| Let the Agent Cook (Protocol Labs) | $4K | Ready | agent.json, agent_log.json, autonomous loop |
+| Let the Agent Cook (Protocol Labs) | $4K | **EXECUTED** | Autonomous spendYield on Base mainnet — no humans [`0x13bf6f...`](https://basescan.org/tx/0x13bf6fdca6796982ab201eeac4c35594402819e2bd47aff25fb28cd992893515) |
 | Autonomous Trading Agent (Base) | $5K | Ready | DCA strategies + live swap proof |
 | MoonPay CLI Agents | $3.5K | **EXECUTED** | 54-tool bridge + live TX: 0.10 USDC → morke.eth [`0x82c733...`](https://basescan.org/tx/0x82c733d5acbcbbe441e3118ecfc3a45e5ac78544ca42a522e27f9d00ce46a96c) |
 | Best Use of Delegations (MetaMask) | $10K | **STRONG** | ERC-7710 caveats + live EIP-7702 on Base mainnet (owner + agent both delegated) |
