@@ -83,6 +83,25 @@ export interface X402PricingEntry {
   payTo: string;
 }
 
+export interface PaymentReceipt {
+  id: string;
+  timestamp: string;
+  method: string;
+  path: string;
+  amountUSDC: string;
+  amountAtomic: string;
+  payer?: string;
+  transaction?: string;
+  network: typeof NETWORK;
+}
+
+export interface PaymentStats {
+  totalPayments: number;
+  totalUSDCEarned: string;
+  totalAtomicEarned: string;
+  lastPaymentAt: string | null;
+}
+
 // --- Helpers ---
 
 function safeBase64Encode(data: string): string {
@@ -130,6 +149,8 @@ function matchRoute(routeKey: string, method: string, urlPath: string): boolean 
 
 export class X402Gateway {
   private config: Required<X402GatewayConfig>;
+  private receipts: PaymentReceipt[] = [];
+  private totalAtomicEarned = BigInt(0);
 
   constructor(config: X402GatewayConfig) {
     this.config = {
@@ -332,12 +353,54 @@ export class X402Gateway {
       return true;
     }
 
-    // Payment successful — add response header and let request proceed
-    console.log(`[x402] Payment settled: tx=${settleResult.transaction ?? 'n/a'}`);
+    // Payment successful — record receipt, add response header, and let request proceed
+    const receipt = this.recordReceipt(method, url, paymentRequirements, settleResult);
+    console.log(`[x402] Payment settled: tx=${settleResult.transaction ?? 'n/a'} receipt=${receipt.id} payer=${settleResult.payer ?? 'unknown'} amount=${receipt.amountUSDC}`);
     const paymentResponse = safeBase64Encode(JSON.stringify(settleResult));
     res.setHeader('x-payment-response', paymentResponse);
 
     return false; // Proceed to handler
+  }
+
+  /** Record a verified and settled payment receipt */
+  recordReceipt(
+    method: string,
+    url: string,
+    paymentRequirements: PaymentRequirements,
+    settleResult: SettleResponse,
+  ): PaymentReceipt {
+    const urlPath = url.split('?')[0];
+    const receipt: PaymentReceipt = {
+      id: `rcpt_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+      timestamp: new Date().toISOString(),
+      method,
+      path: urlPath,
+      amountUSDC: atomicToUsd(paymentRequirements.maxAmountRequired),
+      amountAtomic: paymentRequirements.maxAmountRequired,
+      payer: settleResult.payer,
+      transaction: settleResult.transaction,
+      network: NETWORK,
+    };
+    this.receipts.unshift(receipt); // newest first
+    this.totalAtomicEarned += BigInt(paymentRequirements.maxAmountRequired);
+    return receipt;
+  }
+
+  /** Return all payment receipts (newest first) */
+  getReceipts(): PaymentReceipt[] {
+    return [...this.receipts];
+  }
+
+  /** Return aggregate payment statistics */
+  getPaymentStats(): PaymentStats {
+    const totalAtomic = this.totalAtomicEarned;
+    const totalUSD = Number(totalAtomic) / 10 ** USDC_DECIMALS;
+    return {
+      totalPayments: this.receipts.length,
+      totalUSDCEarned: `$${totalUSD.toFixed(2)}`,
+      totalAtomicEarned: totalAtomic.toString(),
+      lastPaymentAt: this.receipts.length > 0 ? this.receipts[0].timestamp : null,
+    };
   }
 
   /** Get the full pricing table */

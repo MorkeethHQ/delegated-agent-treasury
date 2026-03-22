@@ -44,7 +44,7 @@
 
 | App | Purpose |
 |-----|---------|
-| `api` | REST API: 34 endpoints — evaluate, approvals, respond, audit, policy, treasury, strategy, verify, swap, x402, agents, moonpay |
+| `api` | REST API: 35 endpoints — evaluate, approvals, respond, audit, policy, treasury, strategy, verify, swap, x402, agents, moonpay |
 | `cli` | CLI: 9 commands — health, policy, evaluate, approvals, approve, deny, audit, treasury, demo |
 | `agent-loop` | Autonomous governance-aware yield spending agent — monitors treasury + Lido governance, decides spend/hold |
 

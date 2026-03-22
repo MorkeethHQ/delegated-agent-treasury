@@ -904,6 +904,39 @@ const alertThresholds = {
 async function handleMonitoringStatus(_req: IncomingMessage, res: ServerResponse): Promise<void> {
   const policy = await readJsonFile<Policy>(policyPath);
 
+  // Read audit events for daily spend and last activity
+  let auditEvents: AuditEvent[] = [];
+  try {
+    const raw = await readFile(auditLogPath, 'utf-8');
+    auditEvents = raw.trim().split('\n').filter(Boolean).map(line => JSON.parse(line) as AuditEvent);
+  } catch { /* no events yet */ }
+
+  const now = Date.now();
+  const oneDayAgo = now - 86400000;
+  const dailyExecutions = auditEvents.filter(
+    e => e.type === 'execution_result' && new Date(e.timestamp).getTime() > oneDayAgo,
+  );
+
+  // Sum daily spend from execution events
+  let spentToday = 0;
+  for (const ev of dailyExecutions) {
+    const evData = ev as unknown as Record<string, unknown>;
+    const amt = evData.amount ?? evData.value ?? (evData.result as Record<string, unknown> | undefined)?.amount;
+    if (typeof amt === 'number') spentToday += amt;
+    else if (typeof amt === 'string') spentToday += parseFloat(amt) || 0;
+  }
+
+  const dailyCap = typeof policy.dailyCap === 'number' ? policy.dailyCap : parseFloat(String(policy.dailyCap ?? '0')) || 0;
+  const spentTodayPct = dailyCap > 0 ? Math.min(100, Math.round((spentToday / dailyCap) * 10000) / 100) : null;
+
+  // Pending approvals count
+  const pendingApprovals = listApprovals({ status: 'pending' });
+
+  // Last activity timestamp
+  const lastActivity = auditEvents.length > 0
+    ? auditEvents[auditEvents.length - 1]!.timestamp
+    : null;
+
   // Build comprehensive system status
   const status: Record<string, unknown> = {
     system: {
@@ -921,6 +954,14 @@ async function handleMonitoringStatus(_req: IncomingMessage, res: ServerResponse
       maxSwapPerAction: (policy as unknown as Record<string, unknown>).maxSwapPerAction,
       maxSlippageBps: (policy as unknown as Record<string, unknown>).maxSlippageBps,
     },
+    spend: {
+      spentToday,
+      dailyCap,
+      spentTodayPct,
+      dailyExecutions: dailyExecutions.length,
+    },
+    approvalsPending: pendingApprovals.length,
+    lastActivity,
     alertThresholds,
     webhooks: registeredWebhooks.length,
   };
@@ -1031,12 +1072,58 @@ async function handleMonitoringAlerts(_req: IncomingMessage, res: ServerResponse
     });
   }
 
+  // Principal protection alert — check if on-chain principal has dropped vs a reasonable baseline
+  if (executor) {
+    try {
+      const tState = await executor.treasuryState();
+      const principalNum = parseFloat(tState.principal.formatted);
+      // Baseline: principal should be > 0; if it has dropped to near-zero flag it
+      if (principalNum > 0 && principalNum < 0.01) {
+        alerts.push({
+          severity: 'critical',
+          type: 'principal_protection',
+          message: `Principal critically low (${tState.principal.formatted} ETH) — treasury may be draining`,
+          data: { principal: tState.principal.formatted, threshold: '0.01' },
+        });
+      } else if (principalNum === 0) {
+        alerts.push({
+          severity: 'critical',
+          type: 'principal_protection',
+          message: 'Principal has reached zero — treasury is empty',
+          data: { principal: '0' },
+        });
+      }
+    } catch { /* executor unreachable — skip principal check */ }
+  }
+
+  // Approval timeout alert — flag any approvals pending for more than 1 hour
+  const allPending = listApprovals({ status: 'pending' });
+  const timedOutApprovals = allPending.filter(a => {
+    const age = now - new Date(a.createdAt).getTime();
+    return age > 3600000; // 1 hour
+  });
+  if (timedOutApprovals.length > 0) {
+    alerts.push({
+      severity: 'warning',
+      type: 'approval_timeout',
+      message: `${timedOutApprovals.length} approval(s) have been pending for more than 1 hour`,
+      data: {
+        count: timedOutApprovals.length,
+        approvalIds: timedOutApprovals.map(a => a.approvalId),
+        oldest: timedOutApprovals.reduce((oldest, a) =>
+          a.createdAt < oldest ? a.createdAt : oldest, timedOutApprovals[0]!.createdAt),
+      },
+    });
+  }
+
   return sendJson(res, 200, {
     alerts,
     summary: {
       totalEvents: events.length,
       lastHour: { spends: recentSpends.length, denials: recentDenials.length, total: recentEvents.length },
       lastDay: { approvals: dailyApprovals.length, total: dailyEvents.length },
+      pendingApprovals: allPending.length,
+      timedOutApprovals: timedOutApprovals.length,
     },
     thresholds: alertThresholds,
     note: 'Register webhooks via POST /monitoring/webhook to receive alerts programmatically.',
@@ -1060,9 +1147,30 @@ async function handleWebhookRegister(req: IncomingMessage, res: ServerResponse):
 
   registeredWebhooks.push(webhook);
 
+  // Fire a test webhook so the registrant can verify delivery
+  let testDelivery: { success: boolean; statusCode?: number; error?: string } = { success: false };
+  try {
+    const testPayload = {
+      event: 'webhook_test',
+      message: 'Delegated Agent Treasury — webhook registration confirmed',
+      registeredAt: webhook.registeredAt,
+      subscribedEvents: webhook.events,
+    };
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-treasury-event': 'webhook_test' },
+      body: JSON.stringify(testPayload),
+      signal: AbortSignal.timeout(5000),
+    });
+    testDelivery = { success: resp.ok, statusCode: resp.status };
+  } catch (err) {
+    testDelivery = { success: false, error: err instanceof Error ? err.message : String(err) };
+  }
+
   return sendJson(res, 201, {
     registered: true,
     webhook,
+    testDelivery,
     supportedEvents: [
       'plan_evaluated',
       'approval_requested',
@@ -1224,10 +1332,11 @@ async function handleENSIdentities(_req: IncomingMessage, res: ServerResponse): 
   });
 }
 
-// --- x402 Pricing handler ---
+// --- x402 handlers ---
 
 async function handleX402Pricing(_req: IncomingMessage, res: ServerResponse): Promise<void> {
   const pricing = x402.getPricingTable();
+  const stats = x402.getPaymentStats();
   return sendJson(res, 200, {
     x402: {
       enabled: x402.enabled,
@@ -1239,6 +1348,11 @@ async function handleX402Pricing(_req: IncomingMessage, res: ServerResponse): Pr
       assetSymbol: 'USDC',
       payTo: '0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6',
     },
+    stats: {
+      totalPayments: stats.totalPayments,
+      totalUSDCEarned: stats.totalUSDCEarned,
+      lastPaymentAt: stats.lastPaymentAt,
+    },
     endpoints: pricing,
     freeEndpoints: [
       'GET /health',
@@ -1247,11 +1361,29 @@ async function handleX402Pricing(_req: IncomingMessage, res: ServerResponse): Pr
       'GET /swap/tokens',
       'GET /audit',
       'GET /x402/pricing',
+      'GET /x402/receipts',
     ],
     usage: {
       description: 'Send requests with X-PAYMENT header containing a base64-encoded signed USDC TransferWithAuthorization payload. Requests without payment receive HTTP 402 with payment instructions.',
       docs: 'https://x402.org',
     },
+  });
+}
+
+async function handleX402Receipts(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const receipts = x402.getReceipts();
+  const stats = x402.getPaymentStats();
+  return sendJson(res, 200, {
+    stats: {
+      totalPayments: stats.totalPayments,
+      totalUSDCEarned: stats.totalUSDCEarned,
+      totalAtomicEarned: stats.totalAtomicEarned,
+      lastPaymentAt: stats.lastPaymentAt,
+    },
+    receipts,
+    note: receipts.length === 0
+      ? 'No payments received yet. Enable x402 gating with ENABLE_X402=true and send a request with a valid X-PAYMENT header.'
+      : `${receipts.length} payment(s) verified and settled on Base mainnet.`,
   });
 }
 
@@ -1277,9 +1409,13 @@ const server = createServer(async (req, res) => {
     const handled = await x402.handlePaymentGating(req, res);
     if (handled) return;
 
-    // --- x402 pricing endpoint (always free) ---
+    // --- x402 endpoints (always free) ---
     if (req.method === 'GET' && url === '/x402/pricing') {
       return await handleX402Pricing(req, res);
+    }
+
+    if (req.method === 'GET' && url === '/x402/receipts') {
+      return await handleX402Receipts(req, res);
     }
 
     if (req.method === 'GET' && url === '/health') {

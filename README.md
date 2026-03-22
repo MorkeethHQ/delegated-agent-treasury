@@ -221,7 +221,7 @@ The treasury supports three agent roles:
 
 Agents are registered in `config/agents.json`. The auditor can freeze any agent's spending — frozen agents have all plans denied until unfrozen by an admin.
 
-## API endpoints (34)
+## API endpoints (35)
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -243,7 +243,8 @@ Agents are registered in `config/agents.json`. The auditor can freeze any agent'
 | GET | `/moonpay/status` | MoonPay CLI connection status and config |
 | POST | `/moonpay/swap` | Execute swap via MoonPay CLI (policy-gated) |
 | GET | `/moonpay/tools` | List available MoonPay tools |
-| GET | `/x402/pricing` | x402 payment pricing table |
+| GET | `/x402/pricing` | x402 payment pricing table + stats |
+| GET | `/x402/receipts` | Verified x402 payment receipts |
 | GET | `/agents` | List all registered agents with roles |
 | GET | `/agents/:id` | Get agent profile |
 | POST | `/agents/:id/freeze` | Auditor: freeze agent spending |
