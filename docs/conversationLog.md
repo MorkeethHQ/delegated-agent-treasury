@@ -1,7 +1,7 @@
 # Conversation Log — Human-Agent Collaboration
 
 ## Project
-Synthesis Agent Treasury — yield-only spending for AI agents, backed by wstETH on Base.
+Open Bound Onchain Money Maker — yield-only spending for AI agents, backed by wstETH on Base.
 
 ## Participants
 - **Oscar** (human) — architect, orchestrator, funder
@@ -55,9 +55,9 @@ Synthesis Agent Treasury — yield-only spending for AI agents, backed by wstETH
 **Oscar:** "Funny you said it would take 8 hours but you did it in 10 minutes."
 
 **Bounty research:** Claude Code analyzed all 46 hackathon bounties. Identified 3 realistic targets:
-- Lido stETH Agent Treasury ($3K)
-- Lido MCP Server ($5K)
-- Synthesis Open Track (~$28K)
+- Lido stETH Agent Treasury
+- Lido MCP Server
+- Synthesis Open Track
 
 ### Day 2 — Innovation Push
 
@@ -159,7 +159,7 @@ Oscar decides direction
 1. **Web UI → CLI + skill.md + MCP** — Oscar's call. Right decision for agent-native judges.
 2. **Testnet only → Dual-chain** — Claude identified mainnet as innovation differentiator. Oscar funded it.
 3. **ERC-8004 identity** — Discovered mid-hackathon. Not in original scope but adds verifiable on-chain agent identity.
-4. **Governance tool** — Added after bounty audit revealed it was a hard requirement for $5K MCP bounty.
+4. **Governance tool** — Added after bounty audit revealed it was a hard requirement for the Lido MCP track.
 5. **Autonomous agent loop** — Added to transform from permission layer into actual autonomous agent with governance awareness.
 6. **Chainlink oracle pivot** — L2 wstETH doesn't expose `stEthPerToken()`. Redeployed with Chainlink price feed. Real L2 engineering problem solved under pressure.
 

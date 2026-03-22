@@ -145,12 +145,12 @@
 
 | Track | Sponsor | UUID | Fit |
 |-------|---------|------|-----|
-| stETH Agent Treasury | Lido Labs Foundation ($3K) | `5e445a077b5248e0974904915f76e1a0` | Strong |
-| Lido MCP | Lido Labs Foundation ($5K) | `ee885a40e4bc4d3991546cec7a4433e2` | Strong |
-| Synthesis Open Track | Synthesis Community (~$28K) | `fdb76d08812b43f6a5f454744b66f590` | Universal |
-| Agents With Receipts — ERC-8004 | Protocol Labs ($4K) | `3bf41be958da497bbb69f1a150c76af9` | Strong |
-| Agentic Finance (Best Uniswap API Integration) | Uniswap ($5K) | — | Strong |
-| Agent Services on Base | Base ($5K) | — | Strong |
-| Let the Agent Cook — No Humans Required | Protocol Labs ($4K) | — | Strong |
-| Autonomous Trading Agent | Base ($5K) | — | Strong |
-| MoonPay CLI Agents | MoonPay ($3.5K) | — | Strong |
+| stETH Agent Treasury | Lido Labs Foundation | `5e445a077b5248e0974904915f76e1a0` | Strong |
+| Lido MCP | Lido Labs Foundation | `ee885a40e4bc4d3991546cec7a4433e2` | Strong |
+| Synthesis Open Track | Synthesis Community | `fdb76d08812b43f6a5f454744b66f590` | Universal |
+| Agents With Receipts — ERC-8004 | Protocol Labs | `3bf41be958da497bbb69f1a150c76af9` | Strong |
+| Agentic Finance (Best Uniswap API Integration) | Uniswap | — | Strong |
+| Agent Services on Base | Base | — | Strong |
+| Let the Agent Cook — No Humans Required | Protocol Labs | — | Strong |
+| Autonomous Trading Agent | Base | — | Strong |
+| MoonPay CLI Agents | MoonPay | — | Strong |

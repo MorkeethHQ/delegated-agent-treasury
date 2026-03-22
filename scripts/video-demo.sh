@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ══════════════════════════════════════════════════════════════
-# Yieldbound — 90-second Demo for Judges
+# Open Bound — 90-second Demo for Judges
 # Designed for screen recording. Paced for readability.
 # ══════════════════════════════════════════════════════════════
 set -uo pipefail
@@ -21,7 +21,7 @@ clear
 echo ""
 echo -e "${BOLD}╔════════════════════════════════════════════════════════════════╗${RESET}"
 echo -e "${BOLD}║                                                                ║${RESET}"
-echo -e "${BOLD}║   ${CYAN}YIELDBOUND${RESET}${BOLD}                                                  ║${RESET}"
+echo -e "${BOLD}║   ${CYAN}OPEN BOUND${RESET}${BOLD}                                                  ║${RESET}"
 echo -e "${BOLD}║   Bounded financial authority for autonomous agents            ║${RESET}"
 echo -e "${BOLD}║                                                                ║${RESET}"
 echo -e "${BOLD}║   Live on Base mainnet • 35 API endpoints • 18 on-chain TXs   ║${RESET}"

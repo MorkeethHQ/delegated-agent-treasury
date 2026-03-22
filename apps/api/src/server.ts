@@ -14,7 +14,7 @@ import {
 } from '../../../packages/approval-store/src/index.js';
 import { createExecutor, type Executor } from '../../../packages/executor/src/index.js';
 import { verifyCounterpartyIdentity } from '../../../packages/executor/src/erc8004.js';
-import { createTreasuryDelegation, policyToCaveatMapping, describeDelegation, buildDelegationChain } from '../../../packages/executor/src/delegation.js';
+import { createTreasuryDelegation, redeemTreasuryDelegation, signTreasuryDelegation, policyToCaveatMapping, describeDelegation, buildDelegationChain } from '../../../packages/executor/src/delegation.js';
 import { resolveENS, reverseResolveENS, enrichWithENS, getENSIdentities } from '../../../packages/executor/src/ens.js';
 import type { ActionPlan, AuditEvent, Policy, DistributionPlan, AgentProfile } from '../../../packages/shared/src/index.js';
 import { loadStrategy, computeDistribution } from '../../../packages/strategy-engine/src/index.js';
@@ -31,9 +31,14 @@ import {
   getMoonPayStatus,
   executeMoonPaySwap,
   executeMoonPayDCA,
+  getMoonPayQuote,
+  getMoonPayBalance,
+  executeMoonPayBridge,
+  getMoonPayPortfolio,
   listMoonPayTools,
   type MoonPaySwapParams,
   type MoonPayDCAParams,
+  type MoonPayBridgeParams,
 } from '../../../packages/moonpay-bridge/src/index.js';
 
 const root = process.cwd();
@@ -817,6 +822,112 @@ async function handleMoonPayTools(_req: IncomingMessage, res: ServerResponse): P
   }
 }
 
+async function handleMoonPayQuote(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  try {
+    const reqUrl = new URL(req.url ?? '', `http://${req.headers.host}`);
+    const fromToken = reqUrl.searchParams.get('fromToken');
+    const toToken = reqUrl.searchParams.get('toToken');
+    const amount = reqUrl.searchParams.get('amount');
+    const chain = reqUrl.searchParams.get('chain');
+
+    if (!fromToken || !toToken || !amount) {
+      return sendJson(res, 400, { error: 'Missing required query params: fromToken, toToken, amount' });
+    }
+
+    const quoteResult = await getMoonPayQuote({
+      fromToken,
+      toToken,
+      amount,
+      chain: chain ?? 'base',
+    });
+
+    return sendJson(res, 200, quoteResult);
+  } catch (error) {
+    return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
+  }
+}
+
+async function handleMoonPayBalance(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  try {
+    const reqUrl = new URL(req.url ?? '', `http://${req.headers.host}`);
+    const token = reqUrl.searchParams.get('token');
+    const chain = reqUrl.searchParams.get('chain');
+
+    if (!token || !chain) {
+      return sendJson(res, 400, { error: 'Missing required query params: token, chain' });
+    }
+
+    const balanceResult = await getMoonPayBalance(token, chain);
+    return sendJson(res, 200, balanceResult);
+  } catch (error) {
+    return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
+  }
+}
+
+async function handleMoonPayBridge(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  try {
+    const body = await parseBody(req);
+    const { agentId, token, amount, fromChain, toChain, reason, dryRun = true } = JSON.parse(body) as {
+      agentId: string;
+      token: string;
+      amount: string;
+      fromChain: string;
+      toChain: string;
+      reason: string;
+      dryRun?: boolean;
+    };
+
+    if (!agentId || !token || !amount || !fromChain || !toChain || !reason) {
+      return sendJson(res, 400, { error: 'Missing required fields: agentId, token, amount, fromChain, toChain, reason' });
+    }
+
+    // Evaluate through policy engine
+    const policy = await readJsonFile<Policy>(policyPath);
+    const plan: ActionPlan = {
+      planId: `moonpay-bridge-${Date.now()}`,
+      agentId,
+      type: 'swap',
+      amount: 0,
+      destination: toChain,
+      reason: `[MoonPay Bridge] ${reason}`,
+    };
+
+    await auditLog('plan_submitted', { plan, moonpay: { token, amount, fromChain, toChain, dryRun } });
+
+    const evalResult = evaluatePlan(policy, plan, { spentToday: await computeSpentToday(), frozenAgents });
+    await auditLog('plan_evaluated', { plan, result: evalResult });
+
+    if (evalResult.decision === 'denied') {
+      return sendJson(res, 403, { result: evalResult, message: 'MoonPay bridge denied by policy engine' });
+    }
+
+    if (evalResult.decision === 'approval_required') {
+      const approval = await createApproval(plan, evalResult);
+      await auditLog('approval_requested', { approval });
+      return sendJson(res, 200, { result: evalResult, approval, message: 'MoonPay bridge requires approval' });
+    }
+
+    // Approved — execute via MoonPay bridge
+    const bridgeParams: MoonPayBridgeParams = { token, amount, fromChain, toChain };
+
+    const bridgeResult = await executeMoonPayBridge(bridgeParams, dryRun);
+    await auditLog('execution_result', { plan, result: evalResult, moonpayBridge: bridgeResult });
+
+    return sendJson(res, 200, { result: evalResult, bridge: bridgeResult });
+  } catch (error) {
+    return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
+  }
+}
+
+async function handleMoonPayPortfolio(_req: IncomingMessage, res: ServerResponse): Promise<void> {
+  try {
+    const portfolioResult = await getMoonPayPortfolio();
+    return sendJson(res, 200, portfolioResult);
+  } catch (error) {
+    return sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
+  }
+}
+
 // --- Delegation handler ---
 
 async function handleDelegationCreate(req: IncomingMessage, res: ServerResponse): Promise<void> {
@@ -876,7 +987,17 @@ async function handleDelegationInfo(_req: IncomingMessage, res: ServerResponse):
       treasuryAddr,
     );
 
-    return sendJson(res, 200, chainResponse);
+    // Augment with delegation execution status
+    const delegationStatus = {
+      executionEnabled: !!executor && !!process.env.OWNER_PRIVATE_KEY,
+      lastExecutionTxHash: lastDelegationTxHash,
+      caveatEnforcement: frozenAgents.size > 0
+        ? 'degraded — one or more agents frozen, delegations revoked on-chain'
+        : 'active — all delegation caveats enforced by DelegationManager',
+      endpoint: 'POST /delegation/execute',
+    };
+
+    return sendJson(res, 200, { ...chainResponse, delegationStatus });
   } catch (error) {
     // Fallback: return basic info if policy can't be loaded
     const caveatMap = policyToCaveatMapping();
@@ -887,6 +1008,122 @@ async function handleDelegationInfo(_req: IncomingMessage, res: ServerResponse):
       description: 'Multi-agent delegation chain — see POST /delegation/create for live delegation.',
       caveatMapping: caveatMap,
       error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+// --- Delegation execution handler ---
+
+/** Track last delegation execution TX for status reporting */
+let lastDelegationTxHash: string | null = null;
+
+async function handleDelegationExecute(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  try {
+    const body = await parseBody(req);
+    const { to, amount, delegationMode } = JSON.parse(body) as {
+      to: string;
+      amount: number;
+      delegationMode?: boolean;
+    };
+
+    if (!to || !amount) {
+      return sendJson(res, 400, { error: 'Missing required fields: to, amount' });
+    }
+
+    if (!executor) {
+      return sendJson(res, 400, { error: 'Executor not configured — delegation execution requires treasury + agent + owner' });
+    }
+
+    const treasuryAddr = process.env.TREASURY_ADDRESS;
+    const wstethAddr = process.env.WSTETH_ADDRESS;
+    const ownerKey = process.env.OWNER_PRIVATE_KEY;
+    const chainEnv = (process.env.CHAIN as 'base' | 'base-sepolia') ?? 'base-sepolia';
+
+    if (!treasuryAddr || !wstethAddr || !ownerKey) {
+      return sendJson(res, 400, { error: 'Delegation execution requires TREASURY_ADDRESS, WSTETH_ADDRESS, and OWNER_PRIVATE_KEY' });
+    }
+
+    // Evaluate against policy first
+    const policy = await readJsonFile<Policy>(policyPath);
+    const plan: ActionPlan = {
+      planId: `delegation-${Date.now()}`,
+      agentId: 'executor',
+      type: 'transfer',
+      amount,
+      destination: to,
+      reason: 'Delegation-routed spendYield execution',
+    };
+
+    const spentToday = await computeSpentToday();
+    const evalResult = evaluatePlan(policy, plan, { spentToday, frozenAgents });
+    await auditLog('plan_evaluated', { plan, result: evalResult, delegationMode: true });
+
+    if (evalResult.decision === 'denied') {
+      return sendJson(res, 403, { result: evalResult, error: 'Plan denied by policy engine' });
+    }
+
+    if (evalResult.decision === 'approval_required') {
+      const approval = await createApproval(plan, evalResult);
+      await auditLog('approval_requested', { approval, delegationMode: true });
+      return sendJson(res, 200, { result: evalResult, approval, delegationMode: true });
+    }
+
+    // Create and sign delegation, then redeem on-chain
+    const amountStr = Number(amount).toFixed(18);
+    const amountWei = parseEther(amountStr);
+
+    const delegation = createTreasuryDelegation({
+      treasuryAddress: treasuryAddr as Address,
+      wstETHAddress: wstethAddr as Address,
+      agentAddress: executor.agentAddress,
+      allowedRecipients: policy.allowedDestinations.map((d: string) => d as Address),
+      maxPerTx: String(policy.maxPerAction),
+      maxTotal: String(policy.dailyCap),
+      maxCalls: 50,
+      chain: chainEnv,
+    }, executor.ownerAddress!);
+
+    const signedDelegation = await signTreasuryDelegation(
+      delegation,
+      ownerKey as `0x${string}`,
+      chainEnv,
+    );
+
+    const txHash = await redeemTreasuryDelegation(
+      signedDelegation,
+      to as Address,
+      amountWei,
+      treasuryAddr as Address,
+      executor.agentWalletClient,
+      executor.publicClient,
+      chainEnv,
+    );
+
+    lastDelegationTxHash = txHash;
+
+    await auditLog('execution_result', {
+      plan,
+      result: evalResult,
+      tx: { hash: txHash },
+      delegationMode: true,
+      delegationChain: 'owner → proposer → executor (ERC-7710)',
+    });
+
+    return sendJson(res, 200, {
+      result: evalResult,
+      execution: { hash: txHash },
+      delegationMode: true,
+      delegationChain: 'owner → proposer → executor',
+      framework: 'MetaMask Delegation Framework (ERC-7710)',
+    });
+  } catch (error) {
+    await auditLog('execution_result', {
+      error: error instanceof Error ? error.message : String(error),
+      delegationMode: true,
+    });
+    return sendJson(res, 500, {
+      error: error instanceof Error ? error.message : String(error),
+      delegationMode: true,
     });
   }
 }
@@ -1424,7 +1661,7 @@ const server = createServer(async (req, res) => {
     if (req.method === 'GET' && url === '/health') {
       return sendJson(res, 200, {
         ok: true,
-        service: 'yieldbound-api',
+        service: 'openbound-api',
         executor: executor ? 'connected' : 'not configured',
         x402: x402.enabled ? 'enabled' : 'disabled',
       });
@@ -1541,6 +1778,22 @@ const server = createServer(async (req, res) => {
       return await handleMoonPayTools(req, res);
     }
 
+    if (req.method === 'GET' && url.startsWith('/moonpay/quote')) {
+      return await handleMoonPayQuote(req, res);
+    }
+
+    if (req.method === 'GET' && url.startsWith('/moonpay/balance')) {
+      return await handleMoonPayBalance(req, res);
+    }
+
+    if (req.method === 'POST' && url === '/moonpay/bridge') {
+      return await handleMoonPayBridge(req, res);
+    }
+
+    if (req.method === 'GET' && url === '/moonpay/portfolio') {
+      return await handleMoonPayPortfolio(req, res);
+    }
+
     // --- Delegation routes ---
 
     if (req.method === 'GET' && url === '/delegation') {
@@ -1549,6 +1802,10 @@ const server = createServer(async (req, res) => {
 
     if (req.method === 'POST' && url === '/delegation/create') {
       return await handleDelegationCreate(req, res);
+    }
+
+    if (req.method === 'POST' && url === '/delegation/execute') {
+      return await handleDelegationExecute(req, res);
     }
 
     // --- Monitoring & Alerting routes ---

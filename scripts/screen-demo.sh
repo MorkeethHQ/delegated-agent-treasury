@@ -24,7 +24,7 @@ pj() { node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8
 
 clear
 echo -e "${BOLD}============================================${RESET}"
-echo -e "${BOLD}  Synthesis Agent Treasury — Live Demo (10 tracks)${RESET}"
+echo -e "${BOLD}  Open Bound — Onchain Money Maker — Live Demo${RESET}"
 echo -e "${BOLD}============================================${RESET}"
 echo -e "${DIM}Principal-protected yield treasury with autonomous trading on Base${RESET}"
 echo -e "${DIM}10 packages · 24 MCP tools · 25 API endpoints · 10 bounty tracks${RESET}"

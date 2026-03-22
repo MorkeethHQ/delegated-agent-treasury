@@ -4,7 +4,7 @@ set -e
 # x402 Payment Proof — Agent-to-Agent Commerce Demo
 #
 # Demonstrates the x402 protocol (https://x402.org) payment gating on the
-# Synthesis Agent Treasury API.
+# Open Bound API.
 #
 # Paying agent:   odawgagent.morke.eth (0x1101158041Fd96f21CBcbb0E752a9A2303E6D70e)
 # Service wallet:  bagel.morke.eth     (0x4fD66BdA6d792bE89d1fAeaF9F287AcaCaDBDce6)

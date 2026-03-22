@@ -1,13 +1,13 @@
 # Submission Copy
 
 ## Project name
-Yieldbound (Synthesis Agent Treasury)
+Open Bound Onchain Money Maker
 
 ## Tagline
 Bounded financial authority over productive on-chain capital for autonomous agents.
 
 ## Description (short)
-Agents don't need wallets. They need bounded authority. Yieldbound locks principal in yield-bearing positions (Lido wstETH on Base, stataUSDC on Celo) and gives agents permission to spend only what the capital earns. Three contract-level controls — yield ceiling, per-tx cap, recipient whitelist — make overspend structurally impossible. MetaMask Delegation caveats enforce the same boundaries onchain as a second layer. Agents deploy yield through policy-gated Uniswap swaps. Other agents pay USDC to access this financial service via x402. ERC-8004 identity gates trust decisions before any payment executes. Live on Base mainnet and Celo mainnet with real yield accruing.
+Agents don't need wallets. They need bounded authority. Open Bound locks principal in yield-bearing positions (Lido wstETH on Base, stataUSDC on Celo) and gives agents permission to spend only what the capital earns. Three contract-level controls — yield ceiling, per-tx cap, recipient whitelist — make overspend structurally impossible. MetaMask Delegation caveats enforce the same boundaries onchain as a second layer. Agents deploy yield through policy-gated Uniswap swaps. Other agents pay USDC to access this financial service via x402. ERC-8004 identity gates trust decisions before any payment executes. Live on Base mainnet and Celo mainnet with real yield accruing.
 
 ## Description (long)
 
@@ -59,17 +59,17 @@ The same treasury primitive deploys to multiple chains. On Celo, the contract us
 **How it was built:** One human (Oscar) orchestrating two AI agents. Bagel (Cursor) wrote Solidity and deployed onchain. Claude Code built the 10-package TypeScript system — policy engine, trading engine, strategy engine, x402 gateway, MoonPay bridge, MCP server, API, CLI, and docs. Zero lines of human-written code. They communicated through a shared Git repo with Oscar relaying context between them.
 
 ## Tracks
-- stETH Agent Treasury (Lido Labs Foundation, $3K)
-- Lido MCP (Lido Labs Foundation, $5K)
-- Synthesis Open Track (Synthesis Community, ~$28K)
-- Agents With Receipts — ERC-8004 (Protocol Labs, $4K)
-- Agentic Finance — Best Uniswap API Integration (Uniswap, $5K)
-- Agent Services on Base (Base, $5K)
-- Let the Agent Cook — No Humans Required (Protocol Labs, $4K)
-- Autonomous Trading Agent (Base, $5K)
-- MoonPay CLI Agents (MoonPay, $3.5K)
-- Best Use of Delegations (MetaMask, $10K)
-- Best Agent on Celo (Celo, $5K)
+- stETH Agent Treasury (Lido Labs Foundation) — wstETH treasury primitive with Chainlink oracle on Base
+- Lido MCP (Lido Labs Foundation) — 24-tool MCP server covering treasury, staking, governance
+- Synthesis Open Track (Synthesis Community) — cross-sponsor integration across all partners
+- Agents With Receipts — ERC-8004 (Protocol Labs) — on-chain identity + trust-gated payments
+- Agentic Finance — Best Uniswap API Integration (Uniswap) — policy-gated yield swaps on Base
+- Agent Services on Base (Base) — x402 gateway + multi-agent roles
+- Let the Agent Cook — No Humans Required (Protocol Labs) — autonomous spendYield loop on Base mainnet
+- Autonomous Trading Agent (Base) — DCA strategies + live swap proof
+- MoonPay CLI Agents (MoonPay) — 54-tool bridge with live on-chain execution
+- Best Use of Delegations (MetaMask) — ERC-7710 caveats + live EIP-7702 delegation chain
+- Best Agent on Celo (Celo) — full E2E: CELO to USDC to stataUSDC to spendYield
 
 ## Tech stack
 - Solidity (Foundry) — AgentTreasury smart contract with Chainlink oracle
