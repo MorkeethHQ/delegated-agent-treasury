@@ -87,6 +87,7 @@ Built by one human (Oscar) orchestrating two AI agents: Bagel (Cursor) wrote Sol
 - MetaMask EIP-7702 Delegation (owner EOA): [`0x1a97c5...`](https://basescan.org/tx/0x1a97c54d3633f725e36d83b7c2535b054d296f868b20c0f1e0fbb076601e0f9c) — `0x1101...70e` → EIP7702StatelessDeleGator v1.3.0 on Base mainnet
 - MetaMask EIP-7702 Delegation (agent EOA): [`0x6f3a90...`](https://basescan.org/tx/0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e) — `0x4fD6...ce6` → same DeleGator contract on Base mainnet
 - DelegationManager: [`0xdb9B1e...`](https://basescan.org/address/0xdb9B1e94B5b69Df7e401DDbedE43491141047dB3)
+- MoonPay USDC Transfer TX: [`0x82c733...`](https://basescan.org/tx/0x82c733d5acbcbbe441e3118ecfc3a45e5ac78544ca42a522e27f9d00ce46a96c) — 0.10 USDC → morke.eth (`0xf3476b36fc9942083049C04e9404516703369ef3`) via MoonPay CLI v1.12.4 on Base mainnet
 
 ## Team
 - Oscar (human) — architect, orchestrator, funder

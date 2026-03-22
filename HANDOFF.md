@@ -41,6 +41,7 @@
 - [x] Celo spendYield executed — agent spent accrued yield on Celo mainnet [`0xaac5f8...`](https://celoscan.io/tx/0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5)
 - [x] MetaMask EIP-7702 delegation — owner EOA delegated to EIP7702StatelessDeleGator v1.3.0 on Base mainnet [`0x1a97c5...`](https://basescan.org/tx/0x1a97c54d3633f725e36d83b7c2535b054d296f868b20c0f1e0fbb076601e0f9c)
 - [x] MetaMask EIP-7702 delegation — agent EOA delegated to same DeleGator contract on Base mainnet [`0x6f3a90...`](https://basescan.org/tx/0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e)
+- [x] MoonPay CLI execution — v1.12.4 installed, wallet imported (treasury-agent `0x1101...70e`), 0.10 USDC transferred to morke.eth on Base mainnet [`0x82c733...`](https://basescan.org/tx/0x82c733d5acbcbbe441e3118ecfc3a45e5ac78544ca42a522e27f9d00ce46a96c)
 
 ---
 
@@ -96,7 +97,7 @@
 | Agent Services on Base | $5K | Ready | x402 gateway, multi-agent roles |
 | Let the Agent Cook (Protocol Labs) | $4K | Ready | agent.json, agent_log.json, autonomous loop |
 | Autonomous Trading Agent (Base) | $5K | Ready | DCA strategies + live swap proof |
-| MoonPay CLI Agents | $3.5K | Ready | 54-tool bridge, 10+ chains |
+| MoonPay CLI Agents | $3.5K | **EXECUTED** | 54-tool bridge + live TX: 0.10 USDC → morke.eth [`0x82c733...`](https://basescan.org/tx/0x82c733d5acbcbbe441e3118ecfc3a45e5ac78544ca42a522e27f9d00ce46a96c) |
 | Best Use of Delegations (MetaMask) | $10K | **STRONG** | ERC-7710 caveats + live EIP-7702 on Base mainnet (owner + agent both delegated) |
 | Best Agent on Celo | $5K | Ready | spendYield executed [`0xaac5f8...`](https://celoscan.io/tx/0xaac5f84913c34c661739274a39c9911f618b9a474c80e737fa81ca5afc533df5) |
 
