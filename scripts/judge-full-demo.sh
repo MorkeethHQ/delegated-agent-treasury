@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ══════════════════════════════════════════════════════════════
-# Synthesis Agent Treasury — Full Judge Demo
+# Yieldbound Agent Treasury — Full Judge Demo
 #
 # Runs every major feature end-to-end against the live API.
 # Start the API first:
@@ -24,7 +24,7 @@ info() { echo -e "  ${DIM}$1${RESET}"; }
 section() { echo -e "\n${BOLD}${CYAN}═══ $1 ═══${RESET}"; }
 
 echo -e "${BOLD}╔══════════════════════════════════════════════════════════════╗${RESET}"
-echo -e "${BOLD}║     Synthesis Agent Treasury — Full Demo (35 endpoints)     ║${RESET}"
+echo -e "${BOLD}║    Yieldbound Agent Treasury — Full Demo (35 endpoints)     ║${RESET}"
 echo -e "${BOLD}╚══════════════════════════════════════════════════════════════╝${RESET}"
 
 # ── 0. Health ──

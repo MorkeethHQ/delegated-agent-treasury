@@ -153,7 +153,7 @@ async function demo() {
     process.exit(1);
   }
 
-  console.log('=== Synthesis Agent Treasury Demo ===\n');
+  console.log('=== Yieldbound Agent Treasury Demo ===\n');
 
   // Step 1: Mint mock wstETH
   console.log('1. Minting 1 mock wstETH to owner...');
@@ -217,18 +217,18 @@ const commands: Record<string, () => Promise<void>> = {
 
 if (!command || command === 'help' || !commands[command]) {
   console.log(`
-synthesis — CLI for the Synthesis Agent Treasury
+yieldbound — CLI for the Yieldbound Agent Treasury
 
 Usage:
-  synthesis health                         Check API status
-  synthesis policy                         Show current policy
-  synthesis evaluate '<plan-json>'         Submit plan for evaluation
-  synthesis approvals [pending|approved|denied]  List approvals
-  synthesis approve <id> [respondedBy]     Approve a pending request
-  synthesis deny <id> [respondedBy]        Deny a pending request
-  synthesis audit [limit]                  Show recent audit events
-  synthesis treasury                       Show on-chain treasury state
-  synthesis demo                           Run full end-to-end demo
+  yieldbound health                         Check API status
+  yieldbound policy                         Show current policy
+  yieldbound evaluate '<plan-json>'         Submit plan for evaluation
+  yieldbound approvals [pending|approved|denied]  List approvals
+  yieldbound approve <id> [respondedBy]     Approve a pending request
+  yieldbound deny <id> [respondedBy]        Deny a pending request
+  yieldbound audit [limit]                  Show recent audit events
+  yieldbound treasury                       Show on-chain treasury state
+  yieldbound demo                           Run full end-to-end demo
 
 Env vars:
   API_URL              API base URL (default: http://localhost:3001)
