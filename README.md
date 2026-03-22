@@ -1,18 +1,29 @@
 # Bagel Yieldbound
 
-**This project gives agents bounded financial authority over productive on-chain capital.**
+![Bagel Yieldbound](frontend/cover.svg)
 
-Live on Base + Celo mainnet. 27 on-chain transactions. 11 fully autonomous spends. An agent deposits into a yield-bearing position, accrues yield over time, and spends only the yield. Principal is structurally locked at the contract level. Every action passes through a policy engine and is logged to an append-only audit trail.
+[![Live on Base](https://img.shields.io/badge/Base-Live-2563eb?style=flat-square&logo=ethereum)](https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426)
+[![Live on Celo](https://img.shields.io/badge/Celo-Live-35d07f?style=flat-square)](https://celoscan.io/address/0xc976e463bd209e09cb15a168a275890b872aa1f0)
+[![27 TXs](https://img.shields.io/badge/On--chain_TXs-27-0891b2?style=flat-square)](https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426)
+[![11 Autonomous](https://img.shields.io/badge/Autonomous_Spends-11-16a34a?style=flat-square)](#live-mainnet-proof)
+[![25 MCP Tools](https://img.shields.io/badge/MCP_Tools-25-71717a?style=flat-square)](skill.md)
+[![Website](https://img.shields.io/badge/yieldbound.com-Live-09090b?style=flat-square)](https://yieldbound.com)
+
+**Agents don't need full wallets — they need bounded authority.**
+
+Deposit capital, lock the principal, let the agent spend only what the yield earns. Budget that regenerates forever.
+
+> 27 on-chain transactions. 11 fully autonomous spends. Live on Base + Celo mainnet. Built by 1 human + 3 AI agents.
 
 ```
-┌──────────────────────────────────────────────────┐
-│                  Treasury State                  │
-├──────────────┬───────────┬───────┬───────────────┤
-│  Principal   │ Avail.    │ Spent │  Remaining    │
-│  (locked)    │ Yield     │       │  Yield        │
-│  1.000 wstETH│ 0.032     │ 0.010 │  0.022        │
-│  untouchable │ spendable │ used  │  still usable │
-└──────────────┴───────────┴───────┴───────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                     Treasury State (Base)                    │
+├────────────────┬─────────────┬───────────┬───────────────────┤
+│  Principal     │ Avail.      │ Spent     │  Remaining        │
+│  (locked)      │ Yield       │           │  Yield            │
+│  0.0058 wstETH │ 0.000012    │ 0.000091  │  regenerating...  │
+│  untouchable   │ spendable   │ 11 auto   │  from ~3.5% APY   │
+└────────────────┴─────────────┴───────────┴───────────────────┘
 ```
 
 ---
@@ -194,7 +205,7 @@ node dist/apps/cli/src/cli.js help
 ### Submit a plan
 
 ```bash
-curl -X POST http://localhost:3001/plans/evaluate \
+curl -X POST https://yieldbound.com/plans/evaluate \
   -H 'content-type: application/json' \
   -d '{
     "planId": "plan-1",
