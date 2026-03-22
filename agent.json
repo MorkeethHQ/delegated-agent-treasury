@@ -1,5 +1,5 @@
 {
-  "name": "Open Bound Onchain Money Maker",
+  "name": "Yieldbound ",
   "description": "A yield-only treasury agent on Base. Deposits wstETH, spends only accrued yield. Principal is structurally locked. Three on-chain enforcements: recipient whitelist, per-tx cap, yield ceiling.",
   "version": "0.1.0",
   "identity": {

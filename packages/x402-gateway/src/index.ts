@@ -1,5 +1,5 @@
 /**
- * x402 Payment Gateway for Open Bound Onchain Money Maker
+ * x402 Payment Gateway for Yieldbound 
  *
  * Implements the x402 protocol (https://x402.org) for HTTP 402 Payment Required
  * payment gating on raw Node.js http server endpoints.

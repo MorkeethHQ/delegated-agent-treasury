@@ -10,7 +10,7 @@ What happens when an AI agent needs to pay for things?
 
 Today, agents either have no financial authority (useless for real tasks) or have full access to a wallet (terrifying). There's no middle ground.
 
-**Open Bound is that middle ground.** A human deposits wstETH. Yield accrues passively through Lido staking rewards. The agent can spend *only the yield* — never the principal. Every transaction is permission-scoped, capped, and audit-logged at the smart contract level.
+**Yieldbound is that middle ground.** A human deposits wstETH. Yield accrues passively through Lido staking rewards. The agent can spend *only the yield* — never the principal. Every transaction is permission-scoped, capped, and audit-logged at the smart contract level.
 
 The principal is structurally untouchable. The agent has real spending power, bounded by math, not trust.
 

@@ -3,7 +3,7 @@
 ## Judge Demo (Policy Engine Flow)
 
 ```
-=== Open Bound Onchain Money Maker — Judge Demo ===
+=== Yieldbound  — Judge Demo ===
 
 --- 1. System health ---
 API: healthy | executor: connected

@@ -153,7 +153,7 @@ async function demo() {
     process.exit(1);
   }
 
-  console.log('=== Open Bound Onchain Money Maker Demo ===\n');
+  console.log('=== Yieldbound  Demo ===\n');
 
   // Step 1: Mint mock wstETH
   console.log('1. Minting 1 mock wstETH to owner...');
@@ -217,7 +217,7 @@ const commands: Record<string, () => Promise<void>> = {
 
 if (!command || command === 'help' || !commands[command]) {
   console.log(`
-openbound — CLI for Open Bound Onchain Money Maker
+openbound — CLI for Yieldbound 
 
 Usage:
   openbound health                         Check API status

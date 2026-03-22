@@ -24,7 +24,7 @@ RESPONSE=$(curl -s -X POST "$API/projects" \
 const log = require('fs').readFileSync('docs/conversationLog.md','utf8');
 console.log(JSON.stringify({
   teamUUID: '$TEAM_UUID',
-  name: 'Open Bound Onchain Money Maker',
+  name: 'Yieldbound ',
   description: 'Yield-only spending for AI agents. Human deposits wstETH into a smart contract on Base. Yield accrues via Lido staking rewards. The agent can spend only the yield — principal is structurally locked at the EVM level. Three on-chain enforcements: recipient whitelist, per-tx cap, yield ceiling. Every action is policy-evaluated and audit-logged. Includes an 11-tool MCP server for treasury, Lido staking, and governance. Built by two AI agents (Bagel + Claude Code) orchestrated by one human — zero lines of human-written code.',
   problemStatement: 'AI agents need financial authority, but giving them full wallet access is reckless. There is no middle ground between zero access and full control. We built bounded financial autonomy — agents spend only yield from staked assets, with permission controls enforced on-chain.',
   repoURL: 'https://github.com/MorkeethHQ/delegated-agent-treasury',
