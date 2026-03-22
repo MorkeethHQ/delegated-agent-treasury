@@ -38,8 +38,8 @@
   <text x="524" y="141" font-family="Inter, system-ui, sans-serif" font-size="13" fill="#10b981" letter-spacing="0.5">Live on Base mainnet</text>
 
   <!-- Title -->
-  <text x="600" y="210" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="60" font-weight="800" fill="url(#text-grad)" letter-spacing="-2">Open Bound</text>
-  <text x="600" y="276" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="60" font-weight="800" fill="url(#text-grad)" letter-spacing="-2">Onchain Money Maker</text>
+  <text x="600" y="210" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="60" font-weight="800" fill="url(#text-grad)" letter-spacing="-2">Yieldbound</text>
+  <text x="600" y="276" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="60" font-weight="800" fill="url(#text-grad)" letter-spacing="-2">Guardrails for agent spending</text>
 
   <!-- Subtitle -->
   <text x="600" y="320" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="18" fill="#71717a">Bounded financial authority for autonomous agents.</text>
@@ -60,7 +60,7 @@
 
   <!-- Footer -->
   <rect x="40" y="560" width="36" height="36" rx="8" fill="url(#logo-grad)"/>
-  <text x="50" y="584" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="800" fill="white">OB</text>
+  <text x="50" y="584" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="800" fill="white">YB</text>
 
   <text x="92" y="582" font-family="Inter, system-ui, sans-serif" font-size="13" fill="#52525b">Base + Celo  ·  35 API Endpoints  ·  24 MCP Tools  ·  11 Bounty Tracks  ·  Built by 1 human + 3 AI agents</text>
 </svg>
