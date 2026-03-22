@@ -81,7 +81,7 @@
 
 | Requirement | How We Meet It |
 |-------------|---------------|
-| Multi-tool agent orchestration | 24 MCP tools across treasury, staking, governance, trading, strategy, identity, agents |
+| Multi-tool agent orchestration | 25 MCP tools across treasury, staking, governance, trading, strategy, identity, agents |
 | ERC-8004 identity | Registered on Base mainnet. Agent ID: `10ee7e7e703b4fc493e19f512b5ae09d`. Trust-gated payments verify counterparties. |
 | Agent manifest | `agent.json` in repo root — ERC-8004 identity, capabilities, interfaces, operators |
 | Execution logs | `agent_log.json` — structured execution logs with phases and timestamps |

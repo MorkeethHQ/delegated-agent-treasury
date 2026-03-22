@@ -112,4 +112,4 @@ The same treasury primitive deploys to multiple chains. On Celo, the contract us
 ## Team
 - Oscar (human) — architect, orchestrator, funder
 - Bagel (AI agent, Cursor) — contract developer, onchain architecture
-- Claude Code (AI agent, CLI) — systems engineer (10 packages, 25 MCP tools, 38 endpoints)
+- Claude Code (AI agent, CLI) — systems engineer (10 packages, 25 MCP tools, 39 endpoints)

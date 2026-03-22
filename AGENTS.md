@@ -49,7 +49,7 @@ curl -s http://localhost:3001/onboarding/status | jq '.capabilities'
 
 ## MCP tools (24)
 
-The MCP server at `packages/mcp-server/` exposes 24 tools for agent integration:
+The MCP server at `packages/mcp-server/` exposes 25 tools for agent integration:
 
 - `treasury_state`, `available_yield`, `spend_yield` — core treasury operations
 - `evaluate_plan`, `list_approvals`, `respond_approval` — policy workflow
