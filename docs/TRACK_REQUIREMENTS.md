@@ -106,6 +106,13 @@
 | API endpoints | `GET /moonpay/status`, `POST /moonpay/swap`, `GET /moonpay/tools` |
 | 54 crypto tools exposed | Bridge catalogs all MoonPay tool categories: wallet, trading, DCA, orders, portfolio, market, onramp, offramp, transfers |
 
+**Live Execution Proof (March 22):**
+- MoonPay CLI v1.12.4 installed and verified
+- Wallet imported: `treasury-agent` (`0x1101158041Fd96f21CBcbb0E752a9A2303E6D70e`) on Base
+- USDC transfer executed: 0.10 USDC → morke.eth (`0xf3476b36fc9942083049C04e9404516703369ef3`)
+- TX: [`0x82c733...`](https://basescan.org/tx/0x82c733d5acbcbbe441e3118ecfc3a45e5ac78544ca42a522e27f9d00ce46a96c) — Base mainnet
+- Token checks run for wstETH and USDC with live market data
+
 ## 10. Best Use of Delegations (MetaMask, $10,000)
 
 | Requirement | How We Meet It |

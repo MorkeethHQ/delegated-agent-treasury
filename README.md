@@ -182,6 +182,7 @@ Every major feature has been executed on-chain with real assets:
 | Sepolia E2E | Sepolia | [`0x77dfdb...`](https://sepolia.basescan.org/tx/0x77dfdb5a22e9fa110aa7f5173e2d7bdf650d8b35374ef124ebe7dad6e47e0d4f) | Full spend proof on testnet |
 | **MetaMask EIP-7702 delegation (owner)** | Base | [`0x1a97c5...`](https://basescan.org/tx/0x1a97c54d3633f725e36d83b7c2535b054d296f868b20c0f1e0fbb076601e0f9c) | Owner EOA (`0x1101...70e`) delegated to EIP7702StatelessDeleGator v1.3.0 |
 | **MetaMask EIP-7702 delegation (agent)** | Base | [`0x6f3a90...`](https://basescan.org/tx/0x6f3a90d43720f799e5830859476fcd1b2569eea4274c077617aa94206bca440e) | Agent EOA (`0x4fD6...ce6`) delegated to same DeleGator contract |
+| **MoonPay USDC transfer** | Base | [`0x82c733...`](https://basescan.org/tx/0x82c733d5acbcbbe441e3118ecfc3a45e5ac78544ca42a522e27f9d00ce46a96c) | 0.10 USDC → morke.eth via MoonPay CLI v1.12.4 |
 
 ## Architecture
 
