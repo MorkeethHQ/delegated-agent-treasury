@@ -34,7 +34,7 @@
 | `approval-store` | In-memory + file-persisted approval lifecycle |
 | `audit-log` | Append-only JSONL event logging |
 | `executor` | Viem integration layer (API ↔ contract) + ERC-8004 identity verification |
-| `mcp-server` | 24-tool MCP server for treasury, staking, governance, strategy, trust, trading, agents, moonpay |
+| `mcp-server` | 25-tool MCP server for treasury, staking, governance, strategy, trust, trading, agents, moonpay |
 | `strategy-engine` | Multi-bucket yield distribution engine |
 | `trading-engine` | Uniswap Trading API client — quotes, swaps, DCA on Base |
 | `x402-gateway` | x402 payment gating — HTTP 402 payment protocol for agent-as-a-service |
@@ -44,7 +44,7 @@
 
 | App | Purpose |
 |-----|---------|
-| `api` | REST API: 35 endpoints — evaluate, approvals, respond, audit, policy, treasury, strategy, verify, swap, x402, agents, moonpay |
+| `api` | REST API: 39 endpoints — evaluate, approvals, respond, audit, policy, treasury, strategy, verify, swap, x402, agents, moonpay |
 | `cli` | CLI: 9 commands — health, policy, evaluate, approvals, approve, deny, audit, treasury, demo |
 | `agent-loop` | Autonomous governance-aware yield spending agent — monitors treasury + Lido governance, decides spend/hold |
 

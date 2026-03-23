@@ -92,4 +92,4 @@ curl -X POST http://localhost:3001/delegation/execute \
 
 ## How this was built
 
-1 human (Oscar) orchestrating 2 AI agents (Claude Opus via Claude Code + Cursor). Zero lines of human-written code.
+1 human (Oscar) orchestrating 3 AI agents (Claude Code, Cursor, Anthropic). Zero lines of human-written code.
