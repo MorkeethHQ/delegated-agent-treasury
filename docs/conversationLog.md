@@ -1,7 +1,7 @@
 # Conversation Log — Human-Agent Collaboration
 
 ## Project
-Open Bound Onchain Money Maker — yield-only spending for AI agents, backed by wstETH on Base.
+Yieldbound — bounded financial authority for autonomous agents, backed by wstETH on Base and stataUSDC on Celo.
 
 ## Participants
 - **Oscar** (human) — architect, orchestrator, funder
