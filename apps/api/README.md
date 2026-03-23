@@ -1,6 +1,6 @@
 # Yieldbound API
 
-REST API server for Yieldbound . 35 endpoints covering treasury management, policy evaluation, approval workflows, yield trading, multi-agent orchestration, ENS identity resolution, and monitoring.
+REST API server for Yieldbound . 39 endpoints covering treasury management, policy evaluation, approval workflows, yield trading, multi-agent orchestration, ENS identity resolution, and monitoring.
 
 ```bash
 # Start (API-only mode, no contract env vars needed)

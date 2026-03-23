@@ -24,7 +24,7 @@ info() { echo -e "  ${DIM}$1${RESET}"; }
 section() { echo -e "\n${BOLD}${CYAN}═══ $1 ═══${RESET}"; }
 
 echo -e "${BOLD}╔══════════════════════════════════════════════════════════════╗${RESET}"
-echo -e "${BOLD}║    Yieldbound — Full Demo (35 endpoints)     ║${RESET}"
+echo -e "${BOLD}║    Yieldbound — Full Demo (39 endpoints)     ║${RESET}"
 echo -e "${BOLD}╚══════════════════════════════════════════════════════════════╝${RESET}"
 
 # ── 0. Health ──
