@@ -48,7 +48,7 @@
 | `cli` | CLI: 9 commands — health, policy, evaluate, approvals, approve, deny, audit, treasury, demo |
 | `agent-loop` | Autonomous governance-aware yield spending agent — monitors treasury + Lido governance, decides spend/hold |
 
-## MCP Tools (24)
+## MCP Tools (25)
 
 ### Treasury (3)
 - `get_treasury_state` — available yield, principal, total spent, per-tx cap
@@ -90,7 +90,7 @@
 - `moonpay_swap` — execute token swap via MoonPay CLI (policy-gated, supports dry_run)
 - `moonpay_dca` — set up Dollar Cost Averaging order via MoonPay CLI
 
-## API Endpoints (35)
+## API Endpoints (39)
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -141,7 +141,7 @@
 | `scripts/submit.sh` | Hackathon project submission |
 | `scripts/test-swap-e2e.sh` | E2E Uniswap swap test — live quotes, policy-gated execution, optional on-chain swap |
 
-## Hackathon Tracks (9)
+## Hackathon Tracks (11)
 
 | Track | Sponsor | UUID | Fit |
 |-------|---------|------|-----|
@@ -154,3 +154,5 @@
 | Let the Agent Cook — No Humans Required | Protocol Labs | — | Strong |
 | Autonomous Trading Agent | Base | — | Strong |
 | MoonPay CLI Agents | MoonPay | — | Strong |
+| Best Use of Delegations | MetaMask | — | Strong |
+| Best Agent on Celo | Celo | — | Strong |

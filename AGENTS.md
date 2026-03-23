@@ -47,7 +47,7 @@ curl -s http://localhost:3001/onboarding/status | jq '.capabilities'
 4. **Execution Layer** — Uniswap Trading API for yield deployment. MoonPay CLI as alternative backend. x402 for agent-to-agent payments.
 5. **Portability** — Base mainnet (primary) + Celo mainnet (stataUSDC). Same model, different yield sources.
 
-## MCP tools (24)
+## MCP tools (25)
 
 The MCP server at `packages/mcp-server/` exposes 25 tools for agent integration:
 
@@ -85,8 +85,8 @@ curl -X POST http://localhost:3001/delegation/execute \
 
 ## Key proofs
 
-- 7 autonomous spendYield TXs on Base mainnet (zero human intervention)
-- 21 total mainnet TXs across Base + Celo
+- 11 autonomous spendYield TXs on Base mainnet (zero human intervention)
+- 27 total mainnet TXs across Base + Celo
 - EIP-7702 MetaMask delegations live on Base
 - Full E2E on Celo: CELO → USDC → stataUSDC → deposit → spendYield
 
