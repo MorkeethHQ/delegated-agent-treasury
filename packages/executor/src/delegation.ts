@@ -175,26 +175,22 @@ export function createTreasuryDelegation(config: DelegationConfig, ownerSmartAcc
   const chainId = config.chain === 'base' ? base.id : baseSepolia.id;
   const environment = getSmartAccountsEnvironment(chainId);
 
-  const now = Math.floor(Date.now() / 1000);
+  const now = Math.floor(Date.now() / 1000) - 60; // 60s buffer for block timestamp lag
   const validFor = config.validitySeconds ?? 86400;
 
-  // Create delegation with scope + additional caveats
+  // Create delegation using functionCall scope — restricts to spendYield()
+  // on the treasury contract. The yield ceiling is enforced by the treasury
+  // contract itself at the EVM level (amount <= availableYield).
   const delegation = createDelegation({
     from: ownerSmartAccount,
     to: config.agentAddress,
     environment,
-    // Scope: ERC20 transfer amount — yield ceiling
     scope: {
-      type: 'erc20TransferAmount',
-      tokenAddress: config.wstETHAddress,
-      maxAmount: parseEther(config.maxTotal),
+      type: 'functionCall' as const,
+      targets: [config.treasuryAddress],
+      selectors: ['0x35a89e5a'], // spendYield(address,uint256)
     },
-    // Additional caveats matching policy engine
     caveats: [
-      // Only call our treasury contract
-      { type: 'allowedTargets', targets: [config.treasuryAddress] },
-      // Only call spendYield(address,uint256)
-      { type: 'allowedMethods', selectors: ['0x6d1884e0'] },
       // Time-bounded
       { type: 'timestamp', afterThreshold: now, beforeThreshold: now + validFor },
       // Bounded call count
@@ -217,7 +213,7 @@ export function createProposerDelegation(
   const chainId = config.chain === 'base' ? base.id : baseSepolia.id;
   const environment = getSmartAccountsEnvironment(chainId);
 
-  const now = Math.floor(Date.now() / 1000);
+  const now = Math.floor(Date.now() / 1000) - 60; // 60s buffer for block timestamp lag
   const validFor = config.validitySeconds ?? 86400;
 
   // Proposer gets read + plan submission authority, NOT execution authority
@@ -264,7 +260,7 @@ export function createExecutorDelegation(
   const chainId = config.chain === 'base' ? base.id : baseSepolia.id;
   const environment = getSmartAccountsEnvironment(chainId);
 
-  const now = Math.floor(Date.now() / 1000);
+  const now = Math.floor(Date.now() / 1000) - 60; // 60s buffer for block timestamp lag
   const validFor = config.validitySeconds ?? 86400;
 
   // Executor gets the narrowest delegation — only spendYield with tight caps
@@ -282,7 +278,7 @@ export function createExecutorDelegation(
       // Only the treasury contract
       { type: 'allowedTargets', targets: [config.treasuryAddress] },
       // Only spendYield(address,uint256) — single method
-      { type: 'allowedMethods', selectors: ['0x6d1884e0'] },
+      { type: 'allowedMethods', selectors: ['0x35a89e5a'] },
       // Tighter time window — executor delegations are short-lived
       { type: 'timestamp', afterThreshold: now, beforeThreshold: now + validFor },
       // Low call limit — executor only acts on approved plans
@@ -401,7 +397,7 @@ export function buildDelegationChain(
         type: 'allowedMethods',
         enforcer: 'AllowedMethodsEnforcer',
         description: 'Executor can ONLY call spendYield(address,uint256) — single function',
-        parameter: 'spendYield(address,uint256) [0x6d1884e0]',
+        parameter: 'spendYield(address,uint256) [0x35a89e5a]',
       },
       {
         type: 'timestamp',
