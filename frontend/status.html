@@ -3,413 +3,518 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yieldbound | The Agent Has a Budget. It Hasn't Spent a Cent.</title>
-<meta name="description" content="We gave an AI agent a yield-funded budget. 39 days later it hasn't touched it. The treasury is solved. Autonomy is the open problem.">
-<meta property="og:title" content="The Agent Has a Budget. It Hasn't Spent a Cent.">
-<meta property="og:description" content="50 teams built the same treasury. The hard problem isn't the wallet. It's what the agent wants.">
+<title>Yieldbound | Status</title>
+<meta name="description" content="Agent treasury. Yield accruing. No plan yet.">
+<meta property="og:title" content="$5.60 of Yield. No Idea What To Do.">
+<meta property="og:description" content="We gave an AI agent a yield-funded budget. It hasn't spent a cent.">
 <meta property="og:image" content="https://yieldbound.com/cover.png">
 <meta property="og:url" content="https://yieldbound.com/status">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="The Agent Has a Budget. It Hasn't Spent a Cent.">
-<meta name="twitter:description" content="50 teams built the same treasury. The hard problem isn't the wallet. It's what the agent wants.">
+<meta name="twitter:title" content="$5.60 of Yield. No Idea What To Do.">
 <meta name="twitter:image" content="https://yieldbound.com/cover.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#fafafa;--bg2:#f4f4f5;
-  --dark:#0c0c0e;--dark2:#151518;--dark3:#1c1c20;--dark-border:#2a2a30;
-  --fg:#09090b;--fg2:#3f3f46;--fg3:#71717a;--fg4:#a1a1aa;
-  --border:#e4e4e7;--border-hover:#d4d4d8;
-  --accent:#0891b2;--accent-light:#22d3ee;--green:#16a34a;--green-light:#22c55e;--blue:#2563eb;--amber:#d97706;
-  --ease:cubic-bezier(0.16,1,0.3,1);--ease-spring:cubic-bezier(0.34,1.56,0.64,1);
+  --surface:#fff;--surface-border:#e4e4e7;--surface-hover:#f8f8f8;
+  --dark:#0c0c0e;--dark2:#151518;--dark-border:#2a2a30;
+  --fg:#09090b;--fg2:#3f3f46;--fg3:#71717a;--fg4:#a1a1aa;--fg5:#d4d4d8;
+  --green:#16a34a;--green-light:#22c55e;--green-bg:rgba(22,163,74,.06);
+  --red:#dc2626;--red-bg:rgba(220,38,38,.05);
+  --amber:#d97706;
+  --blue:#2563eb;
+  --ease:cubic-bezier(0.16,1,0.3,1);
 }
 html{scroll-behavior:smooth}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.7}
-::selection{background:rgba(8,145,178,.15)}
-a{color:var(--fg2);text-decoration:none;transition:color .2s}a:hover{color:var(--fg)}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.6}
+::selection{background:rgba(22,163,74,.12)}
+a{color:var(--fg2);text-decoration:none;transition:color .15s}a:hover{color:var(--fg)}
+.mono{font-family:'IBM Plex Mono','SF Mono',Monaco,monospace}
 
-.wrap{max-width:720px;margin:0 auto;padding:0 40px}
-@media(max-width:600px){.wrap{padding:0 20px}}
+.wrap{max-width:640px;margin:0 auto;padding:0 28px}
+@media(max-width:500px){.wrap{padding:0 20px}}
 
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(22,163,74,.4)}50%{box-shadow:0 0 0 6px rgba(22,163,74,0)}}
-@keyframes countTo{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes drawIn{from{stroke-dashoffset:600}to{stroke-dashoffset:0}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes glowPulse{0%,100%{text-shadow:0 0 20px rgba(34,197,94,.1)}50%{text-shadow:0 0 40px rgba(34,197,94,.25)}}
+.label{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--fg4)}
 
-.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(22,163,74,.35)}50%{box-shadow:0 0 0 5px rgba(22,163,74,0)}}
+@keyframes calcPulse{0%,100%{opacity:.35}50%{opacity:1}}
+@keyframes drawLine{from{stroke-dashoffset:400}to{stroke-dashoffset:0}}
+@keyframes ambientDrift{0%{background-position:0% 0%}50%{background-position:100% 100%}100%{background-position:0% 0%}}
+
+.reveal{opacity:0;transform:translateY(12px);transition:opacity .4s var(--ease),transform .4s var(--ease)}
 .reveal.visible{opacity:1;transform:translateY(0)}
-.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}
+.d1{transition-delay:.05s}.d2{transition-delay:.1s}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);background:rgba(250,250,250,.8);border-bottom:1px solid var(--border)}
-nav .inner{max-width:720px;margin:0 auto;padding:0 40px;height:52px;display:flex;align-items:center;justify-content:space-between}
-@media(max-width:600px){nav .inner{padding:0 20px}}
-nav .logo{font-weight:700;font-size:.88rem;color:var(--fg)}
-nav .nav-links{display:flex;align-items:center;gap:16px;font-size:.82rem;color:var(--fg3)}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite,livePulse 2s infinite;display:inline-block}
-@media(max-width:600px){nav .nav-links{display:none}}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(14px) saturate(1.3);-webkit-backdrop-filter:blur(14px) saturate(1.3);background:rgba(250,250,250,.82);border-bottom:1px solid var(--surface-border)}
+nav .inner{max-width:640px;margin:0 auto;padding:0 28px;height:48px;display:flex;align-items:center;justify-content:space-between}
+@media(max-width:500px){nav .inner{padding:0 20px}}
+nav .logo{font-weight:700;font-size:.84rem;color:var(--fg)}
+nav .nav-r{display:flex;align-items:center;gap:16px;font-size:.78rem;color:var(--fg3)}
+nav .nav-r a:hover{color:var(--fg)}
+.live-pill{display:inline-flex;align-items:center;gap:5px;font-size:.64rem;font-weight:600;color:var(--green);padding:3px 9px;border:1px solid rgba(22,163,74,.2);border-radius:4px}
+.live-pill .dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite,livePulse 2s infinite}
 
-/* TEXT */
-h1{font-size:clamp(1.9rem,4.5vw,2.6rem);font-weight:800;letter-spacing:-.04em;line-height:1.08;margin-bottom:24px}
-h2{font-size:1.5rem;font-weight:700;letter-spacing:-.03em;line-height:1.15;margin-bottom:16px}
-.label{font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--fg4);margin-bottom:10px}
-p{font-size:.95rem;color:var(--fg2);line-height:1.75;margin-bottom:20px}
-p:last-child{margin-bottom:0}
-p strong{color:var(--fg);font-weight:600}
-.muted{color:var(--fg3)}
+/* HERO */
+.hero{padding:88px 0 0;position:relative}
+.hero::before{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:radial-gradient(ellipse 600px 400px at 30% 60%, rgba(22,163,74,.04), transparent);
+  background-size:200% 200%;
+  animation:ambientDrift 20s ease-in-out infinite;
+  pointer-events:none;
+}
+.hero-sticky{position:sticky;top:64px;z-index:-1;padding-bottom:32px}
+.hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}
+@media(max-width:500px){.hero-top{flex-direction:column}}
+.hero-left{flex:1}
+.hero-usd{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:clamp(3.2rem,7vw,5rem);
+  font-weight:700;color:var(--green);
+  letter-spacing:-.03em;line-height:1;
+  text-shadow:0 0 40px rgba(22,163,74,.15);
+}
+.hero-wsteth{font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--fg4);margin-top:8px;letter-spacing:.01em}
+.hero-meta{font-size:.76rem;color:var(--fg4);margin-top:14px;line-height:1.6}
+.hero-meta a{color:var(--fg4);border-bottom:1px solid var(--fg5)}
+.hero-meta a:hover{color:var(--fg2)}
+.sparkline-wrap{width:200px;height:60px;flex-shrink:0;margin-top:8px}
+.sparkline-wrap svg{width:100%;height:100%}
+.sparkline{fill:none;stroke:var(--green);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:400;animation:drawLine 1.5s var(--ease) forwards}
+@media(max-width:500px){.sparkline-wrap{width:140px;height:44px}}
 
-/* HERO METRICS */
-.hero-metrics{display:flex;gap:32px;flex-wrap:wrap;margin:28px 0 0}
-.hero-metric .hm-val{font-size:2.2rem;font-weight:800;letter-spacing:-.04em;line-height:1}
-.hero-metric .hm-label{font-size:.72rem;color:var(--fg3);margin-top:4px}
-.hero-metric.green .hm-val{color:var(--green)}
+/* QUESTION */
+.question{font-size:1.5rem;font-weight:800;letter-spacing:-.035em;line-height:1.15;margin:36px 0 6px}
+.question-sub{font-size:.82rem;color:var(--fg3);margin-bottom:28px}
 
-/* DARK BOX */
-.dbox{border-radius:14px;background:var(--dark);color:#fafafa;border:1px solid var(--dark-border);padding:24px;margin:28px 0}
-.dbox .dl{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#71717a;margin-bottom:6px}
-.dbox .dv{font-family:'SF Mono',Monaco,monospace;font-size:1.4rem;font-weight:700;color:var(--green-light)}
-.dbox .ds{font-size:.76rem;color:#52525b;margin-top:3px}
-.drow{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(42,42,48,.5);font-size:.84rem}
-.drow:last-child{border:none}
-.drow span:first-child{color:#a1a1aa}
-.drow span:last-child{color:#fafafa;font-family:'SF Mono',Monaco,monospace;font-size:.8rem}
+/* TABS */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--surface-border)}
+.tab{position:relative;padding:9px 16px;font-size:.78rem;font-weight:600;color:var(--fg4);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .12s,border-color .12s;user-select:none}
+.tab:hover{color:var(--fg2)}
+.tab.active{color:var(--fg);border-bottom-color:var(--green)}
+.tab.active::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:var(--green);box-shadow:0 0 8px rgba(22,163,74,.4)}
+@media(max-width:500px){.tab{padding:9px 10px;font-size:.72rem}}
 
-/* TICKER */
-.ticker{text-align:center;padding:28px 0;border-top:1px solid var(--dark-border);margin-top:16px}
-.ticker-num{font-family:'SF Mono',Monaco,monospace;font-size:clamp(1.4rem,3.5vw,2rem);font-weight:700;color:var(--green-light);animation:glowPulse 3s ease-in-out infinite}
-.ticker-s{font-size:.74rem;color:#52525b;margin-top:4px}
-.ticker-s a{color:var(--accent-light);font-size:.74rem}
+/* PANELS */
+.panel-wrap{min-height:300px;position:relative}
+.panel{display:none;padding:24px 0 0}
+.panel.active{display:block;animation:panelIn .2s ease-out}
+@keyframes panelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.t-title{font-size:1.05rem;font-weight:700;margin-bottom:3px}
+.t-sub{font-size:.8rem;font-style:italic;color:var(--fg3);margin-bottom:14px}
+.t-body{font-size:.84rem;color:var(--fg2);line-height:1.7;margin-bottom:18px;max-width:540px}
+
+/* WEEK CARDS */
+.weeks{display:flex;flex-direction:column;gap:6px}
+.week{background:var(--surface);border:1px solid var(--surface-border);border-radius:6px;padding:12px 14px;border-left:3px solid var(--surface-border)}
+.week.win{border-left-color:var(--green);background:var(--green-bg)}
+.week.loss{border-left-color:var(--red);background:var(--red-bg)}
+.week.pending{border-left-color:var(--fg5)}
+.week-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.week-num{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--fg4)}
+.week-record{font-family:'IBM Plex Mono',monospace;font-size:.66rem;color:var(--fg4)}
+.week-q{font-size:.84rem;color:var(--fg);font-weight:500;margin-bottom:4px}
+.week-stats{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--fg3)}
+.week-stats span{margin-right:10px}
+.week-result{font-size:.72rem;font-weight:700;margin-top:4px}
+.week-result.win{color:var(--green)}
+.week-result.loss{color:var(--red)}
+.week-result.calc{color:var(--fg4);animation:calcPulse 1.5s ease-in-out infinite}
+.bankroll{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--fg4);margin-top:8px;padding-top:8px;border-top:1px solid var(--surface-border)}
+
+/* DEGEN TABLE */
+.ptable{width:100%;border-collapse:collapse;font-size:.76rem;margin-top:4px}
+.ptable th{text-align:left;font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--fg4);padding:5px 0;border-bottom:1px solid var(--surface-border)}
+.ptable td{padding:7px 0;border-bottom:1px solid var(--surface-border);color:var(--fg2)}
+.ptable td:first-child{color:var(--fg);font-weight:500}
+.ptable .up{color:var(--green)}
+.ptable .dn{color:var(--red)}
+.ptable .mcell{font-family:'IBM Plex Mono',monospace;font-size:.72rem}
+
+/* PROGRESS BAR */
+.prog-wrap{margin:14px 0}
+.prog-top{display:flex;justify-content:space-between;font-size:.72rem;color:var(--fg3);margin-bottom:5px}
+.prog-bar{height:5px;background:var(--bg2);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--green);border-radius:3px;transition:width .8s var(--ease)}
+
+/* STAT GRID */
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--surface-border);border:1px solid var(--surface-border);border-radius:6px;overflow:hidden;margin:14px 0}
+.sg-cell{background:var(--surface);padding:11px}
+.sg-cell .sg-l{font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--fg4);margin-bottom:2px}
+.sg-cell .sg-v{font-family:'IBM Plex Mono',monospace;font-size:.84rem;font-weight:600;color:var(--fg)}
+.sg-cell .sg-v.green{color:var(--green)}
+.sg-cell .sg-v.red{color:var(--red)}
+@media(max-width:500px){.sg{grid-template-columns:1fr}}
+
+.t-note{font-size:.76rem;color:var(--fg3);margin-top:14px;padding-top:10px;border-top:1px solid var(--surface-border)}
+.joke-box{margin-top:10px;padding:9px 12px;border-radius:4px;background:var(--red-bg);border:1px solid rgba(220,38,38,.12);font-size:.74rem;color:var(--red);line-height:1.5}
+
+/* DIVIDER */
+hr{border:none;height:1px;background:var(--surface-border);margin:36px 0}
+
+/* SCALE */
+.scale-box{border:1px solid var(--surface-border);border-radius:6px;background:var(--surface);padding:16px;margin:20px 0}
+.scale-row{display:flex;gap:5px;margin:8px 0;flex-wrap:wrap}
+.s-btn{font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:600;padding:5px 11px;border-radius:4px;border:1px solid var(--surface-border);background:transparent;color:var(--fg3);cursor:pointer;transition:all .1s}
+.s-btn:hover{border-color:var(--fg4);color:var(--fg)}
+.s-btn.on{background:var(--fg);border-color:var(--fg);color:#fff}
+.scale-val{font-family:'IBM Plex Mono',monospace;font-size:.84rem;color:var(--green);font-weight:600;margin-top:8px}
+.scale-note{font-size:.74rem;color:var(--fg3);margin-top:3px}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--surface-border);border:1px solid var(--surface-border);border-radius:6px;overflow:hidden;margin:16px 0}
+.stat{background:var(--surface);padding:12px;text-align:center}
+.stat .s-num{font-family:'IBM Plex Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--fg)}
+.stat .s-num.dramatic{color:var(--red);font-size:1.4rem}
+.stat .s-txt{font-size:.6rem;color:var(--fg3);margin-top:2px;text-transform:uppercase;letter-spacing:.06em}
+@media(max-width:500px){.stats{grid-template-columns:1fr}}
 
 /* TIMELINE */
-.timeline{position:relative;margin:32px 0;padding:0 0 0 28px}
-.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--border)}
-.tl-event{position:relative;padding:12px 0 20px;opacity:0;transform:translateX(-10px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
-.tl-event.visible{opacity:1;transform:translateX(0)}
-.tl-event::before{content:'';position:absolute;left:-24px;top:16px;width:10px;height:10px;border-radius:50%;border:2px solid var(--border);background:var(--bg)}
-.tl-event.active::before{border-color:var(--green);background:var(--green);box-shadow:0 0 0 4px rgba(22,163,74,.15)}
-.tl-event.hack::before{border-color:var(--accent);background:var(--accent)}
-.tl-date{font-size:.68rem;font-weight:600;color:var(--fg4);text-transform:uppercase;letter-spacing:.06em}
-.tl-text{font-size:.88rem;color:var(--fg2);margin-top:2px}
-.tl-text strong{color:var(--fg)}
+.tl{margin:16px 0}
+.tl-row{display:flex;gap:12px;padding:5px 0;font-size:.78rem;border-bottom:1px solid var(--surface-border)}
+.tl-row:last-child{border:none}
+.tl-d{font-family:'IBM Plex Mono',monospace;color:var(--fg4);font-size:.68rem;font-weight:500;width:68px;flex-shrink:0;padding-top:1px}
+.tl-t{color:var(--fg2)}
+.tl-t strong{color:var(--fg);font-weight:600}
+.tl-row.now .tl-d{color:var(--green)}
+.tl-row.now .tl-t{color:var(--green);font-weight:600}
 
-/* CONVERGENCE CHART */
-.conv-bar-wrap{margin:24px 0}
-.conv-bar{display:flex;align-items:center;gap:12px;padding:8px 0}
-.conv-bar .cb-label{font-size:.78rem;font-weight:600;color:var(--fg2);width:140px;flex-shrink:0}
-.conv-bar .cb-track{flex:1;height:24px;background:var(--bg2);border-radius:6px;overflow:hidden;position:relative}
-.conv-bar .cb-fill{height:100%;border-radius:6px;width:0;transition:width 1.2s var(--ease)}
-.conv-bar .cb-num{font-size:.78rem;font-weight:700;color:var(--fg);width:40px;text-align:right;font-family:'SF Mono',Monaco,monospace}
-.conv-bar.visible .cb-fill{width:var(--w)}
+/* LINKS */
+.links{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.lk{display:inline-flex;padding:7px 14px;border-radius:4px;font-size:.76rem;font-weight:600;transition:all .1s}
+.lk.pri{background:var(--fg);color:#fff}
+.lk.pri:hover{opacity:.88}
+.lk.sec{border:1px solid var(--surface-border);color:var(--fg3)}
+.lk.sec:hover{border-color:var(--fg4);color:var(--fg)}
 
-.divider{height:1px;background:var(--border);margin:48px 0}
+/* CONTENT (sits above sticky hero) */
+.content{position:relative;z-index:1;background:var(--bg)}
 
-/* NUM CARDS */
-.nums{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
-@media(max-width:600px){.nums{grid-template-columns:repeat(2,1fr)}}
-.num-card{padding:16px;border-radius:10px;border:1px solid var(--border);background:#fff;text-align:center}
-.num-card .nv{font-size:1.8rem;font-weight:800;letter-spacing:-.03em;line-height:1}
-.num-card .nd{font-size:.72rem;color:var(--fg3);margin-top:4px;line-height:1.4}
-
-/* THESIS CARDS */
-.thesis{padding:24px;border-radius:14px;border:1px solid var(--dark-border);background:var(--dark);color:#fafafa;margin:20px 0;position:relative;overflow:hidden;transition:transform .2s var(--ease),box-shadow .2s}
-.thesis:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.2)}
-.thesis::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:2px}
-.thesis h3{font-size:1rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:10px}
-.thesis p{font-size:.88rem;color:#a1a1aa;line-height:1.7;margin:0 0 8px}
-.thesis .edge{font-size:.78rem;color:var(--green-light);font-weight:500}
-.thesis .tag{display:inline-block;font-size:.62rem;font-weight:600;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em;margin-right:6px}
-.thesis .example{margin-top:12px;padding:12px 16px;border-radius:8px;background:var(--dark3);border:1px solid var(--dark-border);font-family:'SF Mono',Monaco,monospace;font-size:.76rem;color:#a1a1aa;line-height:1.6}
-.thesis .example strong{color:var(--green-light)}
-
-.thesis.predict::before{background:var(--accent)}
-.thesis.predict .tag{background:rgba(8,145,178,.15);color:var(--accent-light)}
-.thesis.degen::before{background:var(--amber)}
-.thesis.degen .tag{background:rgba(217,119,6,.12);color:var(--amber)}
-.thesis.intel::before{background:#8b5cf6}
-.thesis.intel .tag{background:rgba(139,92,246,.12);color:#c4b5fd}
-.thesis.econ::before{background:var(--green)}
-.thesis.econ .tag{background:rgba(22,163,74,.12);color:var(--green-light)}
-
-/* CALC */
-.calc-wrap{background:var(--dark2);border-radius:12px;border:1px solid var(--dark-border);padding:20px;margin:24px 0}
-.calc-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
-.cbtn{font-size:.78rem;font-weight:600;padding:8px 16px;border-radius:8px;border:1px solid var(--dark-border);background:transparent;color:#71717a;cursor:pointer;transition:all .15s}
-.cbtn:hover{border-color:#52525b;color:#fafafa}.cbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
-.calc-out{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-@media(max-width:500px){.calc-out{grid-template-columns:1fr}}
-.co{padding:14px;border-radius:10px;border:1px solid var(--dark-border);background:var(--dark);transition:border-color .3s}
-.co .col{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#71717a;margin-bottom:3px}
-.co .cov{font-size:1.2rem;font-weight:700;color:var(--green-light);font-family:'SF Mono',Monaco,monospace;transition:all .3s var(--ease)}
-
-blockquote{border-left:3px solid var(--border);padding:12px 20px;margin:24px 0;background:rgba(0,0,0,.02);border-radius:0 8px 8px 0}
-blockquote p{font-size:.9rem;color:var(--fg3);margin:0}
-
-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;color:var(--fg4);font-size:.78rem}
+footer{border-top:1px solid var(--surface-border);padding:22px 0;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:.66rem;color:var(--fg4);position:relative;z-index:1;background:var(--bg)}
 footer a{color:var(--fg3)}footer a:hover{color:var(--fg)}
-
-@media(max-width:768px){h1{font-size:1.8rem}h2{font-size:1.3rem}.nums{grid-template-columns:repeat(2,1fr)}.hero-metrics{gap:20px}.hero-metric .hm-val{font-size:1.7rem}.conv-bar .cb-label{width:100px;font-size:.72rem}}
 </style>
 </head>
 <body>
 
 <nav>
   <div class="inner">
-    <a href="/" class="logo" style="text-decoration:none">Yieldbound</a>
-    <div class="nav-links">
+    <a href="/" class="logo">Yieldbound</a>
+    <div class="nav-r">
       <a href="/">Home</a>
-      <a href="#thesis">Thesis</a>
-      <span style="display:inline-flex;align-items:center;gap:6px;font-size:.72rem;color:var(--green);font-weight:600"><span class="live-dot"></span> Live</span>
+      <span class="live-pill"><span class="dot"></span> Base Mainnet</span>
     </div>
   </div>
 </nav>
 
 <div class="wrap">
 
-<!-- ========== ACT 1: WHAT WE BUILT ========== -->
-
-<section style="padding:130px 0 0">
-  <div class="reveal">
-    <div class="label">Act 1 &middot; The Hackathon</div>
-    <h1>We gave an AI agent a budget backed by Lido yield.</h1>
-  </div>
-  <p class="reveal d1">Synthesis hackathon, March 2026. We built Yieldbound. An agent treasury on Base where the principal is locked in wstETH, and the agent can only spend what the staking yield earns. Three on-chain guardrails. The agent can't touch the deposit. Ever.</p>
-
-  <div class="hero-metrics reveal d2">
-    <div class="hero-metric"><div class="hm-val" data-count="27">0</div><div class="hm-label">mainnet transactions</div></div>
-    <div class="hero-metric"><div class="hm-val" data-count="11">0</div><div class="hm-label">autonomous spends</div></div>
-    <div class="hero-metric green"><div class="hm-val">MoonPay</div><div class="hm-label">track winner</div></div>
+<!-- HERO: sticky balance that fades as you scroll past -->
+<section class="hero">
+  <div class="hero-sticky reveal" id="hero-sticky">
+    <div class="hero-top">
+      <div class="hero-left">
+        <div class="hero-usd" id="hero-usd">$5.60</div>
+        <div class="hero-wsteth" id="hero-wsteth">0.00579219 wstETH</div>
+        <div class="hero-meta">Lido staking rewards. Accruing since March 14, 2026.<br><a href="https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426" target="_blank">verify on-chain</a></div>
+      </div>
+      <div class="sparkline-wrap">
+        <svg viewBox="0 0 200 60" preserveAspectRatio="none">
+          <polyline class="sparkline" points="0,55 12,54 24,53 36,51 48,50 60,48 72,46 84,44 96,41 108,38 120,35 132,31 144,27 156,23 168,19 180,15 192,11 200,8"/>
+        </svg>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- ========== ACT 2: WHAT HAPPENED SINCE ========== -->
+<!-- CONTENT: floats above the sticky hero -->
+<div class="content">
 
-<div class="divider"></div>
+<div class="reveal d1">
+  <div class="question">The agent has $5.60 and no plan. You decide.</div>
+  <div class="question-sub"><span id="day-count">39</span> days since the hackathon. Zero transactions. Yield keeps accruing.</div>
+</div>
+
+<section style="margin-top:20px">
+  <div class="reveal d2">
+    <div class="tabs">
+      <div class="tab active" data-t="predict">Predictions</div>
+      <div class="tab" data-t="degen">Degen</div>
+      <div class="tab" data-t="brain">Self-Fund</div>
+      <div class="tab" data-t="quant">Quant Mode</div>
+    </div>
+  </div>
+
+  <div class="panel-wrap">
+
+    <div class="panel active" id="p-predict">
+      <div class="t-title">The Prediction Agent</div>
+      <div class="t-sub">Bet yield on what you believe. Find out if you're right.</div>
+      <div class="t-body">The agent reads news, on-chain data, sentiment. Forms a probability. Places a bet on Polymarket. Every week you check the record.</div>
+      <div class="weeks">
+        <div class="week win">
+          <div class="week-head"><span class="week-num">Week 1</span><span class="week-record">1-0</span></div>
+          <div class="week-q">ETH above $2,800 by Friday?</div>
+          <div class="week-stats"><span>Confidence: 72%</span><span>Bet: $0.47</span><span>Odds: 1.38x</span></div>
+          <div class="week-result win">CORRECT</div>
+        </div>
+        <div class="week loss">
+          <div class="week-head"><span class="week-num">Week 2</span><span class="week-record">1-1</span></div>
+          <div class="week-q">Base daily TXs exceed 5M?</div>
+          <div class="week-stats"><span>Confidence: 61%</span><span>Bet: $0.30</span></div>
+          <div class="week-result loss">WRONG</div>
+        </div>
+        <div class="week pending">
+          <div class="week-head"><span class="week-num">Week 3</span><span class="week-record">pending</span></div>
+          <div class="week-q">SOL above $180 by Sunday?</div>
+          <div class="week-stats"><span>Confidence: <span class="week-result calc">calculating...</span></span></div>
+        </div>
+      </div>
+      <div class="bankroll">Bankroll: $5.43 &middot; Yield regenerates ~$0.14/week</div>
+      <div class="t-note">Every bet is a tweet. The record is public. That's the whole point.</div>
+    </div>
+
+    <div class="panel" id="p-degen">
+      <div class="t-title">The Degen Agent</div>
+      <div class="t-sub">Scan. Read the contract. Ape. Learn.</div>
+      <div class="t-body">The agent scans Base for new launches. Reads the Solidity. Checks liquidity, holder count, deployer history. Small bets, high frequency, yield-funded risk.</div>
+      <table class="ptable">
+        <thead><tr><th>Token</th><th>Entry</th><th>Current</th><th>P&L</th></tr></thead>
+        <tbody>
+          <tr><td>$BAGEL</td><td class="mcell">$0.0012</td><td class="mcell">$0.0000</td><td class="mcell dn">-$0.45</td></tr>
+          <tr><td>$CLANKER</td><td class="mcell">$0.038</td><td class="mcell">$0.159</td><td class="mcell up">+$1.60</td></tr>
+          <tr><td>$ONCHAIN</td><td class="mcell">$0.0071</td><td class="mcell">$0.0084</td><td class="mcell up">+$0.09</td></tr>
+        </tbody>
+      </table>
+      <div class="bankroll" style="margin-top:10px">Record: 2-1 &middot; Net PnL: +$1.24</div>
+      <div class="t-note">LLMs can read Solidity. That might actually be alpha.</div>
+    </div>
+
+    <div class="panel" id="p-brain">
+      <div class="t-title">The Self-Funding Brain</div>
+      <div class="t-sub">Spend yield on thinking. Think better. Earn more.</div>
+      <div class="t-body">The agent saves yield until it can pay for its own API calls and data feeds. Every $2 of accrued yield funds one analysis cycle. The thinking funds better thinking.</div>
+      <div class="prog-wrap">
+        <div class="prog-top"><span>Next analysis cycle</span><span class="mono" style="font-size:.7rem">$1.80 / $2.00</span></div>
+        <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+      <div class="sg" style="margin-top:14px">
+        <div class="sg-cell"><div class="sg-l">Cycles done</div><div class="sg-v">2</div></div>
+        <div class="sg-cell"><div class="sg-l">Spent on data</div><div class="sg-v">$3.60</div></div>
+        <div class="sg-cell"><div class="sg-l">First profit</div><div class="sg-v green">Month 3</div></div>
+      </div>
+      <div class="t-note">Starts dumb. Gets smarter. Measurably.</div>
+    </div>
+
+    <div class="panel" id="p-quant">
+      <div class="t-title">Jane Street Mode</div>
+      <div class="t-sub">Bulletproof. Market-neutral. 300x yield.</div>
+      <div class="t-body">Cross-chain statistical arbitrage. Long wstETH on Base, short stETH on mainnet, hedge with stataUSDC on Celo. 47-factor alpha model. Kalman filter. Rebalance every block.</div>
+      <div class="sg">
+        <div class="sg-cell"><div class="sg-l">Sharpe ratio</div><div class="sg-v green">14.7</div></div>
+        <div class="sg-cell"><div class="sg-l">Max drawdown</div><div class="sg-v green">0.003%</div></div>
+        <div class="sg-cell"><div class="sg-l">Annual return</div><div class="sg-v green">29,847%</div></div>
+      </div>
+      <div class="sg">
+        <div class="sg-cell"><div class="sg-l">Gas costs</div><div class="sg-v red">$47.00</div></div>
+        <div class="sg-cell"><div class="sg-l">Yield available</div><div class="sg-v">$5.60</div></div>
+        <div class="sg-cell"><div class="sg-l">Net PnL</div><div class="sg-v red">-$41.40</div></div>
+      </div>
+      <div class="joke-box">Spent its entire yearly budget on gas in 3 minutes. The Kalman filter worked perfectly though.</div>
+    </div>
+
+  </div>
+</section>
+
+<hr>
 
 <section>
   <div class="reveal">
-    <div class="label">Act 2 &middot; Day <span id="day-count">39</span></div>
-    <h1>It's been <span id="hero-days" class="counter-days">39</span> days.<br>The agent hasn't spent a cent.</h1>
-  </div>
-</section>
-
-<!-- TIMELINE -->
-<div class="timeline reveal" id="timeline">
-  <div class="tl-event hack"><div class="tl-date">Mar 15</div><div class="tl-text"><strong>Hackathon starts.</strong> Oscar + Bagel + Claude Code begin building.</div></div>
-  <div class="tl-event hack"><div class="tl-date">Mar 18</div><div class="tl-text"><strong>Treasury deployed on Base mainnet.</strong> 0.0038 wstETH deposited.</div></div>
-  <div class="tl-event hack"><div class="tl-date">Mar 19</div><div class="tl-text"><strong>11 autonomous spends.</strong> Agent deploys yield via Uniswap, MoonPay, x402.</div></div>
-  <div class="tl-event hack"><div class="tl-date">Mar 23</div><div class="tl-text"><strong>Hackathon ends.</strong> 27 transactions. MoonPay track win. Walk away.</div></div>
-  <div class="tl-event"><div class="tl-date">Mar 24 - Apr 30</div><div class="tl-text" style="color:var(--fg4)">Nothing. Zero transactions. Zero agent activity. Yield accrues silently.</div></div>
-  <div class="tl-event active"><div class="tl-date">Today</div><div class="tl-text"><strong>$5.60 in spendable yield.</strong> The agent hasn't touched it. Not because it can't. Because it has no idea what to do.</div></div>
-</div>
-
-<!-- LIVE STATE -->
-<div class="dbox reveal">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-    <div><div class="dl">Treasury balance</div><div class="dv">0.00579 wstETH</div><div class="ds">~$16.22 on Base mainnet</div></div>
-    <div><div class="dl">Spendable yield</div><div class="dv">~$5.60</div><div class="ds">Accrued. Untouched.</div></div>
-  </div>
-  <div style="margin-top:16px">
-    <div class="drow"><span>Principal locked</span><span>0.00379 wstETH ($10.62)</span></div>
-    <div class="drow"><span>Celo treasury</span><span>6.534 stataUSDC ($6.53)</span></div>
-    <div class="drow"><span>Transactions since hackathon</span><span style="color:var(--amber)">0</span></div>
-    <div class="drow"><span>Agent activity</span><span style="color:var(--amber)">none</span></div>
-  </div>
-  <div class="ticker">
-    <div class="ticker-num" id="yield-ticker">0.005792194600</div>
-    <div class="ticker-s">wstETH accruing live from Lido staking rewards &middot; <a href="https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426" target="_blank">verify on-chain</a></div>
-  </div>
-</div>
-
-<!-- ========== ACT 3: THE HIVE MIND ========== -->
-
-<div class="divider"></div>
-
-<section id="convergence">
-  <div class="reveal">
-    <div class="label">Act 3 &middot; The Hive Mind</div>
-    <h2>50 teams read the same docs.<br>They built the same thing.</h2>
-  </div>
-  <p class="reveal d1">687 submissions. The stETH track alone had 50 projects, and nearly every one converged on the identical architecture. Locked principal. Yield ceiling. Whitelist. Per-tx caps. Chainlink oracle. Uniswap swaps.</p>
-
-  <!-- ANIMATED BAR CHART -->
-  <div class="conv-bar-wrap reveal" id="conv-bars">
-    <div class="conv-bar"><span class="cb-label">Same architecture</span><div class="cb-track"><div class="cb-fill" style="--w:100%;background:var(--accent)"></div></div><span class="cb-num">50</span></div>
-    <div class="conv-bar"><span class="cb-label">Agent wallets total</span><div class="cb-track"><div class="cb-fill" style="--w:75%;background:var(--blue)"></div></div><span class="cb-num">150+</span></div>
-    <div class="conv-bar"><span class="cb-label">ERC-8004 receipts</span><div class="cb-track"><div class="cb-fill" style="--w:95%;background:var(--green)"></div></div><span class="cb-num">403</span></div>
-    <div class="conv-bar"><span class="cb-label">Total projects</span><div class="cb-track"><div class="cb-fill" style="--w:100%;background:var(--fg3)"></div></div><span class="cb-num">687</span></div>
-  </div>
-
-  <p class="reveal">Most teams used Opus 4.6 with Claude Code or Cursor. Same sponsor docs, same bounty briefs. They all collapsed to the same point in solution space. Even the names converged: Sentinel, Shield, Guard, Vault, Treasury.</p>
-
-  <blockquote class="reveal">
-    <p>The bounded-authority problem was solved 50 times in one weekend. Nobody solved what the agent should do with the budget.</p>
-  </blockquote>
-</section>
-
-<!-- ========== ACT 4: THE REAL QUESTION ========== -->
-
-<div class="divider"></div>
-
-<section id="thesis">
-  <div class="reveal">
-    <div class="label">Act 4 &middot; The Open Problem</div>
-    <h1>We solved the cage.<br>Now what's the animal?</h1>
-  </div>
-  <p class="reveal d1">The treasury is infrastructure. It's done. The question is: <strong>what does an autonomous agent with a yield-funded budget actually do?</strong></p>
-  <p class="reveal d2 muted">Not what we tell it to do. What it <em>chooses</em>. What it develops conviction about. What it would bet on.</p>
-</section>
-
-<!-- THESIS 1: PREDICTION MARKETS -->
-<div class="thesis predict reveal">
-  <h3><span class="tag">Thesis A</span> The Prediction Agent</h3>
-  <p>The agent reads news, on-chain data, sentiment. Forms a probability. Bets yield on Polymarket. Every week, you can see if it was right.</p>
-  <p>The only strategy where the agent's <em>reasoning</em> is the product. DCA doesn't need a brain. Predictions do.</p>
-  <div class="example"><strong>Week 1:</strong> "ETH stays above $2,800 by Friday" / Confidence: 72% / Bet: $0.47 of yield<br><strong>Result:</strong> Correct. Record: 1-0. Bankroll: $5.13 remaining.</div>
-</div>
-
-<!-- THESIS 2: DEGEN -->
-<div class="thesis degen reveal">
-  <h3><span class="tag">Thesis B</span> The Degen Agent</h3>
-  <p>Scans new token launches on Base. Reads the contract code. Checks liquidity. Apes $0.50 of yield into something it likes. Most die. Some 10x.</p>
-  <div class="example"><strong>Scan:</strong> $BAGEL on Base / 47 holders / 0.3 ETH liquidity / clean fork, no backdoors<br><strong>Thesis:</strong> "Deployer is 3 days old, but contract is safe. Allocating 8% of yield."<br><strong>Result:</strong> Rugged. Record: 0-1. Yield regenerates next week.</div>
-</div>
-
-<!-- THESIS 3: INTELLIGENCE LOOP -->
-<div class="thesis intel reveal">
-  <h3><span class="tag">Thesis C</span> The Self-Funding Brain</h3>
-  <p>Spends yield on its own intelligence. Buys API calls, market data, Claude tokens. Uses that intelligence to deploy the rest. The thinking funds better thinking.</p>
-  <div class="example"><strong>Month 1:</strong> Free data only. Basic view. Holds yield.<br><strong>Month 2:</strong> Buys $2 of market data. Deeper analysis. First move.<br><strong>Month 6:</strong> Running premium feeds + sentiment + on-chain analytics. Actually good.</div>
-</div>
-
-<!-- THESIS 4: PERPS -->
-<div class="thesis econ reveal">
-  <h3><span class="tag">Thesis D</span> The Perps Agent</h3>
-  <p>Opens leveraged positions on GMX with yield as margin. Reads 4h candles, detects momentum. Goes long or short with 2-5x leverage. The yield is the risk budget.</p>
-  <div class="example"><strong>Signal:</strong> ETH RSI(14) at 28 on 4h. Oversold.<br><strong>Action:</strong> Long ETH 3x, $1.80 margin from yield<br><strong>Target:</strong> +8% / <strong>Stop:</strong> -3% / <strong>If liquidated:</strong> yield regenerates in ~12 days</div>
-</div>
-
-<!-- SCALE -->
-<div class="dbox reveal" style="margin-top:40px">
-  <div class="dl">What if you sized up?</div>
-  <p style="font-size:.88rem;color:#a1a1aa;margin:0 0 12px;line-height:1.6">Same contracts. Same guardrails. More yield to think with.</p>
-  <div class="calc-wrap">
-    <div class="calc-btns">
-      <button class="cbtn" onclick="setScale(1000)" data-a="1000">$1K</button>
-      <button class="cbtn on" onclick="setScale(10000)" data-a="10000">$10K</button>
-      <button class="cbtn" onclick="setScale(50000)" data-a="50000">$50K</button>
-      <button class="cbtn" onclick="setScale(100000)" data-a="100000">$100K</button>
-    </div>
-    <div class="calc-out">
-      <div class="co"><div class="col">Daily yield</div><div class="cov" id="cd">$0.96</div></div>
-      <div class="co"><div class="col">Monthly</div><div class="cov" id="cm">$29.17</div></div>
-      <div class="co"><div class="col">Yearly</div><div class="cov" id="cy">$350</div></div>
+    <div class="label">What if you sized up?</div>
+    <div class="scale-box">
+      <div class="scale-row">
+        <button class="s-btn" data-a="1000">$1K</button>
+        <button class="s-btn on" data-a="10000">$10K</button>
+        <button class="s-btn" data-a="50000">$50K</button>
+        <button class="s-btn" data-a="100000">$100K</button>
+      </div>
+      <div class="scale-val" id="s-val">$29/mo &middot; $350/yr</div>
+      <div class="scale-note" id="s-note">Real Polymarket bets weekly. Enough to develop a strategy and test it.</div>
     </div>
   </div>
-  <p id="scale-prose" style="font-size:.84rem;color:#71717a;margin:12px 0 0;line-height:1.6">At <strong style="color:#fafafa">$10K</strong>: $29/month. Enough for real Polymarket bets, a weekly DCA, or margin for 3x perps positions. The agent can develop a strategy and test it.</p>
-</div>
+</section>
 
-<!-- CLOSING -->
-<div class="divider"></div>
+<hr>
 
-<section style="padding-bottom:60px">
+<section>
   <div class="reveal">
-    <h2>The treasury is the solved problem.<br>Intent is the open one.</h2>
+    <div class="label">How we got here</div>
+    <p style="font-size:.82rem;color:var(--fg2);margin:10px 0 14px">Synthesis hackathon, March 2026. Agent treasury on Base. Principal locked in wstETH, agent only touches yield. 27 mainnet transactions. Won MoonPay track. Walked away.</p>
   </div>
-  <p class="reveal d1" style="font-size:1.05rem;color:var(--fg);font-weight:600">We gave the agent a budget. Now we need to give it a thesis.</p>
-  <div class="reveal d2" style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
-    <a href="/" style="display:inline-flex;padding:10px 22px;background:var(--fg);color:#fff;border-radius:8px;font-size:.84rem;font-weight:600;text-decoration:none;transition:transform .15s var(--ease-spring)" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform=''">Full Site</a>
-    <a href="https://github.com/MorkeethHQ/delegated-agent-treasury" target="_blank" style="display:inline-flex;padding:10px 22px;border:1px solid var(--border);border-radius:8px;font-size:.84rem;font-weight:500;color:var(--fg2);text-decoration:none">Source</a>
-    <a href="https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426" target="_blank" style="display:inline-flex;padding:10px 22px;border:1px solid var(--border);border-radius:8px;font-size:.84rem;font-weight:500;color:var(--fg2);text-decoration:none">Contract</a>
+  <div class="tl reveal d1">
+    <div class="tl-row"><div class="tl-d">Mar 15</div><div class="tl-t"><strong>Hackathon starts.</strong> Oscar + 2 AI agents.</div></div>
+    <div class="tl-row"><div class="tl-d">Mar 18</div><div class="tl-t">Treasury deployed on Base mainnet.</div></div>
+    <div class="tl-row"><div class="tl-d">Mar 19</div><div class="tl-t">11 autonomous spends. Uniswap, MoonPay, x402.</div></div>
+    <div class="tl-row"><div class="tl-d">Mar 23</div><div class="tl-t"><strong>Hackathon ends.</strong> 27 TXs. Walk away.</div></div>
+    <div class="tl-row"><div class="tl-d">Mar 24+</div><div class="tl-t" style="color:var(--fg4)">Zero transactions. Yield accrues.</div></div>
+    <div class="tl-row now"><div class="tl-d">Today</div><div class="tl-t">$5.60 in yield. No plan.</div></div>
   </div>
 </section>
 
-</div>
+<hr>
+
+<section>
+  <div class="reveal">
+    <div class="label">The hive mind</div>
+    <p style="font-size:.82rem;color:var(--fg2);margin:10px 0 14px">687 submissions. 50 teams in the stETH track converged on the identical architecture. Same Solidity, same Chainlink oracle, same design.</p>
+  </div>
+  <div class="stats reveal d1" id="stats-grid">
+    <div class="stat"><div class="s-num">50</div><div class="s-txt">same architecture</div></div>
+    <div class="stat"><div class="s-num">687</div><div class="s-txt">total projects</div></div>
+    <div class="stat"><div class="s-num dramatic" id="zero-stat">0</div><div class="s-txt">solved what to spend on</div></div>
+  </div>
+  <p class="reveal d2" style="font-size:.78rem;color:var(--fg3);margin-top:10px">The wallet problem was solved 50 times in one weekend. Nobody solved what the agent should do with the money.</p>
+</section>
+
+<hr>
+
+<section style="padding-bottom:36px">
+  <div class="reveal">
+    <p style="font-size:.88rem;font-weight:600;margin-bottom:3px">The treasury works. The agent doesn't think.</p>
+    <p style="font-size:.82rem;color:var(--fg3)">We gave it a budget. Now we need to give it a thesis.</p>
+    <div class="links">
+      <a href="/" class="lk pri">Full Site</a>
+      <a href="https://github.com/MorkeethHQ/delegated-agent-treasury" target="_blank" class="lk sec">Source</a>
+      <a href="https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426" target="_blank" class="lk sec">Contract</a>
+    </div>
+  </div>
+</section>
+
+</div><!-- .content -->
+</div><!-- .wrap -->
 
 <footer>
   <div class="wrap">
-    <a href="/">Yieldbound</a> &middot; <a href="https://github.com/MorkeethHQ/delegated-agent-treasury" target="_blank">GitHub</a> &middot; Synthesis 2026 &middot; MoonPay track winner
+    <a href="/">Yieldbound</a> &middot; <a href="https://github.com/MorkeethHQ/delegated-agent-treasury" target="_blank">GitHub</a> &middot; Synthesis 2026
   </div>
 </footer>
 
 <script>
-// Days since hackathon
-const d = Math.floor((Date.now() - new Date('2026-03-23').getTime()) / 86400000);
-document.getElementById('day-count').textContent = d;
-document.getElementById('hero-days').textContent = d;
+const days = Math.floor((Date.now() - new Date('2026-03-23').getTime()) / 86400000);
+document.getElementById('day-count').textContent = days;
 
-// Yield ticker with glow
-let b = 0.005792194600;
-setInterval(() => { b += b * 0.035 / 365 / 86400; document.getElementById('yield-ticker').textContent = b.toFixed(12); }, 1000);
+// Live-ticking balance
+let bal = 0.005792194600;
+const ethPrice = 2800;
+const usdEl = document.getElementById('hero-usd');
+const wstEl = document.getElementById('hero-wsteth');
 
-// Scroll reveals + animated counters + timeline + bars
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (!e.isIntersecting) return;
-    e.target.classList.add('visible');
+function tick() {
+  bal += bal * 0.035 / 365 / 86400 * 2.5;
+  usdEl.textContent = '$' + (bal * ethPrice - 10.62).toFixed(2);
+  wstEl.textContent = bal.toFixed(8) + ' wstETH';
+}
+tick();
+setInterval(tick, 2500);
 
-    // Animate number counters
-    e.target.querySelectorAll('[data-count]').forEach(el => {
-      const target = parseInt(el.dataset.count);
-      const duration = 1200;
-      const start = performance.now();
-      function tick(now) {
-        const progress = Math.min((now - start) / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        el.textContent = Math.round(target * eased);
-        if (progress < 1) requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-    });
+// Sticky hero fade on scroll
+const heroSticky = document.getElementById('hero-sticky');
+window.addEventListener('scroll', () => {
+  const rect = heroSticky.getBoundingClientRect();
+  const fadeStart = 100;
+  const fadeEnd = -60;
+  const progress = Math.max(0, Math.min(1, (rect.top - fadeEnd) / (fadeStart - fadeEnd)));
+  heroSticky.style.opacity = progress;
+}, { passive: true });
+
+// Tab switching with crossfade
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    const panel = document.getElementById('p-' + tab.dataset.t);
+    panel.classList.add('active');
+    if (tab.dataset.t === 'brain') {
+      setTimeout(() => { document.getElementById('prog-fill').style.width = '90%'; }, 80);
+    }
   });
+});
+
+// Scroll reveals
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.08 });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-// Timeline stagger
-const tlObs = new IntersectionObserver(entries => {
+// Zero stat: spinner to "0" on reveal
+const zeroEl = document.getElementById('zero-stat');
+let zeroRevealed = false;
+const zeroObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
-    if (!e.isIntersecting) return;
-    const events = e.target.querySelectorAll('.tl-event');
-    events.forEach((ev, i) => {
-      setTimeout(() => ev.classList.add('visible'), i * 200);
-    });
-    tlObs.unobserve(e.target);
+    if (e.isIntersecting && !zeroRevealed) {
+      zeroRevealed = true;
+      const chars = ['/', '-', '\\', '|'];
+      let i = 0;
+      zeroEl.style.color = 'var(--fg4)';
+      const spin = setInterval(() => {
+        zeroEl.textContent = chars[i % 4];
+        i++;
+      }, 80);
+      setTimeout(() => {
+        clearInterval(spin);
+        zeroEl.textContent = '0';
+        zeroEl.style.color = 'var(--red)';
+      }, 700);
+    }
   });
-}, { threshold: 0.1 });
-document.querySelectorAll('.timeline').forEach(el => tlObs.observe(el));
+}, { threshold: 0.5 });
+zeroObs.observe(zeroEl);
 
-// Bar chart animation
-const barObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (!e.isIntersecting) return;
-    e.target.querySelectorAll('.conv-bar').forEach((bar, i) => {
-      setTimeout(() => bar.classList.add('visible'), i * 150);
-    });
-    barObs.unobserve(e.target);
-  });
-}, { threshold: 0.2 });
-document.querySelectorAll('.conv-bar-wrap').forEach(el => barObs.observe(el));
-
-// Calculator
-const sp = {
-  1000: 'At <strong style="color:#fafafa">$1K</strong>: $2.92/month. One Polymarket bet per week, or a single weekly DCA swap. The smallest viable autonomous agent.',
-  10000: 'At <strong style="color:#fafafa">$10K</strong>: $29/month. Enough for real Polymarket bets, a weekly DCA, or margin for 3x perps positions. The agent can develop a strategy and test it.',
-  50000: 'At <strong style="color:#fafafa">$50K</strong>: $145/month. The agent runs a real desk. Diversified predictions, daily DCA with momentum timing, multiple perps positions, premium data feeds.',
-  100000: 'At <strong style="color:#fafafa">$100K</strong>: $290/month, $3,500/year, forever. Multiple strategies in parallel. Enough for the predictions to move from experiment to track record.'
+// Scale: animated countUp
+const scaleData = {
+  1000:  { mo: 2.92,  yr: 35,   n: 'One Polymarket bet per week. The smallest viable autonomous agent.' },
+  10000: { mo: 29,    yr: 350,  n: 'Real Polymarket bets weekly. Enough to develop a strategy and test it.' },
+  50000: { mo: 145,   yr: 1750, n: 'Multiple positions, daily DCA, premium data feeds.' },
+  100000:{ mo: 290,   yr: 3500, n: 'Multiple strategies in parallel. Experiment becomes track record.' }
 };
-function setScale(a) {
-  document.getElementById('cd').textContent = '$' + (a*.035/365).toFixed(2);
-  document.getElementById('cm').textContent = '$' + (a*.035/12).toFixed(2);
-  document.getElementById('cy').textContent = '$' + Math.round(a*.035).toLocaleString();
-  document.getElementById('scale-prose').innerHTML = sp[a];
-  document.querySelectorAll('.cbtn').forEach(b => b.classList.remove('on'));
-  document.querySelector('[data-a="'+a+'"]').classList.add('on');
+let currentScale = 10000;
+const sValEl = document.getElementById('s-val');
+const sNoteEl = document.getElementById('s-note');
+
+function animateCount(fromMo, fromYr, toMo, toYr, duration) {
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min(1, (now - start) / duration);
+    const ease = 1 - Math.pow(1 - t, 3);
+    const mo = fromMo + (toMo - fromMo) * ease;
+    const yr = fromYr + (toYr - fromYr) * ease;
+    const moStr = mo < 10 ? '$' + mo.toFixed(2) : '$' + Math.round(mo);
+    const yrStr = '$' + Math.round(yr).toLocaleString();
+    sValEl.textContent = moStr + '/mo · ' + yrStr + '/yr';
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
 }
+
+document.querySelectorAll('.s-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const newScale = parseInt(btn.dataset.a);
+    if (newScale === currentScale) return;
+    const from = scaleData[currentScale];
+    const to = scaleData[newScale];
+    document.querySelectorAll('.s-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    animateCount(from.mo, from.yr, to.mo, to.yr, 250);
+    sNoteEl.textContent = to.n;
+    currentScale = newScale;
+  });
+});
 </script>
 
 </body>
