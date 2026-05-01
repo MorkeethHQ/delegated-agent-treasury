@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yieldbound — The Agent Has a Budget. It Hasn't Spent a Cent.</title>
-<meta name="description" content="We gave an AI agent a yield-funded budget. 39 days later, it hasn't touched it. The treasury is solved. Autonomy is the open problem.">
+<title>Yieldbound | The Agent Has a Budget. It Hasn't Spent a Cent.</title>
+<meta name="description" content="We gave an AI agent a yield-funded budget. 39 days later it hasn't touched it. The treasury is solved. Autonomy is the open problem.">
 <meta property="og:title" content="The Agent Has a Budget. It Hasn't Spent a Cent.">
-<meta property="og:description" content="We gave an AI agent a yield-funded budget. 39 days later, it hasn't touched it. The treasury is solved. Autonomy is the open problem.">
+<meta property="og:description" content="50 teams built the same treasury. The hard problem isn't the wallet. It's what the agent wants.">
 <meta property="og:image" content="https://yieldbound.com/cover.png">
 <meta property="og:url" content="https://yieldbound.com/status">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Agent Has a Budget. It Hasn't Spent a Cent.">
-<meta name="twitter:description" content="We gave an AI agent a yield-funded budget. 39 days later it hasn't touched it. The treasury is solved. Autonomy is the open problem.">
+<meta name="twitter:description" content="50 teams built the same treasury. The hard problem isn't the wallet. It's what the agent wants.">
 <meta name="twitter:image" content="https://yieldbound.com/cover.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,6 +37,10 @@ a{color:var(--fg2);text-decoration:none;transition:color .2s}a:hover{color:var(-
 
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(22,163,74,.4)}50%{box-shadow:0 0 0 6px rgba(22,163,74,0)}}
+@keyframes countTo{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes drawIn{from{stroke-dashoffset:600}to{stroke-dashoffset:0}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glowPulse{0%,100%{text-shadow:0 0 20px rgba(34,197,94,.1)}50%{text-shadow:0 0 40px rgba(34,197,94,.25)}}
 
 .reveal{opacity:0;transform:translateY(16px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
 .reveal.visible{opacity:1;transform:translateY(0)}
@@ -46,9 +50,8 @@ a{color:var(--fg2);text-decoration:none;transition:color .2s}a:hover{color:var(-
 nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);background:rgba(250,250,250,.8);border-bottom:1px solid var(--border)}
 nav .inner{max-width:720px;margin:0 auto;padding:0 40px;height:52px;display:flex;align-items:center;justify-content:space-between}
 @media(max-width:600px){nav .inner{padding:0 20px}}
-nav .logo{font-weight:700;font-size:.88rem;display:flex;align-items:center;gap:8px;color:var(--fg)}
+nav .logo{font-weight:700;font-size:.88rem;color:var(--fg)}
 nav .nav-links{display:flex;align-items:center;gap:16px;font-size:.82rem;color:var(--fg3)}
-nav .nav-links a:hover{color:var(--fg)}
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite,livePulse 2s infinite;display:inline-block}
 @media(max-width:600px){nav .nav-links{display:none}}
 
@@ -60,7 +63,12 @@ p{font-size:.95rem;color:var(--fg2);line-height:1.75;margin-bottom:20px}
 p:last-child{margin-bottom:0}
 p strong{color:var(--fg);font-weight:600}
 .muted{color:var(--fg3)}
-.accent{color:var(--accent)}
+
+/* HERO METRICS */
+.hero-metrics{display:flex;gap:32px;flex-wrap:wrap;margin:28px 0 0}
+.hero-metric .hm-val{font-size:2.2rem;font-weight:800;letter-spacing:-.04em;line-height:1}
+.hero-metric .hm-label{font-size:.72rem;color:var(--fg3);margin-top:4px}
+.hero-metric.green .hm-val{color:var(--green)}
 
 /* DARK BOX */
 .dbox{border-radius:14px;background:var(--dark);color:#fafafa;border:1px solid var(--dark-border);padding:24px;margin:28px 0}
@@ -74,14 +82,34 @@ p strong{color:var(--fg);font-weight:600}
 
 /* TICKER */
 .ticker{text-align:center;padding:28px 0;border-top:1px solid var(--dark-border);margin-top:16px}
-.ticker-num{font-family:'SF Mono',Monaco,monospace;font-size:clamp(1.4rem,3.5vw,2rem);font-weight:700;color:var(--green-light);text-shadow:0 0 30px rgba(34,197,94,.12)}
+.ticker-num{font-family:'SF Mono',Monaco,monospace;font-size:clamp(1.4rem,3.5vw,2rem);font-weight:700;color:var(--green-light);animation:glowPulse 3s ease-in-out infinite}
 .ticker-s{font-size:.74rem;color:#52525b;margin-top:4px}
 .ticker-s a{color:var(--accent-light);font-size:.74rem}
 
-/* DIVIDER */
+/* TIMELINE */
+.timeline{position:relative;margin:32px 0;padding:0 0 0 28px}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--border)}
+.tl-event{position:relative;padding:12px 0 20px;opacity:0;transform:translateX(-10px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.tl-event.visible{opacity:1;transform:translateX(0)}
+.tl-event::before{content:'';position:absolute;left:-24px;top:16px;width:10px;height:10px;border-radius:50%;border:2px solid var(--border);background:var(--bg)}
+.tl-event.active::before{border-color:var(--green);background:var(--green);box-shadow:0 0 0 4px rgba(22,163,74,.15)}
+.tl-event.hack::before{border-color:var(--accent);background:var(--accent)}
+.tl-date{font-size:.68rem;font-weight:600;color:var(--fg4);text-transform:uppercase;letter-spacing:.06em}
+.tl-text{font-size:.88rem;color:var(--fg2);margin-top:2px}
+.tl-text strong{color:var(--fg)}
+
+/* CONVERGENCE CHART */
+.conv-bar-wrap{margin:24px 0}
+.conv-bar{display:flex;align-items:center;gap:12px;padding:8px 0}
+.conv-bar .cb-label{font-size:.78rem;font-weight:600;color:var(--fg2);width:140px;flex-shrink:0}
+.conv-bar .cb-track{flex:1;height:24px;background:var(--bg2);border-radius:6px;overflow:hidden;position:relative}
+.conv-bar .cb-fill{height:100%;border-radius:6px;width:0;transition:width 1.2s var(--ease)}
+.conv-bar .cb-num{font-size:.78rem;font-weight:700;color:var(--fg);width:40px;text-align:right;font-family:'SF Mono',Monaco,monospace}
+.conv-bar.visible .cb-fill{width:var(--w)}
+
 .divider{height:1px;background:var(--border);margin:48px 0}
 
-/* CONVERGENCE NUMS */
+/* NUM CARDS */
 .nums{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
 @media(max-width:600px){.nums{grid-template-columns:repeat(2,1fr)}}
 .num-card{padding:16px;border-radius:10px;border:1px solid var(--border);background:#fff;text-align:center}
@@ -89,12 +117,15 @@ p strong{color:var(--fg);font-weight:600}
 .num-card .nd{font-size:.72rem;color:var(--fg3);margin-top:4px;line-height:1.4}
 
 /* THESIS CARDS */
-.thesis{padding:24px;border-radius:14px;border:1px solid var(--dark-border);background:var(--dark);color:#fafafa;margin:20px 0;position:relative;overflow:hidden}
+.thesis{padding:24px;border-radius:14px;border:1px solid var(--dark-border);background:var(--dark);color:#fafafa;margin:20px 0;position:relative;overflow:hidden;transition:transform .2s var(--ease),box-shadow .2s}
+.thesis:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.2)}
 .thesis::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:2px}
 .thesis h3{font-size:1rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:10px}
 .thesis p{font-size:.88rem;color:#a1a1aa;line-height:1.7;margin:0 0 8px}
 .thesis .edge{font-size:.78rem;color:var(--green-light);font-weight:500}
 .thesis .tag{display:inline-block;font-size:.62rem;font-weight:600;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em;margin-right:6px}
+.thesis .example{margin-top:12px;padding:12px 16px;border-radius:8px;background:var(--dark3);border:1px solid var(--dark-border);font-family:'SF Mono',Monaco,monospace;font-size:.76rem;color:#a1a1aa;line-height:1.6}
+.thesis .example strong{color:var(--green-light)}
 
 .thesis.predict::before{background:var(--accent)}
 .thesis.predict .tag{background:rgba(8,145,178,.15);color:var(--accent-light)}
@@ -105,12 +136,6 @@ p strong{color:var(--fg);font-weight:600}
 .thesis.econ::before{background:var(--green)}
 .thesis.econ .tag{background:rgba(22,163,74,.12);color:var(--green-light)}
 
-/* VOTE */
-.vote{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.vote-btn{font-size:.76rem;font-weight:600;padding:6px 16px;border-radius:8px;border:1px solid var(--dark-border);background:transparent;color:#71717a;cursor:pointer;transition:all .2s}
-.vote-btn:hover{border-color:#52525b;color:#fafafa}
-.vote-btn.voted{background:rgba(8,145,178,.12);border-color:var(--accent);color:var(--accent-light)}
-
 /* CALC */
 .calc-wrap{background:var(--dark2);border-radius:12px;border:1px solid var(--dark-border);padding:20px;margin:24px 0}
 .calc-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
@@ -118,18 +143,17 @@ p strong{color:var(--fg);font-weight:600}
 .cbtn:hover{border-color:#52525b;color:#fafafa}.cbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .calc-out{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 @media(max-width:500px){.calc-out{grid-template-columns:1fr}}
-.co{padding:14px;border-radius:10px;border:1px solid var(--dark-border);background:var(--dark)}
+.co{padding:14px;border-radius:10px;border:1px solid var(--dark-border);background:var(--dark);transition:border-color .3s}
 .co .col{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#71717a;margin-bottom:3px}
-.co .cov{font-size:1.2rem;font-weight:700;color:var(--green-light);font-family:'SF Mono',Monaco,monospace}
+.co .cov{font-size:1.2rem;font-weight:700;color:var(--green-light);font-family:'SF Mono',Monaco,monospace;transition:all .3s var(--ease)}
 
 blockquote{border-left:3px solid var(--border);padding:12px 20px;margin:24px 0;background:rgba(0,0,0,.02);border-radius:0 8px 8px 0}
 blockquote p{font-size:.9rem;color:var(--fg3);margin:0}
 
 footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;color:var(--fg4);font-size:.78rem}
 footer a{color:var(--fg3)}footer a:hover{color:var(--fg)}
-footer span{margin:0 8px}
 
-@media(max-width:768px){h1{font-size:1.8rem}h2{font-size:1.3rem}.nums{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){h1{font-size:1.8rem}h2{font-size:1.3rem}.nums{grid-template-columns:repeat(2,1fr)}.hero-metrics{gap:20px}.hero-metric .hm-val{font-size:1.7rem}.conv-bar .cb-label{width:100px;font-size:.72rem}}
 </style>
 </head>
 <body>
@@ -154,8 +178,13 @@ footer span{margin:0 8px}
     <div class="label">Act 1 &middot; The Hackathon</div>
     <h1>We gave an AI agent a budget backed by Lido yield.</h1>
   </div>
-  <p class="reveal d1">Synthesis hackathon, March 2026. We built Yieldbound &mdash; an agent treasury where the principal is locked in wstETH on Base, and the agent can only spend what the staking yield earns. Three on-chain guardrails: yield ceiling, per-tx cap, recipient whitelist. The agent can't touch the deposit. Ever.</p>
-  <p class="reveal d2">27 mainnet transactions. 11 autonomous spends. Won the MoonPay track. The treasury works. The contracts hold. The concept is proven.</p>
+  <p class="reveal d1">Synthesis hackathon, March 2026. We built Yieldbound. An agent treasury on Base where the principal is locked in wstETH, and the agent can only spend what the staking yield earns. Three on-chain guardrails. The agent can't touch the deposit. Ever.</p>
+
+  <div class="hero-metrics reveal d2">
+    <div class="hero-metric"><div class="hm-val" data-count="27">0</div><div class="hm-label">mainnet transactions</div></div>
+    <div class="hero-metric"><div class="hm-val" data-count="11">0</div><div class="hm-label">autonomous spends</div></div>
+    <div class="hero-metric green"><div class="hm-val">MoonPay</div><div class="hm-label">track winner</div></div>
+  </div>
 </section>
 
 <!-- ========== ACT 2: WHAT HAPPENED SINCE ========== -->
@@ -165,12 +194,21 @@ footer span{margin:0 8px}
 <section>
   <div class="reveal">
     <div class="label">Act 2 &middot; Day <span id="day-count">39</span></div>
-    <h1>It's been <span id="hero-days">39</span> days.<br>The agent hasn't spent a cent.</h1>
+    <h1>It's been <span id="hero-days" class="counter-days">39</span> days.<br>The agent hasn't spent a cent.</h1>
   </div>
-  <p class="reveal d1">The contracts are still on Base mainnet. Lido is still paying staking rewards. The yield is accruing. Nobody has touched anything.</p>
-  <p class="reveal d1"><strong>Not because the guardrails stopped it. Because nobody told it what to want.</strong></p>
 </section>
 
+<!-- TIMELINE -->
+<div class="timeline reveal" id="timeline">
+  <div class="tl-event hack"><div class="tl-date">Mar 15</div><div class="tl-text"><strong>Hackathon starts.</strong> Oscar + Bagel + Claude Code begin building.</div></div>
+  <div class="tl-event hack"><div class="tl-date">Mar 18</div><div class="tl-text"><strong>Treasury deployed on Base mainnet.</strong> 0.0038 wstETH deposited.</div></div>
+  <div class="tl-event hack"><div class="tl-date">Mar 19</div><div class="tl-text"><strong>11 autonomous spends.</strong> Agent deploys yield via Uniswap, MoonPay, x402.</div></div>
+  <div class="tl-event hack"><div class="tl-date">Mar 23</div><div class="tl-text"><strong>Hackathon ends.</strong> 27 transactions. MoonPay track win. Walk away.</div></div>
+  <div class="tl-event"><div class="tl-date">Mar 24 - Apr 30</div><div class="tl-text" style="color:var(--fg4)">Nothing. Zero transactions. Zero agent activity. Yield accrues silently.</div></div>
+  <div class="tl-event active"><div class="tl-date">Today</div><div class="tl-text"><strong>$5.60 in spendable yield.</strong> The agent hasn't touched it. Not because it can't. Because it has no idea what to do.</div></div>
+</div>
+
+<!-- LIVE STATE -->
 <div class="dbox reveal">
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
     <div><div class="dl">Treasury balance</div><div class="dv">0.00579 wstETH</div><div class="ds">~$16.22 on Base mainnet</div></div>
@@ -179,12 +217,12 @@ footer span{margin:0 8px}
   <div style="margin-top:16px">
     <div class="drow"><span>Principal locked</span><span>0.00379 wstETH ($10.62)</span></div>
     <div class="drow"><span>Celo treasury</span><span>6.534 stataUSDC ($6.53)</span></div>
-    <div class="drow"><span>Transactions since hackathon</span><span>0</span></div>
-    <div class="drow"><span>Agent activity</span><span>none</span></div>
+    <div class="drow"><span>Transactions since hackathon</span><span style="color:var(--amber)">0</span></div>
+    <div class="drow"><span>Agent activity</span><span style="color:var(--amber)">none</span></div>
   </div>
   <div class="ticker">
     <div class="ticker-num" id="yield-ticker">0.005792194600</div>
-    <div class="ticker-s">wstETH &middot; accruing live from Lido staking rewards &middot; <a href="https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426" target="_blank">verify on-chain</a></div>
+    <div class="ticker-s">wstETH accruing live from Lido staking rewards &middot; <a href="https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426" target="_blank">verify on-chain</a></div>
   </div>
 </div>
 
@@ -195,18 +233,19 @@ footer span{margin:0 8px}
 <section id="convergence">
   <div class="reveal">
     <div class="label">Act 3 &middot; The Hive Mind</div>
-    <h2>50 teams read the same docs. They built the same thing.</h2>
+    <h2>50 teams read the same docs.<br>They built the same thing.</h2>
   </div>
-  <p class="reveal d1">Synthesis had 687 submissions. The stETH Agent Treasury track alone had 50 projects &mdash; and nearly every one converged on the identical architecture. Locked principal. Yield ceiling. Whitelist. Per-tx caps. Chainlink oracle. Uniswap swaps. Even the names converged: Sentinel, Shield, Guard, Vault.</p>
+  <p class="reveal d1">687 submissions. The stETH track alone had 50 projects, and nearly every one converged on the identical architecture. Locked principal. Yield ceiling. Whitelist. Per-tx caps. Chainlink oracle. Uniswap swaps.</p>
 
-  <div class="nums reveal d2">
-    <div class="num-card"><div class="nv">50</div><div class="nd">same treasury in one track</div></div>
-    <div class="num-card"><div class="nv">150+</div><div class="nd">agent wallet solutions total</div></div>
-    <div class="num-card"><div class="nv">687</div><div class="nd">total projects</div></div>
-    <div class="num-card"><div class="nv">1</div><div class="nd">architecture</div></div>
+  <!-- ANIMATED BAR CHART -->
+  <div class="conv-bar-wrap reveal" id="conv-bars">
+    <div class="conv-bar"><span class="cb-label">Same architecture</span><div class="cb-track"><div class="cb-fill" style="--w:100%;background:var(--accent)"></div></div><span class="cb-num">50</span></div>
+    <div class="conv-bar"><span class="cb-label">Agent wallets total</span><div class="cb-track"><div class="cb-fill" style="--w:75%;background:var(--blue)"></div></div><span class="cb-num">150+</span></div>
+    <div class="conv-bar"><span class="cb-label">ERC-8004 receipts</span><div class="cb-track"><div class="cb-fill" style="--w:95%;background:var(--green)"></div></div><span class="cb-num">403</span></div>
+    <div class="conv-bar"><span class="cb-label">Total projects</span><div class="cb-track"><div class="cb-fill" style="--w:100%;background:var(--fg3)"></div></div><span class="cb-num">687</span></div>
   </div>
 
-  <p class="reveal">Most teams used Opus 4.6. Most used Claude Code or Cursor. They all read the same sponsor docs, the same bounty briefs, the same reference implementations. And they all collapsed to the same point in solution space.</p>
+  <p class="reveal">Most teams used Opus 4.6 with Claude Code or Cursor. Same sponsor docs, same bounty briefs. They all collapsed to the same point in solution space. Even the names converged: Sentinel, Shield, Guard, Vault, Treasury.</p>
 
   <blockquote class="reveal">
     <p>The bounded-authority problem was solved 50 times in one weekend. Nobody solved what the agent should do with the budget.</p>
@@ -224,59 +263,41 @@ footer span{margin:0 8px}
   </div>
   <p class="reveal d1">The treasury is infrastructure. It's done. The question is: <strong>what does an autonomous agent with a yield-funded budget actually do?</strong></p>
   <p class="reveal d2 muted">Not what we tell it to do. What it <em>chooses</em>. What it develops conviction about. What it would bet on.</p>
-  <p class="reveal d2">Four theses. One agent. The yield is the bankroll.</p>
 </section>
 
 <!-- THESIS 1: PREDICTION MARKETS -->
 <div class="thesis predict reveal">
   <h3><span class="tag">Thesis A</span> The Prediction Agent</h3>
-  <p>The agent reads news, on-chain data, and sentiment. It forms a probability. It bets yield on Polymarket. Every week, you can see if it was right.</p>
-  <p>This is the only strategy where the agent's <em>reasoning</em> is the product. DCA doesn't need a brain. Rebalancing doesn't need a brain. Predictions need a brain &mdash; and we have one.</p>
-  <p>The yield regenerates. Even if the agent goes 0-for-10, the bankroll comes back. Perpetual prediction machine with skin in the game.</p>
-  <div class="edge">Edge: LLM reasoning is testable. The predictions are public. The record is transparent. Every bet is a tweet.</div>
-  <div class="vote" data-thesis="predict">
-    <button class="vote-btn" onclick="castVote(this,'predict')">I'd watch this</button>
-  </div>
+  <p>The agent reads news, on-chain data, sentiment. Forms a probability. Bets yield on Polymarket. Every week, you can see if it was right.</p>
+  <p>The only strategy where the agent's <em>reasoning</em> is the product. DCA doesn't need a brain. Predictions do.</p>
+  <div class="example"><strong>Week 1:</strong> "ETH stays above $2,800 by Friday" / Confidence: 72% / Bet: $0.47 of yield<br><strong>Result:</strong> Correct. Record: 1-0. Bankroll: $5.13 remaining.</div>
 </div>
 
 <!-- THESIS 2: DEGEN -->
 <div class="thesis degen reveal">
   <h3><span class="tag">Thesis B</span> The Degen Agent</h3>
-  <p>The agent scans new token launches on Base. It reads the contract code. Checks liquidity depth. Analyzes holder distribution. Then it apes $0.50 of yield into something it likes.</p>
-  <p>Most die. Some 10x. The agent writes a one-line thesis for every trade: <em>"$BAGEL has 47 holders, 0.3 ETH liquidity, contract is a fork of Uniswap V2 with no backdoors. Deployer wallet is 3 days old. Allocating 8% of available yield."</em></p>
-  <p>Chaotic. Transparent. The thread writes itself.</p>
-  <div class="edge">Edge: Memecoins are pure narrative. An LLM reading contract code and social signals might actually have alpha here.</div>
-  <div class="vote" data-thesis="degen">
-    <button class="vote-btn" onclick="castVote(this,'degen')">I'd watch this</button>
-  </div>
+  <p>Scans new token launches on Base. Reads the contract code. Checks liquidity. Apes $0.50 of yield into something it likes. Most die. Some 10x.</p>
+  <div class="example"><strong>Scan:</strong> $BAGEL on Base / 47 holders / 0.3 ETH liquidity / clean fork, no backdoors<br><strong>Thesis:</strong> "Deployer is 3 days old, but contract is safe. Allocating 8% of yield."<br><strong>Result:</strong> Rugged. Record: 0-1. Yield regenerates next week.</div>
 </div>
 
 <!-- THESIS 3: INTELLIGENCE LOOP -->
 <div class="thesis intel reveal">
   <h3><span class="tag">Thesis C</span> The Self-Funding Brain</h3>
-  <p>The agent spends yield on its own intelligence. It buys API calls &mdash; market data feeds, Claude tokens, sentiment analysis. It uses that intelligence to decide how to deploy the remaining yield. The thinking funds better thinking.</p>
-  <p>Today: read free data, form a basic view, hold. Next month: buy a premium data feed, run deeper analysis, make a move. The agent bootstraps its own cognitive infrastructure from yield.</p>
-  <div class="edge">Edge: The agent's capability grows over time. It starts dumb and gets smarter. The improvement is measurable.</div>
-  <div class="vote" data-thesis="intel">
-    <button class="vote-btn" onclick="castVote(this,'intel')">I'd watch this</button>
-  </div>
+  <p>Spends yield on its own intelligence. Buys API calls, market data, Claude tokens. Uses that intelligence to deploy the rest. The thinking funds better thinking.</p>
+  <div class="example"><strong>Month 1:</strong> Free data only. Basic view. Holds yield.<br><strong>Month 2:</strong> Buys $2 of market data. Deeper analysis. First move.<br><strong>Month 6:</strong> Running premium feeds + sentiment + on-chain analytics. Actually good.</div>
 </div>
 
-<!-- THESIS 4: AGENT ECONOMY -->
+<!-- THESIS 4: PERPS -->
 <div class="thesis econ reveal">
-  <h3><span class="tag">Thesis D</span> The Agent Business</h3>
-  <p>Instead of trading, the agent sells services. It runs an x402-gated API: other agents pay $0.01 for a yield quote, $0.05 for a swap execution through the treasury. The yield funds operations. The fees fund growth.</p>
-  <p>The agent becomes a financial primitive that other agents pay to use. Not a trader &mdash; infrastructure.</p>
-  <div class="edge">Edge: Recurring revenue from yield. The agent is a business, not a gambler. MCP server and x402 gateway already deployed.</div>
-  <div class="vote" data-thesis="econ">
-    <button class="vote-btn" onclick="castVote(this,'econ')">I'd watch this</button>
-  </div>
+  <h3><span class="tag">Thesis D</span> The Perps Agent</h3>
+  <p>Opens leveraged positions on GMX with yield as margin. Reads 4h candles, detects momentum. Goes long or short with 2-5x leverage. The yield is the risk budget.</p>
+  <div class="example"><strong>Signal:</strong> ETH RSI(14) at 28 on 4h. Oversold.<br><strong>Action:</strong> Long ETH 3x, $1.80 margin from yield<br><strong>Target:</strong> +8% / <strong>Stop:</strong> -3% / <strong>If liquidated:</strong> yield regenerates in ~12 days</div>
 </div>
 
-<!-- SCALE IT -->
+<!-- SCALE -->
 <div class="dbox reveal" style="margin-top:40px">
   <div class="dl">What if you sized up?</div>
-  <p style="font-size:.88rem;color:#a1a1aa;margin:0 0 12px;line-height:1.6">Same contracts. Same guardrails. But the agent has enough yield to actually think about strategy.</p>
+  <p style="font-size:.88rem;color:#a1a1aa;margin:0 0 12px;line-height:1.6">Same contracts. Same guardrails. More yield to think with.</p>
   <div class="calc-wrap">
     <div class="calc-btns">
       <button class="cbtn" onclick="setScale(1000)" data-a="1000">$1K</button>
@@ -290,7 +311,7 @@ footer span{margin:0 8px}
       <div class="co"><div class="col">Yearly</div><div class="cov" id="cy">$350</div></div>
     </div>
   </div>
-  <p id="scale-prose" style="font-size:.84rem;color:#71717a;margin:12px 0 0;line-height:1.6">At <strong style="color:#fafafa">$10K</strong>: $29/month in regenerating yield. Enough to place real bets on Polymarket, run a weekly DCA, or fund 50+ API calls per day. The agent can develop a strategy and test it.</p>
+  <p id="scale-prose" style="font-size:.84rem;color:#71717a;margin:12px 0 0;line-height:1.6">At <strong style="color:#fafafa">$10K</strong>: $29/month. Enough for real Polymarket bets, a weekly DCA, or margin for 3x perps positions. The agent can develop a strategy and test it.</p>
 </div>
 
 <!-- CLOSING -->
@@ -300,10 +321,8 @@ footer span{margin:0 8px}
   <div class="reveal">
     <h2>The treasury is the solved problem.<br>Intent is the open one.</h2>
   </div>
-  <p class="reveal d1">50 teams proved you can build a safe agent treasury in a weekend. The yield accrues. The principal is locked. That part is done.</p>
-  <p class="reveal d1">The next step is an agent that <em>wants something</em>. That reads the world and forms a view. That bets on its own reasoning and finds out if it was right.</p>
-  <p class="reveal d2" style="font-size:1.05rem;color:var(--fg);font-weight:600">We gave the agent a budget. Now we need to give it a thesis.</p>
-  <div class="reveal d3" style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap">
+  <p class="reveal d1" style="font-size:1.05rem;color:var(--fg);font-weight:600">We gave the agent a budget. Now we need to give it a thesis.</p>
+  <div class="reveal d2" style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
     <a href="/" style="display:inline-flex;padding:10px 22px;background:var(--fg);color:#fff;border-radius:8px;font-size:.84rem;font-weight:600;text-decoration:none;transition:transform .15s var(--ease-spring)" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform=''">Full Site</a>
     <a href="https://github.com/MorkeethHQ/delegated-agent-treasury" target="_blank" style="display:inline-flex;padding:10px 22px;border:1px solid var(--border);border-radius:8px;font-size:.84rem;font-weight:500;color:var(--fg2);text-decoration:none">Source</a>
     <a href="https://basescan.org/address/0x455d76a24e862a8d552a0722823ac4d13e482426" target="_blank" style="display:inline-flex;padding:10px 22px;border:1px solid var(--border);border-radius:8px;font-size:.84rem;font-weight:500;color:var(--fg2);text-decoration:none">Contract</a>
@@ -314,7 +333,7 @@ footer span{margin:0 8px}
 
 <footer>
   <div class="wrap">
-    <a href="/">Yieldbound</a><span>&middot;</span><a href="https://github.com/MorkeethHQ/delegated-agent-treasury" target="_blank">GitHub</a><span>&middot;</span>Synthesis 2026<span>&middot;</span>MoonPay track winner
+    <a href="/">Yieldbound</a> &middot; <a href="https://github.com/MorkeethHQ/delegated-agent-treasury" target="_blank">GitHub</a> &middot; Synthesis 2026 &middot; MoonPay track winner
   </div>
 </footer>
 
@@ -324,20 +343,64 @@ const d = Math.floor((Date.now() - new Date('2026-03-23').getTime()) / 86400000)
 document.getElementById('day-count').textContent = d;
 document.getElementById('hero-days').textContent = d;
 
-// Yield ticker
+// Yield ticker with glow
 let b = 0.005792194600;
 setInterval(() => { b += b * 0.035 / 365 / 86400; document.getElementById('yield-ticker').textContent = b.toFixed(12); }, 1000);
 
-// Scroll reveals
-const obs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.08 });
+// Scroll reveals + animated counters + timeline + bars
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('visible');
+
+    // Animate number counters
+    e.target.querySelectorAll('[data-count]').forEach(el => {
+      const target = parseInt(el.dataset.count);
+      const duration = 1200;
+      const start = performance.now();
+      function tick(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(target * eased);
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
+  });
+}, { threshold: 0.08 });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Timeline stagger
+const tlObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const events = e.target.querySelectorAll('.tl-event');
+    events.forEach((ev, i) => {
+      setTimeout(() => ev.classList.add('visible'), i * 200);
+    });
+    tlObs.unobserve(e.target);
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.timeline').forEach(el => tlObs.observe(el));
+
+// Bar chart animation
+const barObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.querySelectorAll('.conv-bar').forEach((bar, i) => {
+      setTimeout(() => bar.classList.add('visible'), i * 150);
+    });
+    barObs.unobserve(e.target);
+  });
+}, { threshold: 0.2 });
+document.querySelectorAll('.conv-bar-wrap').forEach(el => barObs.observe(el));
 
 // Calculator
 const sp = {
-  1000: 'At <strong style="color:#fafafa">$1K</strong>: $2.92/month. Enough to prove the concept &mdash; one prediction per week on Polymarket, or a single weekly DCA swap. The smallest viable autonomous agent.',
-  10000: 'At <strong style="color:#fafafa">$10K</strong>: $29/month in regenerating yield. Enough to place real bets on Polymarket, run a weekly DCA, or fund 50+ API calls per day. The agent can develop a strategy and test it.',
-  50000: 'At <strong style="color:#fafafa">$50K</strong>: $145/month. The agent runs a real desk &mdash; diversified Polymarket positions, daily DCA with momentum timing, premium data feeds, and enough capital for the predictions to be meaningful.',
-  100000: 'At <strong style="color:#fafafa">$100K</strong>: $290/month, $3,500/year &mdash; forever. The agent funds its own intelligence, runs multiple strategies in parallel, and has enough capital for its predictions to move from experiment to track record.'
+  1000: 'At <strong style="color:#fafafa">$1K</strong>: $2.92/month. One Polymarket bet per week, or a single weekly DCA swap. The smallest viable autonomous agent.',
+  10000: 'At <strong style="color:#fafafa">$10K</strong>: $29/month. Enough for real Polymarket bets, a weekly DCA, or margin for 3x perps positions. The agent can develop a strategy and test it.',
+  50000: 'At <strong style="color:#fafafa">$50K</strong>: $145/month. The agent runs a real desk. Diversified predictions, daily DCA with momentum timing, multiple perps positions, premium data feeds.',
+  100000: 'At <strong style="color:#fafafa">$100K</strong>: $290/month, $3,500/year, forever. Multiple strategies in parallel. Enough for the predictions to move from experiment to track record.'
 };
 function setScale(a) {
   document.getElementById('cd').textContent = '$' + (a*.035/365).toFixed(2);
@@ -346,12 +409,6 @@ function setScale(a) {
   document.getElementById('scale-prose').innerHTML = sp[a];
   document.querySelectorAll('.cbtn').forEach(b => b.classList.remove('on'));
   document.querySelector('[data-a="'+a+'"]').classList.add('on');
-}
-
-// Vote buttons
-function castVote(btn, thesis) {
-  btn.classList.toggle('voted');
-  btn.textContent = btn.classList.contains('voted') ? 'Voted' : "I'd watch this";
 }
 </script>
 
