@@ -9,9 +9,12 @@
 [![25 MCP Tools](https://img.shields.io/badge/MCP_Tools-25-71717a?style=flat-square)](skill.md)
 [![Website](https://img.shields.io/badge/yieldbound.com-Live-09090b?style=flat-square)](https://yieldbound.com)
 
-**Agents don't need full wallets — they need bounded authority.**
+**Bagel Yieldbound gives an AI agent a budget it can never drain: deposit capital, lock the principal, and the agent spends only what the yield earns.**
 
-Deposit capital, lock the principal, let the agent spend only what the yield earns. Budget that regenerates forever.
+Giving an agent a full wallet means one bad action can empty it, and giving it nothing means it cannot act at all.
+For people who want an agent to pay for things on-chain without handing it their money.
+A Solidity treasury on Base (Lido wstETH staking yield) and Celo (Aave USDC lending yield) computes spendable yield on-chain, a policy engine approves, escalates or denies each action with caps and recipient whitelists, and 25 MCP tools let the agent operate it.
+Live on Base and Celo mainnet, with 27 on-chain transactions and 11 autonomous spends recorded in this README. Site: https://yieldbound.com
 
 > 27 on-chain transactions. 11 fully autonomous spends. Live on Base + Celo mainnet. Built by 1 human + 3 AI agents.
 
